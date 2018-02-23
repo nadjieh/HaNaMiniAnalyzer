@@ -30,7 +30,7 @@ Hamb = cms.EDFilter('TreeHamb',
 
                      MET = cms.PSet( Input = cms.InputTag("slimmedMETs"),
                                      Cut = cms.double( 40. ),
-                                     Uncertainty = cms.int(-1)
+                                     Uncertainty = cms.int32(-1)
                                      #http://cmsdoxygen.web.cern.ch/cmsdoxygen/CMSSW_8_4_0_patch2/doc/html/db/deb/classpat_1_1MET.html#a5c8ea7c9575730bedb6f1639140a7422
                                      #enum  	METUncertainty {
                                      #   JetResUp =0, JetResDown =1, JetEnUp =2, JetEnDown =3,
