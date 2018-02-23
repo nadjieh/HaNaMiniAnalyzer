@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-nFilesPerJob=15
+nFilesPerJob=3
 CheckFailedJobs=True
 hname = "Hamb/CutFlowTable/CutFlowTable"
 prefix = "out"
@@ -38,6 +38,8 @@ call(["voms-proxy-init" , "--out" , "./%s/.x509up_u%d" % ( workingdir , os.getui
 FailedJobs = {}
 if CheckFailedJobs:
     for sample in samples:
+        if not sample.Name in ["DoubleMuH2"] :
+            continue
 
         ListOfFailedJobs = []
         for job_ in sample.Jobs :
@@ -68,6 +70,10 @@ if CheckFailedJobs:
 
 file = open("%s/submit.sh" % (workingdir) , "w" )
 for sample in samples:
+
+    if not sample.Name in ["DoubleMuH2"] :
+        continue
+
 
     if CheckFailedJobs:
         if len(FailedJobs[ sample.Name ]) > 0:
@@ -116,4 +122,5 @@ file.close()
 print "to submit the jobs, you have to run the following commands :"
 print "cd %s" % (workingdir)
 print "source submit.sh"
+
 

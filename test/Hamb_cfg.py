@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("HaNa")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+process.MessageLogger.cerr.FwkReport.reportEvery = 100000
 
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
@@ -207,4 +207,5 @@ process.outp1=cms.OutputModule("PoolOutputModule",
    SelectEvents = cms.untracked.PSet(  SelectEvents = cms.vstring('p')  )
 )
 process.ep = cms.EndPath( process.outp1 )
+
 
