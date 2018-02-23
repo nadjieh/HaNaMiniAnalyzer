@@ -209,8 +209,10 @@ else :
         process.HambPUDown.Vertex.PUDataFileName = "pileUpDataDown.root"
         process.HambJECUP = process.Hamb.clone()
         process.HambJECUP.Jets.JECUncertainty = 1
+        process.HambJECUP.MET.Uncertainty = 2
         process.HambJECDOWN = process.Hamb.clone()
         process.HambJECDOWN.Jets.JECUncertainty = -1
+        process.HambJECDOWN.MET.Uncertainty = 3
         process.HambJERUP = process.Hamb.clone()
         process.HambJERUP.Jets.JERUncertainty = 2
         process.HambJERDOWN = process.Hamb.clone()
@@ -219,10 +221,10 @@ else :
         process.HambBUP.Jets.BTagUncertainty = 1
         process.HambBDOWN = process.Hamb.clone()
         process.HambBDOWN.Jets.BTagUncertainty = -1                
-        process.HambMETJESDOWN = process.Hamb.clone()
-        process.HambMETJESDOWN.MET.Uncertainty = 3
-        process.HambMETJESUP = process.Hamb.clone()
-        process.HambMETJESUP.MET.Uncertainty = 2
+#        process.HambMETJESDOWN = process.Hamb.clone()
+#        process.HambMETJESDOWN.MET.Uncertainty = 3
+#        process.HambMETJESUP = process.Hamb.clone()
+#        process.HambMETJESUP.MET.Uncertainty = 2
         process.HambMETUnClusDOWN = process.Hamb.clone()
         process.HambMETUnClusDOWN.MET.Uncertainty = 11
         process.HambMETUnClusUP = process.Hamb.clone()
@@ -231,7 +233,7 @@ else :
         process.HambHLTUP.DiMuon.HLTUnc = 1
         process.HambHLTDOWN = process.Hamb.clone()
         process.HambHLTDOWN.DiMuon.HLTUnc = -1
-        process.pathSystematics = cms.Path( process.HambPUDown + process.HambPUUp + process.HambJECUP + process.HambJECDOWN + process.HambBUP + process.HambBDOWN + process.HambJERUP + process.HambJERDOWN + process.HambMETJESUP + process.HambMETJESDOWN + process.HambMETUnClusUP + process.HambMETUnClusDOWN + process.HambHLTDOWN + process.HambHLTUP )
+        process.pathSystematics = cms.Path( process.HambPUDown + process.HambPUUp + process.HambJECUP + process.HambJECDOWN + process.HambBUP + process.HambBDOWN + process.HambJERUP + process.HambJERDOWN + process.HambMETUnClusUP + process.HambMETUnClusDOWN + process.HambHLTDOWN + process.HambHLTUP )
 
 process.outp1=cms.OutputModule("PoolOutputModule",
    outputCommands = cms.untracked.vstring('keep *'), 
