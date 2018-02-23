@@ -150,7 +150,8 @@ class CutInfo:
             return ("Weight.W%d" % (index) )
 
     def LoadHistos( self , samplename , isdata , tree , indices=[0] , additionalCut = None ):
-        UseEventList = gROOT.GetVersionCode() > 600000
+        #UseEventList = gROOT.GetVersionCode() > 600000
+	UseEventList = True
         
         #print UseEventList, gROOT.GetVersionCode()
         if UseEventList :

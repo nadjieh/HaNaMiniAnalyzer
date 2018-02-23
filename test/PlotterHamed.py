@@ -26,7 +26,7 @@ def GetSample( s ):
         return s
 
 
-nTuples = "/home/nadjieh/cernbox/Hamb13/June06_Full2016_MassProd/withSelVariables/"
+nTuples = "/home/ajafari/cernbox/Hamb13/June06_Full2016_MassProd/withSelVariables/withMoreBtags/"
 #nTuples = "/home/hbakhshi/Downloads/Hamb_Nadjieh/withSelVariables/"
 
 from Haamm.HaNaMiniAnalyzer.SampleType import *
@@ -76,21 +76,54 @@ Cuts = { "HLT":"(passHLT_Mu17Mu8 || passHLT_Mu17Mu8_DZ)",
          "MET":"met < 60 ",
          "chi2sum":"chi2Sum < 5 ",
          "TL":"passTL" ,
+         "TM":"passTM" ,
+         "TT":"passTT" ,
+         "MM":"passMM" ,
          "LL" : "1==1",
          "TLFormula":"Max$(jetsBtag) > 0.9535 && Sum$( jetsBtag > 0.5426 ) > 1",
-         "invchi2sum":"chi2Sum > 5 && chi2Sum < 11"
+         "invchi2sum":"chi2Sum > 5 && chi2Sum < 11",
+         "mHDiff25":"abs(higgsMass - 125) < 25",
+         "mHDiff10":"abs(higgsMass - 125) < 10",         
+	 "lowmet":"met<30",
+	 "highmet":"met>30",
+	 "TLexc":"passTL && !passTM && !passTT",
+	 "TMexc":"passTM && !passTT"
          }
 
 cPreselectionLL = CutInfo( "PreselectionLL" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "LL"]] ) , "Weight*bWeightLL" , title="2#mu2loose-bjets"  )
 cPreselectionTL = CutInfo( "PreselectionTL" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL"]] ) , "Weight*bWeightTL" , title="2#mu, tight-loose b-jets"  )
+cPreselectionTM = CutInfo( "PreselectionTM" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TM"]] ) , "Weight*bWeightTM" , title="2#mu, tight-medium b-jets"  )
+cPreselectionTT = CutInfo( "PreselectionTT" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TT"]] ) , "Weight*bWeightTT" , title="2#mu, tight-tight b-jets"  )
+cPreselectionMM = CutInfo( "PreselectionMM" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "MM"]] ) , "Weight*bWeightMM" , title="2#mu, medium-medium b-jets"  )
+
+
 cTLMetBlind = CutInfo( "TLMetBlind" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET"]] ) , "Weight*bWeightTL" , title="2#mu, tight-loose b-jets, met>60 (blind)" , blind=True  )
-cSRBlind = CutInfo( "SRBlind" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum"]] ) , "Weight*bWeightTL" , title="Signal Region (blind)" , blind=True )
-cSR = CutInfo( "SR" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum"]] ) , "Weight*bWeightTL" , title="Signal Region"  )
+cSRTLBlind = CutInfo( "SRTLBlind" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum"]] ) , "Weight*bWeightTL" , title="Signal Region (blind)" , blind=True )
+
+cSRTL = CutInfo( "SRTL" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum"]] ) , "Weight*bWeightTL" , title="Signal Region - TL"  )
+cSRTM = CutInfo( "SRTM" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TM" , "MET" , "chi2sum"]] ) , "Weight*bWeightTM" , title="Signal Region - TM"  )
+cSRTT = CutInfo( "SRTT" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TT" , "MET" , "chi2sum"]] ) , "Weight*bWeightTT" , title="Signal Region - TT"  )
+cSRMM = CutInfo( "SRMM" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "MM" , "MET" , "chi2sum"]] ) , "Weight*bWeightMM" , title="Signal Region - MM"  )
+cSRTLmHDiff25 = CutInfo( "SRTLmHDiff25" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "mHDiff25"]] ) , "Weight*bWeightTL" , title="Signal Region - TL (mH 25)"  )
+cSRTLmHDiff10 = CutInfo( "SRTLmHDiff10" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "mHDiff10"]] ) , "Weight*bWeightTL" , title="Signal Region - TL (mH 10)"  )
+
 cTLMet = CutInfo( "TLMet" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET"]] ) , "Weight*bWeightTL" , title="2#mu, tight-loose b-jets, met>60"   )
 cTLChi2Sum = CutInfo( "TLChi2Sum" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "chi2sum"]] ) , "Weight*bWeightTL" , title="2#mu, tight-loose b-jets, chi2sum<5"   )
 cTLInvChi2Sum = CutInfo( "CRChi2Sum" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET", "invchi2sum"]] ) , "Weight*bWeightTL" , title="2#mu, tight-loose b-jets, 11>chi2sum>5"   )
 
-cuts = [cPreselectionTL, cPreselectionLL , cTLMet , cSR , cSRBlind, cTLMetBlind, cTLChi2Sum, cTLInvChi2Sum ]
+#Categories for more sensitivity
+cSRLowMET = CutInfo("SRLowMET", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum", "lowmet"]] ), "Weight*bWeightTL" , title="SR+MET<30"   )
+cSRHighMET = CutInfo("SRHighMET", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum", "highmet"]] ), "Weight*bWeightTL" , title="SR+MET>30"   )
+cCRLowMET = CutInfo("CRLowMET", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "invchi2sum", "lowmet"]] ), "Weight*bWeightTL" , title="CR+MET<30"   )
+cCRHighMET = CutInfo("CRHighMET", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "invchi2sum", "highmet"]]), "Weight*bWeightTL" , title="CR+MET>30"   )
+
+cSRTLexc = CutInfo("SRTLexc", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TLexc" , "MET" , "chi2sum"]] ), "Weight*bWeightTL" , title="SR+TLexc"   )
+cSRTMexc = CutInfo("SRTMexc", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TMexc" , "MET" , "chi2sum"]] ), "Weight*bWeightTM" , title="SR+TMexc"   )
+cCRTLexc = CutInfo("CRTLexc", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TLexc" , "MET" , "invchi2sum"]] ), "Weight*bWeightTL" , title="CR+TLexc"   )
+cCRTMexc = CutInfo("CRTMexc", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TMexc" , "MET" , "invchi2sum"]]), "Weight*bWeightTM" , title="CR+TMexc"   )
+cCRTT = CutInfo("CRTT", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TT" , "MET" , "invchi2sum"]]), "Weight*bWeightTT" , title="CR+TT"   )
+
+cuts = [cPreselectionTL, cPreselectionTM, cPreselectionTT, cPreselectionMM, cPreselectionLL , cTLMet , cSRTL , cSRTM, cSRTT, cSRMM, cSRTLBlind, cTLMetBlind, cTLChi2Sum, cTLInvChi2Sum, cSRTLmHDiff25, cSRTLmHDiff10,  cSRLowMET,cSRHighMET, cCRLowMET,cCRHighMET, cSRTLexc, cSRTMexc,cCRTLexc, cCRTMexc, cCRTT ]
 
 for cut in cuts :
     if "Blind" not in cut.Name :
@@ -116,6 +149,7 @@ for cut in cuts :
     cut.AddHist( "HiggsPt" , "higgsPt" , 30 , 0. , 300., False , Title="p_{T}^{#mu#mubb}", dirName="MuMubb")
     cut.AddHist( "chi2B" , "chi2B", 25 , 0. , 50., False , Title="#chi^{2}_{a#rightarrowbb}" , dirName="bb")
     cut.AddHist( "chi2H" , "chi2H", 25 , 0. , 50., False , Title="#chi^{2}_{H#rightarrowbb#mu#mu}" , dirName="MuMubb" )
+    cut.AddHist( "chi2SUM" , "chi2Sum", 25 , 0. , 50., False , Title="Sum #chi^{2}" , dirName="MuMubb" )
     cut.AddHist( "HiggsMDiff" , "abs(higgsMass - 125.0)", 20 , 0. , 100., False , Title="|mass_{#mu#mubb}-125.0|" , dirName="MuMubb" )
     #cut.AddHist( amuMass , chi2sum )
     #cut.AddHist( amuMass , met )

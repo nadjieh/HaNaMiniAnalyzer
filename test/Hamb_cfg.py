@@ -3,7 +3,7 @@ import FWCore.ParameterSet.Config as cms
 process = cms.Process("HaNa")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
-process.MessageLogger.cerr.FwkReport.reportEvery = 100000
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
@@ -201,10 +201,44 @@ else :
     if theSample.DSName.count( "_reHLT_" ):
 	process.Hamb.HLT_Mu17Mu8_DZ.Input = cms.InputTag( "TriggerResults","","HLT2" )
 	process.Hamb.HLT_Mu17Mu8.Input = cms.InputTag( "TriggerResults","","HLT2" )
+
+    if theSample.Name.count("GGH") :
+        process.HambPUUp = process.Hamb.clone()
+        process.HambPUUp.Vertex.PUDataFileName = "pileUpDataUP.root"
+        process.HambPUDown = process.Hamb.clone()
+        process.HambPUDown.Vertex.PUDataFileName = "pileUpDataDOWN.root"
+        process.HambJECUP = process.Hamb.clone()
+        process.HambJECUP.Jets.JECUncertainty = 1
+        process.HambJECDOWN = process.Hamb.clone()
+        process.HambJECDOWN.Jets.JECUncertainty = -1
+        process.HambJERUP = process.Hamb.clone()
+        process.HambJERUP.Jets.JERUncertainty = 2
+        process.HambJERDOWN = process.Hamb.clone()
+        process.HambJERDOWN.Jets.JERUncertainty = 1
+        process.HambBUP = process.Hamb.clone()
+        process.HambBUP.Jets.BTagUncertainty = 1
+        process.HambBDOWN = process.Hamb.clone()
+        process.HambBDOWN.Jets.BTagUncertainty = -1                
+        process.HambMETJESDOWN = process.Hamb.clone()
+        process.HambMETJESDOWN.MET.Uncertainty = 3
+        process.HambMETJESUP = process.Hamb.clone()
+        process.HambMETJESUP.MET.Uncertainty = 2
+        process.HambMETUnClusDOWN = process.Hamb.clone()
+        process.HambMETUnClusDOWN.MET.Uncertainty = 11
+        process.HambMETUnClusUP = process.Hamb.clone()
+        process.HambMETUnClusUP.MET.Uncertainty = 10
+        process.HambHLTUP = process.Hamb.clone()
+        process.HambHLTUP.DiMuon.HLTUnc = 1
+        process.HambHLTDOWN = process.Hamb.clone()
+        process.HambHLTDOWN.DiMuon.HLTUnc = -1
+        process.pathSystematics = cms.Path( process.HambPUDown , process.HambPUUp, process.HambJECUP, process.HambJECDOWN, process.HambBUP, process.HambBDOWN,process.HambJERUP, process.HambJERDOWN , process.HambMETJESUP , process.HambMETJESDOWN , process.HambMETUnClusUP , process.HambMETUnClusDOWN , process.HambHLTDOWN , process.HambHLTUP )
+
 process.outp1=cms.OutputModule("PoolOutputModule",
    outputCommands = cms.untracked.vstring('keep *'), 
    fileName = cms.untracked.string(job.Output2),
    SelectEvents = cms.untracked.PSet(  SelectEvents = cms.vstring('p')  )
 )
+
+
 process.ep = cms.EndPath( process.outp1 )
 

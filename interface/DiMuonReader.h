@@ -92,7 +92,9 @@ private :
 public:
   double MuonSFHltMu17Mu8( double ptL , double ptSL );
   double MuonSFHltMu17Mu8_DZ( double ptL , double ptSL );
+  double MuonSFHltEta( double eta1 , double eta2 );
 private:
+  int uncert;
   TH2* hMuSFID;
   TH2* hMuSFIso;
   TH2* hMuHltMu17Mu8;
