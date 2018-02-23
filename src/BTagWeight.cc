@@ -138,55 +138,49 @@ float BTagWeight::TagScaleFactor(pat::Jet jet, bool LooseWP ){
 	else if(flavour == 4) flavour = BTagEntry::FLAV_C;
 	else flavour = BTagEntry::FLAV_UDSG;
 	
-	// if(flavour != BTagEntry::FLAV_UDSG){
-	//    if (JetPt>MaxBJetPt)  { // use MaxLJetPt for  light jets
-        // 	JetPt = MaxBJetPt; 
-        // 	DoubleUncertainty = true;
-      	//    }
-	// } else {
-	//    if (JetPt>MaxLJetPt)  { // use MaxLJetPt for  light jets
-        //         JetPt = MaxBJetPt;
-        //         DoubleUncertainty = true;
-        //    }
-	// }
-	// if(JetPt<MinJetPt){
-	//    JetPt = MinJetPt;
-	//    DoubleUncertainty = true;
-	// }
+	if(flavour != BTagEntry::FLAV_UDSG){
+	   if (JetPt>MaxBJetPt)  { // use MaxLJetPt for  light jets
+        	JetPt = MaxBJetPt; 
+        	DoubleUncertainty = true;
+      	   }
+	} else {
+	   if (JetPt>MaxLJetPt)  { // use MaxLJetPt for  light jets
+                JetPt = MaxBJetPt;
+                DoubleUncertainty = true;
+           }
+	}
+	if(JetPt<MinJetPt){
+	   JetPt = MinJetPt;
+	   DoubleUncertainty = true;
+	}
 
 	float jet_scalefactor = 1;
+	float jet_scalefactorCent = 1;
+
 	if((BTagEntry::JetFlavor)flavour != BTagEntry::FLAV_UDSG){
 	  jet_scalefactor = reader->eval_auto_bounds( Systs[syst], BTagEntry::FLAV_B, jet.eta(), JetPt); 
-		if(LooseWP)
+	  if(DoubleUncertainty && syst != 0)
+	    jet_scalefactorCent = reader->eval_auto_bounds( Systs[0], BTagEntry::FLAV_B, jet.eta(), JetPt);
+	  if(LooseWP){
 		  jet_scalefactor = readerExc->eval_auto_bounds( Systs[syst], BTagEntry::FLAV_B, jet.eta(), JetPt);
-
-		// jet_scalefactor = reader->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt); 
-		// if(LooseWP)
-		// 	jet_scalefactor = readerExc->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt);
+		  if(DoubleUncertainty && syst != 0)
+		    jet_scalefactorCent= readerExc->eval_auto_bounds( Systs[0], BTagEntry::FLAV_B, jet.eta(), JetPt);
+	  }
 	} else {
 	  jet_scalefactor = reader->eval_auto_bounds(Systs[syst], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
-	        if(LooseWP)
+	  if(DoubleUncertainty && syst != 0)
+	    jet_scalefactorCent = reader->eval_auto_bounds( Systs[0], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
+	  if(LooseWP){
 		  jet_scalefactor = readerExc->eval_auto_bounds(Systs[syst], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
-
-	        //jet_scalefactor = readerLight->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt);
-		//if(LooseWP)
-		//	jet_scalefactor = readerExcLight->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt);
+		  if(DoubleUncertainty && syst != 0)
+		    jet_scalefactorCent = readerExc->eval_auto_bounds( Systs[0], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
+	  }
 	}
 
 
-	/*if(DoubleUncertainty && syst != 0){
-	        float jet_scalefactorCent = 1;
-		if((BTagEntry::JetFlavor)flavour != BTagEntry::FLAV_UDSG){
-			jet_scalefactorCent = readerCent->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt); 
-			if(LooseWP)
-				jet_scalefactorCent = readerCentExc->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt);
-		} else {
-			jet_scalefactorCent = readerCentLight->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt); 
-			if(LooseWP)
-				jet_scalefactorCent = readerCentExcLight->eval((BTagEntry::JetFlavor)flavour, jet.eta(), JetPt);
-		}
-                jet_scalefactor = 2*(jet_scalefactor - jet_scalefactorCent) + jet_scalefactorCent; 
-		}*/
+	if(DoubleUncertainty && syst != 0){
+	  jet_scalefactor = 2*(jet_scalefactor - jet_scalefactorCent) + jet_scalefactorCent; 
+	}
 	return jet_scalefactor;
 }
 
