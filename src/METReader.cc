@@ -27,7 +27,7 @@ double METReader::Read( const edm::Event& iEvent , pat::JetCollection* newJets )
   if( Uncertainty < 0)
     met = met_.p4();
   else{
-    met = met_.shiftedP4( Uncertainty );
+    met = met_.shiftedP4( pat::MET::METUncertainty(Uncertainty) );
   }
   
   if( newJets && ReadOldJets){

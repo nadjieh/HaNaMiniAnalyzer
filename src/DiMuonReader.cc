@@ -5,6 +5,7 @@ using namespace pat;
 
 DiMuonReader::DiMuonReader( edm::ParameterSet const& iConfig, edm::ConsumesCollector && iC , bool isData , string SetupDir) :
   BaseEventReader< pat::MuonCollection >( iConfig , &iC ),
+  uncert( iConfig.getParameter<int>( "HLTUnc" ) ),
   MuonLeadingPtCut( iConfig.getParameter<double>( "MuonLeadingPtCut" ) ),
   MuonSubLeadingPtCut( iConfig.getParameter<double>( "MuonSubLeadingPtCut" ) ),
   MuonIsoCut( iConfig.getParameter<double>( "MuonIsoCut" ) ),
@@ -15,8 +16,7 @@ DiMuonReader::DiMuonReader( edm::ParameterSet const& iConfig, edm::ConsumesColle
   DiMuCharge( iConfig.getParameter<int>( "DiMuCharge" ) ),
   IsData(isData),
   isHamb(iConfig.getParameter<bool>( "isHamb" )),
-  isSignalStudy(iConfig.getParameter<bool>( "isSignalStudy" )),
-  uncert( iConfig.getParameter<int>( "HLTUnc" ) )
+  isSignalStudy(iConfig.getParameter<bool>( "isSignalStudy" ))
 {
   if( !IsData ){
     TFile* f1 = TFile::Open( TString(SetupDir + "/MuonIDSF.root") );

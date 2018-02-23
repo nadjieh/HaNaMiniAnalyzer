@@ -3,21 +3,20 @@
 
 JetReader::JetReader( edm::ParameterSet const& iConfig, edm::ConsumesCollector && iC, bool isData , string SetupDir) :
   BaseEventReader< pat::JetCollection >( iConfig , &iC ),
+  unc (iConfig.getParameter<int> ("JECUncertainty")),
+  jerunc (iConfig.getParameter<int> ("JERUncertainty")),
+  btagunc (iConfig.getParameter<int> ("BTagUncertainty")),
   IsData( isData ),
   ApplyJER( iConfig.getParameter<bool>( "ApplyJER" ) ),
   JetPtCut( iConfig.getParameter<double>( "JetPtCut" ) ),
   JetEtaCut( iConfig.getParameter<double>( "JetEtaCut" ) ),
   MinNJets( iConfig.getParameter<unsigned int>( "MinNJets" ) ),
-  
   BTagWPL( iConfig.getParameter<double>( "BTagWPL" ) ),
   BTagWPM( iConfig.getParameter<double>( "BTagWPM" ) ),
   BTagWPT( iConfig.getParameter<double>( "BTagWPT" ) ),
   BTagAlgo( iConfig.getParameter<string>( "BTagAlgo" ) ),
   MinNBJets( iConfig.getParameter<unsigned int>( "MinNBJets" ) ),
   MaxNBJets( iConfig.getParameter<int>( "MaxNBJets" ) ),
-  unc (iConfig.getParameter<int> ("JECUncertainty")),
-  btagunc (iConfig.getParameter<int> ("BTagUncertainty")),
-  jerunc (iConfig.getParameter<int> ("JERUncertainty")),
   rndJER(new TRandom3( 13611360 ) )
 {
 
@@ -154,7 +153,7 @@ float JetReader::JER( pat::Jet jet , double rho , int syst ){
   parameters_1.setJetPt(jet.pt());
   parameters_1.setJetEta(jet.eta());
   parameters_1.setRho( rho );
-  float sf = resolution_sf.getScaleFactor(parameters_1,jerunc);
+  float sf = resolution_sf.getScaleFactor(parameters_1,Variation(jerunc));
 
   const reco::GenJet*  genjet =  jet.genJet ();
   float ret = jet.pt();
