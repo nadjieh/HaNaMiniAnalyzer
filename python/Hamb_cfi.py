@@ -14,7 +14,7 @@ Hamb = cms.EDFilter('TreeHamb',
                                      ),
                      Vertex = cms.PSet( Input = cms.InputTag( "offlineSlimmedPrimaryVertices" ),
                                         pileupSrc = cms.InputTag("slimmedAddPileupInfo"),
-                                        PUDataFileName = cms.InputTag("pileUpData.root")
+                                        PUDataFileName = cms.string("pileUpData.root")
                                         ),
                      DiMuon = cms.PSet( Input = cms.InputTag("slimmedMuons"),
                                         MuonLeadingPtCut = cms.double(24),

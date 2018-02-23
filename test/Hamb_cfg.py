@@ -204,9 +204,9 @@ else :
 
     if theSample.Name.count("GGH") :
         process.HambPUUp = process.Hamb.clone()
-        process.HambPUUp.Vertex.PUDataFileName = "pileUpDataUP.root"
+        process.HambPUUp.Vertex.PUDataFileName = "pileUpDataUp.root"
         process.HambPUDown = process.Hamb.clone()
-        process.HambPUDown.Vertex.PUDataFileName = "pileUpDataDOWN.root"
+        process.HambPUDown.Vertex.PUDataFileName = "pileUpDataDown.root"
         process.HambJECUP = process.Hamb.clone()
         process.HambJECUP.Jets.JECUncertainty = 1
         process.HambJECDOWN = process.Hamb.clone()
@@ -231,7 +231,7 @@ else :
         process.HambHLTUP.DiMuon.HLTUnc = 1
         process.HambHLTDOWN = process.Hamb.clone()
         process.HambHLTDOWN.DiMuon.HLTUnc = -1
-        process.pathSystematics = cms.Path( process.HambPUDown , process.HambPUUp, process.HambJECUP, process.HambJECDOWN, process.HambBUP, process.HambBDOWN,process.HambJERUP, process.HambJERDOWN , process.HambMETJESUP , process.HambMETJESDOWN , process.HambMETUnClusUP , process.HambMETUnClusDOWN , process.HambHLTDOWN , process.HambHLTUP )
+        process.pathSystematics = cms.Path( process.HambPUDown + process.HambPUUp + process.HambJECUP + process.HambJECDOWN + process.HambBUP + process.HambBDOWN + process.HambJERUP + process.HambJERDOWN + process.HambMETJESUP + process.HambMETJESDOWN + process.HambMETUnClusUP + process.HambMETUnClusDOWN + process.HambHLTDOWN + process.HambHLTUP )
 
 process.outp1=cms.OutputModule("PoolOutputModule",
    outputCommands = cms.untracked.vstring('keep *'), 
@@ -240,6 +240,6 @@ process.outp1=cms.OutputModule("PoolOutputModule",
 )
 
 
-process.ep = cms.EndPath( process.outp1 )
+#process.ep = cms.EndPath( process.outp1 )
 
 
