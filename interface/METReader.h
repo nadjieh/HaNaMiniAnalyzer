@@ -23,6 +23,7 @@ private :
   
   reco::Candidate::LorentzVector HT4( pat::JetCollection jets );
 
+  int Uncertainty;
   bool reRunMetSig;
   bool ReadOldJets ;
   edm::Handle<pat::JetCollection> oldjets;

@@ -25,6 +25,7 @@ private :
   bool IsData ;
   bool CheckVertex(VertexCollection::value_type vtx);
 
+  std::string PUDataFileName;
   edm::Handle<std::vector< PileupSummaryInfo > >  PupInfo;
   edm::EDGetTokenT< std::vector< PileupSummaryInfo > > PileupToken_;
   edm::LumiReWeighting LumiWeights_;

@@ -90,7 +90,9 @@ int main(int argc, char** argv) {
 	
 	particleinfo mH, mHReg, mHb, mHbReg;
 	float amuMass, bWTL, bWLL, chiB, chiH, chiSum,higgsMass,abMass,higgsPt,abPt,amPt;
+	float bWTT, bWTM, bWMM;
    	bool passTL, passJetSize, passMuSize, passJet1Pt, passJet2Pt, passMu1Pt, passMu2Pt;
+   	bool passTT, passTM, passMM;
 	
         TTree * newTree = rds->fChain->CloneTree(0);
         if(Mode == "Opt"){
@@ -114,6 +116,13 @@ int main(int argc, char** argv) {
     	    newTree->Branch("abPt", &abPt);
     	    newTree->Branch("amPt", &amPt);
     	    newTree->Branch("passTL", &passTL); 
+    	    newTree->Branch("passTT", &passTT);     	    
+    	    newTree->Branch("passTM", &passTM);
+    	    newTree->Branch("passMM", &passMM);
+    	    newTree->Branch("bWeightTL", &bWTL);
+	    	newTree->Branch("bWeightTT", &bWTT);				        			
+	    	newTree->Branch("bWeightTM", &bWTM);
+	    	newTree->Branch("bWeightMM", &bWMM);	    	    	             	    
     	    newTree->Branch("passJetSize", &passJetSize);
     	    newTree->Branch("passMuSize", &passMuSize);
     	    newTree->Branch("passJet1Pt", &passJet1Pt);
@@ -295,7 +304,42 @@ int main(int argc, char** argv) {
     		  	}
     		  }
     		  
+    		  //TM condition Check
+    		  if(bQuarkJets.size() >= 2){
+    		  	if ((bQuarkJets[0].second > 0.9535 && bQuarkJets[1].second >0.8484 ) || (bQuarkJets[1].second > 0.9535 && bQuarkJets[0].second >0.8484 ) ) 
+    		  		passTM = true;
+    		  	else {
+    		  		passTM = false;
+    		  		//continue;
+    		  	}
+    		  }
     		  
+    		  //TT condition Check
+    		  if(bQuarkJets.size() >= 2){
+    		  	if (bQuarkJets[0].second > 0.9535 && bQuarkJets[1].second >0.9535  ) 
+    		  		passTT = true;
+    		  	else {
+    		  		passTT = false;
+    		  		//continue;
+    		  	}
+    		  }    		  
+    		  
+    		  
+    		  //MM condition Check
+    		  if(bQuarkJets.size() >= 2){
+    		  	if (bQuarkJets[0].second > 0.8484 && bQuarkJets[1].second >0.8484  ) 
+    		  		passMM = true;
+    		  	else {
+    		  		passMM = false;
+    		  		//continue;
+    		  	}
+    		  }    		  
+    		  
+    		  
+    		  bWTM = rds->bWs_W1M1T;
+	          bWTT = rds->bWs_W2T;
+	          bWMM = rds->bWs_W2M;
+    		  bWTL = rds->bWs_W1L1T;    		  
     		  // Chi2 Evaluations and selections
     		  abMass = (bQuarkJets[0].first+bQuarkJets[1].first).M();
     		  higgsMass = ((bQuarkJets[0].first+bQuarkJets[1].first)+a).M();
@@ -328,7 +372,25 @@ int main(int argc, char** argv) {
 	      // for the control region for multipdf
 	      if(!rds->passTL) continue;
 	      if(rds->met > 60) continue;
-	      if(rds->chi2Sum < 5 || rds->chi2Sum > 11) continue;
+	      //if(rds->chi2Sum < 5 || rds->chi2Sum > 11) continue;
+	      //if(fabs(rds->higgsMass - 125) < 25) continue;
+	      
+		  //Optimized kinematics
+		  //if(rds->met > 60) continue;
+	      if(rds->chi2Sum > 5) continue;
+
+	      // For optimization based on TM
+	      //if(!rds->passTM) continue;	      
+	      
+
+	      // For optimization based on TT
+	      //if(!rds->passTT) continue;
+
+	      
+	      // For optimization based on MM
+	      //if(!rds->passMM) continue;
+
+	      	      
 	      newTree->Fill();			
 	    }
 	}
