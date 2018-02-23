@@ -5,7 +5,8 @@ from das_client import *
 from subprocess import call
 import os, ntpath
 import os.path
-
+from JSONSample import *
+import json
 ####NEVER TRY TO IMPORT ROOT MODULES IN THE PYTHON CONFIGURATION, Oherwise CMSSW fails in initiating the tree
 #kGray = 920
 #kGreen = 416
@@ -54,11 +55,14 @@ class JobInformation:
 class Sample :
     WD = './'
 
-    def __init__(self , name , xsection , lheW , datasetname , appendix = "" , dbsInstance = "phys03"  ):
+    def __str__(self):
+        return self.Name
+    
+    def __init__(self , name , xsection , lheW , datasetname , appendix = "" , dbsInstance = "phys03" , info_from_json = None , treeName = None ):
         self.Jobs = []
         self.Name = name
         self.XSection = xsection
-        self.IsData = (self.XSection <= 0)
+        self.IsData = (self.XSection == 0)
         self.LHEWeight = lheW
         
         self.Files = []
@@ -71,9 +75,21 @@ class Sample :
         #count the total number of events without cuts
         self.ParentSample = None
 
+        
+        self.JSONInfo = info_from_json
+        if info_from_json:
+            if os.path.exists( self.JSONInfo["jsonfile"] ):
+                f = open( self.JSONInfo['jsonfile'] , 'r')
+                self.JSONFile = json.load(f)[self.DSName]
+                f.close()
+
+        
         if not datasetname == "" :
             self.InitiateFilesFromListOrDAS( datasetname , appendix )
 
+        if treeName :
+            self.TreeName = treeName
+            
     def AddFiles( self , directory ):
         files = [join(directory, f) for f in listdir(directory) if isfile(join(directory, f))]
         self.Files.extend( files )
@@ -99,12 +115,19 @@ class Sample :
         self.Files = []
         self.LoadFilesFromList()
 
+        if len(self.Files) == 0 and hasattr( self , "JSONFile") :
+            json_sample = JSONSample( self.DSName , self.JSONFile ,self.JSONInfo['jsonfile'] )
+            for f in json_sample.Files:
+                self.Files.append( str(f.name) )
+                self.WriteFileListToFile()
+        
         if len(self.Files) == 0 :
             self.AddDASFiles( sample , prefix )
             self.WriteFileListToFile()
 
     def MakeSampleFromOutputs(self):
         ret = Sample( self.Name , self.XSection , self.LHEWeight , "" , dir )
+        ret.DSName = self.DSName
         for j in self.Jobs:
             ret.Files.append( "%s" % ( j.Output2 ) )
         ret.ParentSample = self

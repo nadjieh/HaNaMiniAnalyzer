@@ -8,7 +8,7 @@ locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
 from ExtendedSample import *
 
 class SampleType:
-    def __init__(self , name , color , samples = [] , LoadJobDir = "" , signal = False ):
+    def __init__(self , name , color , samples = [] , LoadJobDir = "" , signal = False , additionalCut=None ):
         self.Name = name 
         if signal:
 	        self.SetMass()
@@ -18,7 +18,7 @@ class SampleType:
             self.Color = color
             self.MultiPlot = False
             
-        self.Samples = [ExtendedSample(s) for s in samples]
+        self.Samples = [ExtendedSample(s, additionalCut) for s in samples]
         if not LoadJobDir == "":
             for ss in self.Samples:
                 ss.LoadJobs( LoadJobDir )

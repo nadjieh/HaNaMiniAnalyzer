@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
     stringstream optionStr;
     for(unsigned int i =0; i < varInfo.size(); i++){
     	cout<<varInfo[i].name<<"\t"<<varInfo[i].isCommon <<"\t"<<varInfo[i].isFixed<<"\t"<<varInfo[i].val<<"\t"<<varInfo[i].xD<<"\t"<<varInfo[i].xU<<endl;
-    	if(varInfo[i].isCommon && varInfo[i].name != "mS" && varInfo[i].name != "mcbS" && varInfo[i].name != "a1"){
+    	if(varInfo[i].isCommon && varInfo[i].name != "mS" && varInfo[i].name != "a0" && varInfo[i].name != "a1" && varInfo[i].name != "b0"){
     		optionStr << varInfo[i].name <<"Common";
     	}
     	if(varInfo[i].isFixed){
@@ -121,9 +121,9 @@ int main(int argc, char** argv) {
 
    	RooRealVar * mass = new RooRealVar("aMuMass", "aMuMass", 10, 70);
     RooRealVar * leptonWeight = new RooRealVar("hltWeight_Mu17Mu8_DZ", "hltWeight_Mu17Mu8_DZ", -2, 2.);
-    RooRealVar * btagWeightLL = new RooRealVar("bWeightLL", "bWeightLL", -2., 2.);
+    RooRealVar * btagWeightTL = new RooRealVar("bWeightTL", "bWeightTL", -2., 2.);
     RooRealVar * otherWeights = new RooRealVar("Weight", "Weight", -2, 2.);
-    RooFormulaVar * WeightGlobal = new RooFormulaVar("WeightGlobal", "@0*@1*@2", RooArgSet(*leptonWeight, *btagWeightLL, *otherWeights));    
+    RooFormulaVar * WeightGlobal = new RooFormulaVar("WeightGlobal", "@0*@1*@2", RooArgSet(*leptonWeight, *btagWeightTL, *otherWeights));    
 	std::vector<TTree*> trees;
 	std::vector<RooRealVar*> wVars;
 	std::vector<RooFormulaVar*> weights;					
@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 		trees.push_back((TTree*) f->Get("Hamb/Trees/Events"));
 		fname.str("");	
 		fname << "Weights" << 20 + (5*i);
-		weights.push_back(new RooFormulaVar(fname.str().c_str(), "@0*@1*@2", RooArgSet(*leptonWeight, *btagWeightLL, *otherWeights)));
+		weights.push_back(new RooFormulaVar(fname.str().c_str(), "@0*@1*@2", RooArgSet(*leptonWeight, *btagWeightTL, *otherWeights)));
 		fname.str("");
 		fname << "sample"<<	20 + (5*i);
 		sampleWeighted.defineType(fname.str().c_str());
@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
 	for(unsigned int i = 0; i < trees.size(); i++){
 		fname.str("");
 		fname << "data" << 20 + (5*i);		
-		datas.push_back(new RooDataSet(fname.str().c_str(), fname.str().c_str(),trees[i], RooArgSet(*mass, *leptonWeight, *btagWeightLL, *otherWeights), ""));
+		datas.push_back(new RooDataSet(fname.str().c_str(), fname.str().c_str(),trees[i], RooArgSet(*mass, *leptonWeight, *btagWeightTL, *otherWeights), ""));
 		datas[datas.size()-1]->Print();
 		wVars.push_back((RooRealVar*)datas[datas.size()-1]->addColumn(*weights[i]));
 		Wdatas.push_back(new RooDataSet(fname.str().c_str(), fname.str().c_str(),datas[datas.size()-1],*datas[datas.size()-1]->get(),0, wVars[wVars.size()-1]->GetName()));
@@ -159,16 +159,16 @@ int main(int argc, char** argv) {
 	
 	cout << "begin ..." << endl;
 	
-	 RooDataSet combData("combDataWeighted", "combined data", RooArgSet(*mass, *leptonWeight, *btagWeightLL, *otherWeights), Index(sampleWeighted),
-            //Import("sample20", *Wdatas[0]),
+	 RooDataSet combData("combDataWeighted", "combined data", RooArgSet(*mass, *leptonWeight, *btagWeightTL, *otherWeights), Index(sampleWeighted),
+            Import("sample20", *Wdatas[0]),
             Import("sample25", *Wdatas[1]),
             Import("sample30", *Wdatas[2]),
-            Import("sample35", *Wdatas[3]),
+            //Import("sample35", *Wdatas[3]),
             Import("sample40", *Wdatas[4]),
-            Import("sample45", *Wdatas[5]),
+            //Import("sample45", *Wdatas[5]),
             Import("sample50", *Wdatas[6]),
-            Import("sample55", *Wdatas[7])
-            //Import("sample60", *Wdatas[8])
+            Import("sample55", *Wdatas[7]),
+            Import("sample60", *Wdatas[8])
             );
 
     RooRealVar * weightGlobal = (RooRealVar*) combData.addColumn(*WeightGlobal);
@@ -179,7 +179,7 @@ int main(int argc, char** argv) {
     cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << endl;
     RooSimultaneous simPdfWeighted("simPdfWeighted", "simultaneous pdf", sampleWeighted);
 	for(int i = 0; i < 9; i++){
-		if( i == 0 || i == 8) continue;
+		if( i == 3 || i == 5) continue;
 		fname.str("");
 		fname << "sample"<<	20 + (5*i);
 		simPdfWeighted.addPdf(*pdfs[i], fname.str().c_str());		
@@ -191,7 +191,7 @@ int main(int argc, char** argv) {
     std::vector<int> tmpMasspoints;
 	std::vector<TString> massPointsStr;   
 	for(int i = 0; i < 9; i++){
-		if( i == 0 || i == 8) continue;
+		if( i == 3 || i == 5) continue;
 		tmpMasspoints.push_back(20 + (5*i));
 		stringstream S;
 		S << 20 + (5*i);

@@ -7,6 +7,7 @@
 #include "TH1D.h"
 #include "TProfile.h"
 #include "TCanvas.h"
+#include "TGraph.h"
 #include "TString.h"
 #include "TStyle.h"
 #include "TChain.h"
@@ -87,32 +88,44 @@ int main(int argc, char** argv) {
     TString name = "";
     TCanvas * c = 0;
     gErrorIgnoreLevel = kError;
-    RooRealVar * eventSelectionamassMu = new RooRealVar("eventSelectionamassMu", "eventSelectionamassMu", mL, mH);
+    RooRealVar * aMuMass = new RooRealVar("aMuMass", "aMuMass", mL, mH);
     TFile * input = TFile::Open(inputFileName);
-    TTree * tree = (TTree*) input->Get("rds_zbb");
-    RooDataSet * data = new RooDataSet("ControlData", "The original control data", tree, *eventSelectionamassMu, "");
+    TTree * tree = (TTree*) input->Get("Hamb/Trees/Events");
+    RooDataSet * data = new RooDataSet("ControlData", "The original control data", tree, *aMuMass, "");
     RooDataHist * dataHist = 0;
     RooWorkspace * w = 0;
-    if (inv == 0)
+    TString Name ="";
+    if (inv == 0){
         w = new RooWorkspace("WS", "WS");
-    else if (inv == 1)
+	Name ="gen.root";
+    } else if (inv == 1){
         w = new RooWorkspace("InvWS", "InvWS");
-    else if (inv == 2)
+	Name = "Inv.root";
+    } else if (inv == 2){
         w = new RooWorkspace("ChebWS", "ChebWS");
-    else if (inv == 3){
+	Name = "Cheb.root";
+    } else if (inv == 3){
 	std::cout<<"BERN"<<std::endl;
+	Name = "bern.root";
         w = new RooWorkspace("BernWS", "BernWS");
     }
     w->import(*data);
-    w->import(*eventSelectionamassMu);
+    w->import(*aMuMass);
+    std::vector<double> probs;
+    std::vector<double> nlls;
+    TGraph * gNLL = new TGraph(degrees.size()-1);
+    gNLL->SetName("NLLProb");
+    TGraph * gChi2 = new TGraph(degrees.size());
+    gChi2->SetName("Chi2");
+
     for (unsigned int i = 0; i < degrees.size(); i++) {
         dop = degrees[i];
         cout << "================ Degree: " << dop << endl;
-        Ttest mytest("test", nbins, dop, eventSelectionamassMu, data, minpar, maxpar);
+        Ttest mytest("test", nbins, dop, aMuMass, data, minpar, maxpar);
         mytest.getTtest(inv);
         mytest.Print(inv);
         if (i == 0) {
-            dataHist = new RooDataHist("hist", "hist", *eventSelectionamassMu, (TH1D*) mytest.getDataHist());
+            dataHist = new RooDataHist("hist", "hist", *aMuMass, (TH1D*) mytest.getDataHist());
             w->import(*dataHist);
         }
         bool keep = mytest.keepPdf(inv);
@@ -146,7 +159,7 @@ int main(int argc, char** argv) {
                 w->writeToFile("wsChb.root");
             else if (inv == 3)
                 w->writeToFile("wsBern.root");
-            RooPlot * P = eventSelectionamassMu->frame();
+            RooPlot * P = aMuMass->frame();
             data->plotOn(P, Binning(nbins));
             pdfext->plotOn(P);
             s.str("");
@@ -165,17 +178,41 @@ int main(int argc, char** argv) {
             name = name + ".C";
             c->SaveAs(name);
         }
+	cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> With NLL Cross Check:"<<endl;
+	double nll = mytest.getNLL(inv);
+	cout<<">>>>>>> dop: "<< nll <<endl;
+	nlls.push_back(nll);
+	
+        if(i > 0){
+	  probs.push_back(TMath::Prob(2*(nlls[nlls.size()-2] - nlls[nlls.size()-1]),1));
+	  gNLL->SetPoint(i-1,i,probs[probs.size()-1]);
+	}	
+	double chi2 = mytest.getChi2(inv);
+	gChi2->SetPoint(i, i+1, chi2);
     }
-    dop = 6;
+    for(unsigned int i = 0; i < probs.size(); i++){
+      cout<<"degree "<<degrees[i+1] <<" vs degree "<< degrees[i] <<": "<<probs[i]<<endl;
+    }
+    cout<<"=============================>>>>>>>>> Chi2s:"<<endl;
+    for(unsigned int i = 0; i < degrees.size();i++){
+      double x,y;
+      gChi2->GetPoint(i,x,y);
+      cout<<"degree "<<degrees[i]<<": "<<y<<endl;
+    }
+    TFile * f = new TFile(Name,"recreate");
+    f->cd();
+    gNLL->Write();
+    gChi2->Write();
+    /*dop = 6;
 
     RooRealVar a0("a0", "a0", 30., 10., 50.);
     RooRealVar a1("a1", "a1", -100., 100.);
     RooRealVar a2("a2", "a2", -10., 10.);
     RooRealVar a3("a3", "a3", -10., 10.);
     //    RooRealVar a4("a4", "a4", -10., 10.);
-    RooGenericPdf ch("ch", "ch", "(eventSelectionamassMu-a0)^4-(a1*(eventSelectionamassMu-a0)^2)", RooArgSet(*eventSelectionamassMu, a0, a1));
+    RooGenericPdf ch("ch", "ch", "(aMuMass-a0)^4-(a1*(aMuMass-a0)^2)", RooArgSet(*aMuMass, a0, a1));
     ch.fitTo(*dataHist);
-    RooPlot * Pexp = eventSelectionamassMu->frame();
+    RooPlot * Pexp = aMuMass->frame();
     dataHist->plotOn(Pexp);
     ch.plotOn(Pexp);
     s.str("");
@@ -185,6 +222,6 @@ int main(int argc, char** argv) {
     c->cd();
     Pexp->Draw();
     name = name + ".C";
-    c->SaveAs(name);
+    c->SaveAs(name);*/
     return 1;
 }

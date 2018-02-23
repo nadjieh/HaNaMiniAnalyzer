@@ -1,12 +1,12 @@
 /* 
- * File:   WSProvider.h
+ * File:   SignalWSProvider.h
  * Author: nadjieh
  *
  * Created on May 24, 2015, 2:22 PM
  */
 
-#ifndef WSPROVIDER_H
-#define	WSPROVIDER_H
+#ifndef SIGNALWSPROVIDER_H
+#define	SIGNALWSPROVIDER_H
 #include <iostream>
 #include <sstream>
 #ifndef __CINT__
@@ -91,27 +91,16 @@
 #include <stdio.h>
 #include <math.h>
 #include <map>
-/********** WITH T0 SELECTION ****************
-	w->factory("y0[1.44241]");
-        w->factory("y1[0.0485034]");
-        YieldErrors["btag"] = make_pair(0.969, 1.031);
-        YieldErrors["JES"] = make_pair(0.934, 1.065);
-        YieldErrors["JER"] = make_pair(1.005, 0.998);
-        YieldErrors["muon"] = make_pair(0.958, 1.042);
-        YieldErrors["pileup"] = make_pair(0.959, 0.959);
-        YieldErrors["PDF"] = make_pair(0.989, 1.008);
-	f = new TFile("DoubleMu2012_Summer12_final_4_4.root", "READ");
-*********************************************/
 typedef std::map<TString, std::pair<double, std::pair<double, double> > > MeanErr;
 typedef std::map<TString, double> FixedParams;
 
 using namespace std;
 using namespace RooFit;
 
-class WSProvider {
+class SignalWSProvider {
 public:
 
-    WSProvider(MeanErr systYield, FixedParams fixed_, double UncSig, bool widerange = false) : sigNormUnc(UncSig), WR(widerange) {
+    SignalWSProvider(MeanErr systYield, FixedParams fixed_, double UncSig) : sigNormUnc(UncSig) {
         RooRandom::randomGenerator()->SetSeed(35);
         for (auto& x : systYield) {
             MeanErrors[x.first] = make_pair(x.second.first, make_pair(x.second.second.first, x.second.second.second));
@@ -122,37 +111,19 @@ public:
         }
         w = new RooWorkspace("w", "w");
         var = new RooRealVar("aMuMass", "aMuMass", 20, 70);
-        //var = new RooRealVar("aMuMass", "aMuMass", 25, 65);
         w->import(*var);
         w->factory("MH[20,70]");
-        //w->factory("MH[25,65]");
 	(w->var("MH"))->setConstant();
-	/* if(!WR){ */
-	/* 	cout<<"---------------------------"<<endl; */
-	/* 	//Does not include the drop towards 20 GeV. Hence not correct. */
-        /* 	//w->factory("y0[2.078156]"); */
-	/*         //w->factory("y1[0.03582713]"); */
-	/*         //w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)\",{MH,y0,y1})"); */
-	/* 	//for 13 TeV extrapolation */
-        /* 	w->factory("y0[4.67585]"); */
-	/*         w->factory("y1[0.080611]"); */
-	/*         w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)\",{MH,y0,y1})"); */
-
-	/* } else { */
-        /*         w->factory("y0[0.497776]"); */
-        /*         w->factory("y1[0.0147822]"); */
-	/*         w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)\",{MH,y0,y1})"); */
-	/* } */
-	
-	w->factory("y0[-447.2139]");
-	w->factory("y1[83.12874]");
-	w->factory("y2[-6.396835]");
-	w->factory("y3,0.2676367]");
-	w->factory("y4,-0.006570802]");
-	w->factory("y5,9.461177e-05]");
-	w->factory("y6,-7.396847e-07]");
-	w->factory("y7,2.42384e-09]");
-	
+        w->factory("Br[0.00017,-0.1,0.1]");
+        w->factory("Sigma[19.3,10,30]");
+	//if(sigNormUnc != 0)	
+	//	(w->var("Sigma"))->setConstant();
+	w->factory("IL[19700]");
+        w->factory("y0[0.102448]");
+        w->factory("y1[-0.0026199]");
+        w->factory("y2[3.39914e-05]");
+        w->factory("FormulaVar::efficiency(\"@1+(@2*@0)+(@3*TMath::Power(@0,2))\",{MH,y0,y1,y2})");
+	w->factory("FormulaVar::signal_norm(\"@0*@1*@2*@3\",{Sigma,Br,IL,efficiency})");
 
         stringstream s;
         s << Fixeds["alpha"];
@@ -193,8 +164,9 @@ public:
         w->factory("m1[" + Val + ",0 , 0.1]");
 
 	w->factory("FormulaVar::mean(\"@1+@0\",{MH,m1})");
-	w->factory("FormulaVar::sigma_cb(\"-0.0089+@1*@0\",{MH,b1})");//0.017
-	w->factory("FormulaVar::sigma(\"-0.029+@1*@0\",{MH,a1})");//0.02
+	w->factory("FormulaVar::sigma_cb(\"0.017+@1*@0\",{MH,b1})");
+	w->factory("FormulaVar::sigma(\"0.02+@1*@0\",{MH,a1})");
+        //        Yield = new TF1("Yield", " 5.80131+(x*-0.138701)+(x*x*0.00187576)", 20, 70);
         w->factory("RooCBShape::CB(aMuMass, mean, sigma_cb, alpha, n)");
         w->factory("RooVoigtian::Voig(aMuMass, mean, width, sigma)");
         w->factory("RooAddPdf::signal(Voig,CB,frac)");
@@ -225,8 +197,7 @@ public:
                     continue;
                 cout << "************************************" << PolyName << " *******************" << endl;
                 RooRealVar * myvar = (RooRealVar*) WS->var("p21");
-		if(myvar != NULL)
-	                cout << myvar->getVal() << "\tMin: " << myvar->getMin() << "\tMax: " << myvar->getMax() << "\tErrL: " << myvar->getErrorLo() << "\tErrH: " << myvar->getErrorHi() << endl;
+                cout << myvar->getVal() << "\tMin: " << myvar->getMin() << "\tMax: " << myvar->getMax() << "\tErrL: " << myvar->getErrorLo() << "\tErrH: " << myvar->getErrorHi() << endl;
                 //pdf->fitTo(*dataHist);
                 storedPdfs.add(*pdf);
             }
@@ -265,7 +236,6 @@ public:
                 if (pdf == NULL)
                     continue;
                 cout << "************************************" << PolyName << " *******************" << endl;
-		pdf->Print();
                 if (dataHist == 0) {
                     dataHist = (RooDataHist*) InvWS->data("hist");
                 }
@@ -306,14 +276,14 @@ public:
     void cardMaker() {
         stringstream Mass_;
         if (sigNormUnc == 0)
-            Mass_ << "SigmaBr";
+            Mass_ << "SignalSigmaBr";
         else
-            Mass_ << "Br";
+            Mass_ << "SignalBr";
 
         TString Val = Mass_.str().c_str();
         TString outname = "hamb_shape_"+Val+"_ws.txt";
         int N = MeanErrors.size() + YieldErrors.size();
-        int I = 2;
+        int I = 1;
         if (sigNormUnc == 0)
             I = 1;
         ofstream myfile;
@@ -339,10 +309,8 @@ public:
         myfile << "rate\t1.0\t1.0" << endl;
         myfile << "------------" << endl;
         myfile << "lumi_8TeV\tlnN\t1.026\t-" << endl;
-        if (sigNormUnc != 0){
-            cout<<"========>>>>>>>> Theo Syst!"<<endl;
-            myfile << "signalTHunc\tlnN\t" << 1 + sigNormUnc << "\t-" << endl;
-        }
+        //if (sigNormUnc != 0)
+        //    myfile << "signalTHunc\tlnN\t" << 1 + sigNormUnc << "\t-" << endl;
         for (auto& x : YieldErrors) {
 	    if(x.second.first == x.second.second )
 		myfile << x.first << "\tlnN\t" << x.second.first << "\t-" << endl;
@@ -355,26 +323,27 @@ public:
 	    else
 		myfile << x.first << "\tparam\t" << x.second.first << "\t" << x.second.second.first << "/+" << x.second.second.second << endl;
         }
+	myfile <<"Sigma\tparam\t19.3\t0.13"<<endl;
         myfile << "pdfindex\tdiscrete" << endl;
         myfile.close();
     }
 
     void YieldSystMaker() {
-        YieldErrors["btag"] = make_pair(0.955, 1.001);
-        YieldErrors["JES"] = make_pair(0.934, 1.068);
-        YieldErrors["JER"] = make_pair(1.015, 0.99);
+        YieldErrors["btag"] = make_pair(0.969, 1.031);
+        YieldErrors["JES"] = make_pair(0.934, 1.065);
+        YieldErrors["JER"] = make_pair(1.005, 0.998);
         YieldErrors["muon"] = make_pair(0.958, 1.042);
-        YieldErrors["pileup"] = make_pair(1.012, 0.988);
+        YieldErrors["pileup"] = make_pair(0.959, 0.959);
         YieldErrors["PDF"] = make_pair(0.989, 1.008);
     }
 
     void WriteWS(bool blind = true) {
 	TFile * f = 0;
 	if(!blind)
-		f = new TFile("DoubleMu2012_final_6_6.root", "READ");
+		f = new TFile("DoubleMu2012_Summer12_final_4_4.root", "READ");
 	else
         	f = new TFile("DoubleMu2012_Summer12_final_CR_4_4.root", "READ");
-        TTree* hh = (TTree*) f->Get("Hamb/Trees/Events");
+        TTree* hh = (TTree*) f->Get("rds_zbb");
         RooDataSet data("data", "data", hh, *var, "");
         w->import(data);
         //TH1D * hData = (TH1D*) data.createHistogram("data_obs", *var, Binning(50));
@@ -388,19 +357,18 @@ public:
         stringstream S;
         //S << mass;
         if (sigNormUnc == 0)
-            S << "SigmaBr";
+            S << "SignalSigmaBr";
         else
-            S << "Br";
+            S << "SignalBr";
         TString fname = S.str().c_str();
         fname = "hamb-shapes-UnbinnedParam-" + fname + "-Data-fit.root";
         w->writeToFile(fname);
     }
 
-    virtual ~WSProvider() {
+    virtual ~SignalWSProvider() {
     };
 private:
     double sigNormUnc;
-    bool WR;
     FixedParams Fixeds;
     MeanErr MeanErrors;
     std::map<TString, std::pair <double, double> > YieldErrors;
@@ -408,5 +376,5 @@ private:
     RooWorkspace * w;
 };
 
-#endif	/* WSPROVIDER_H */
+#endif	/* SIGNALWSPROVIDER_H */
 

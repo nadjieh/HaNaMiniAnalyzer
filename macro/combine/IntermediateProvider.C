@@ -1,4 +1,5 @@
 #include "WSProvider.h"
+#include "SignalWSProvider.h"
 using namespace std;
 /****** WITH T0 SLECTION
     meanerrors["a1"] = make_pair(0.009, make_pair(0.0001,0.0001));
@@ -30,14 +31,14 @@ int main(int argc, char** argv) {
         }
     }
     MeanErr meanerrors;
-    meanerrors["a1"] = make_pair(0.0091, make_pair(0.00085,0.00085));
-    meanerrors["b1"] = make_pair(0.0172, make_pair(0.0017, 0.0017));
-    meanerrors["m1"] = make_pair(-0.069, make_pair(0.0066,0.0066));
+    meanerrors["a1"] = make_pair(0.000, make_pair(0.0004,0.0004));
+    meanerrors["b1"] = make_pair(0.011, make_pair(0.00006, 0.00006));
+    meanerrors["m1"] = make_pair(0.000, make_pair(0.00015,0.00015));
     FixedParams fixes;
-    fixes["alpha"] = 1.15;
-    fixes["width"] = 0.008;
-    fixes["n"] = 3.02;
-    fixes["frac"] = 0.57;
+    fixes["alpha"] = 1.345;
+    fixes["width"] = 0.42;
+    fixes["n"] = 2.7;
+    fixes["frac"] = 0.121;
     //for (double i = 25.; i < 65; i += 0.5) {
     //for (double i = 30.; i < 30.01; i += 0.5) {
     //	double i = 28;

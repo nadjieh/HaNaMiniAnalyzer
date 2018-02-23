@@ -274,7 +274,6 @@ bool TreeHamb::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     //  } 
   
   hCutFlowTable->Fill( ++stepEventSelection , W );
-
 //---------- PV --------
   if( vertexReader->Read( iEvent ) < 0 ){
     return false;

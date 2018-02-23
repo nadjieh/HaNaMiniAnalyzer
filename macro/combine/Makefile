@@ -20,9 +20,16 @@ HEADERS 	+= $(ROOFITINC)
 
 t: Ttest clean
 
+ws: WS clean
+
 md: med clean
 
-
+WS:
+	@echo "Compiling the WSProvider.C .... \n"
+	$(CXX) WSProvider.C -c -o WSProvider.o -O0 $(ROOTCFLAGS) -fPIC $(HEADERS) -g
+	@echo "Linking ...... \n"
+	g++ WSProvider.o -o provideWS $(ROOTGLIBS) $(LIBS) -g -fPIC -O0 -I/opt/root/include -m64 -pthread $(HEADERS)
+	
 Ttest:
 	@echo "Compiling the myT_test .... \n"
 	$(CXX) myT_test.C -c -o myT_test.o -O0 $(ROOTCFLAGS) -fPIC $(HEADERS) -g

@@ -32,6 +32,9 @@
 #include "RooFitResult.h"
 #include "RooDataHist.h"
 #include "RooPlot.h"
+#include "RooNLLVar.h"
+#include "RooMinuit.h"
+#include "RooChi2Var.h"
 #include <stdio.h>
 #include <math.h>
 using namespace RooFit;
@@ -256,63 +259,110 @@ public:
     }
 
 
+    //NLL based F-test
+    double getChi2(int inv = 0){
+      RooAbsPdf * p = 0;
+      if (inv == 0)
+        p = this->pol();
+      else if (inv == 1)
+        p = this->invPol();
+      else if (inv == 2)
+        p = this->chebychev();
+      else if (inv == 3)
+        p = this->bern();
+      RooDataHist datahistChi("datahistChi", "datahistChi", RooArgSet(*var), hdata);
+      RooRealVar n("n", "n", 0., 2 * Ndata);
+      RooExtendPdf pext("pext", "pext", *p, n);
+      RooChi2Var chi2("chi2","chi2",pext,datahistChi) ;
+      RooMinuit m(chi2) ;
+      m.migrad() ;
+      m.hesse() ;
+      RooFitResult* r = m.save() ;
+      cout << "result of chi2 fit" << endl ;
+      //r3->Print("v") ;
+      return chi2.getVal()/Nbins;
+    }
+    double getNLL(int inv = 0){
+      RooAbsPdf * p = 0;
+      if (inv == 0)
+        p = this->pol();
+      else if (inv == 1)
+        p = this->invPol();
+      else if (inv == 2)
+        p = this->chebychev();
+      else if (inv == 3)
+        p = this->bern();
+      RooRealVar n("n", "n", 0., 2 * Ndata);
+      RooExtendPdf pext("pext", "pext", *p, n);
+      RooNLLVar nll("nll","nll",pext,*data) ;
+      RooMinuit m(nll) ;
+      m.migrad() ;
+      m.hesse() ;
+      RooFitResult* r1 = m.save() ;
+      cout << "result of binned likelihood fit" << endl ;
+      r1->Print("v") ;
+      cout<<r1->minNll()<<endl;      
+      return r1->minNll();
+    }
+
+
     void getTtest(int inv = 0) {//0: pol, 1: inv, 2: chb
-        RooAbsPdf * p = 0;
-        if (inv == 0)
-            p = this->pol();
-        else if (inv == 1)
-            p = this->invPol();
-        else if (inv == 2)
-            p = this->chebychev();
-        else if (inv == 3)
-            p = this->bern();
-        RooRealVar n("n", "n", 0., 2 * Ndata);
-        RooExtendPdf pext("pext", "pext", *p, n);
-        RooDataHist datahist("datahist", "datahist", RooArgSet(*var), hdata);
-        RooFitResult* res = pext.fitTo(datahist, RooFit::Save());
-        RooPlot * p2 = var->frame();
-        data->plotOn(p2, Binning(Nbins));
-        pext.plotOn(p2);
-        TCanvas c;
-        p2->Draw();
-	stringstream fName;
-	fName <<inv<<"_"<<degreeOfPolyNom<<"_fit.C";
-	TString fNameStr = fName.str().c_str();
-        c.SaveAs(fNameStr);
-	if((inv == 0 && degreeOfPolyNom == 0) /*|| (inv == 1 && degreeOfPolyNom == 1)*/){
-	    cout << "I am here! "<<endl;
-	    TString S = "n";
-	    double ratio = n.getVal() / n.getError();
-	    cout << S <<": "<<ratio<<endl;
-            ratios[S] = fabs(ratio);
-            parVals[S] = n.getVal();
-            parErrs[S] = n.getError();
-	    return;
-	} 
-        stringstream s;
-        int N = degreeOfPolyNom;
-        if (inv == 2 || inv == 3)
-            N++;
-        for (int i = 0; i < N; i++) {
-            s.str("");
-            if (inv == 0){
-               	s << "p" << degreeOfPolyNom << i + 1;
-            } else if (inv == 1) {
-                s << "inva" << degreeOfPolyNom << i + 1;//2;
-                if ((i + 1/*2*/) > degreeOfPolyNom)
-                    continue;
-            } else if (inv == 2) {
-                s << "c" << degreeOfPolyNom << i;
-            } else if (inv == 3) {
+      RooAbsPdf * p = 0;
+      if (inv == 0)
+	p = this->pol();
+      else if (inv == 1)
+	p = this->invPol();
+      else if (inv == 2)
+	p = this->chebychev();
+      else if (inv == 3)
+	p = this->bern();
+      RooRealVar n("n", "n", 0., 2 * Ndata);
+      RooExtendPdf pext("pext", "pext", *p, n);
+      RooDataHist datahist("datahist", "datahist", RooArgSet(*var), hdata);
+      RooFitResult* res = pext.fitTo(datahist, RooFit::Save());
+      RooPlot * p2 = var->frame();
+      data->plotOn(p2, Binning(Nbins));
+      pext.plotOn(p2);
+      TCanvas c;
+      p2->Draw();
+      stringstream fName;
+      fName <<"Shape_"<<inv<<"_"<<degreeOfPolyNom<<"_fit.C";
+      TString fNameStr = fName.str().c_str();
+      c.SaveAs(fNameStr);
+      if((inv == 0 && degreeOfPolyNom == 0) /*|| (inv == 1 && degreeOfPolyNom == 1)*/){
+	cout << "I am here! "<<endl;
+	TString S = "n";
+	double ratio = n.getVal() / n.getError();
+	cout << S <<": "<<ratio<<endl;
+	ratios[S] = fabs(ratio);
+	parVals[S] = n.getVal();
+	parErrs[S] = n.getError();
+	return;
+      } 
+      stringstream s;
+      int N = degreeOfPolyNom;
+      if (inv == 2 || inv == 3)
+	N++;
+      for (int i = 0; i < N; i++) {
+	s.str("");
+	if (inv == 0){
+	  s << "p" << degreeOfPolyNom << i + 1;
+	} else if (inv == 1) {
+	  s << "inva" << degreeOfPolyNom << i + 1;//2;
+	  if ((i + 1/*2*/) > degreeOfPolyNom)
+	    continue;
+	} else if (inv == 2) {
+	  s << "c" << degreeOfPolyNom << i;
+	} else if (inv == 3) {
                 s << "bern" << degreeOfPolyNom << i;
-            }
-            TString S = s.str().c_str();
-            RooRealVar* parI = (RooRealVar*) res->floatParsFinal().find(S);
-	    double ratio = parI->getVal() / parI->getError();
-            ratios[S] = fabs(ratio);
-            parVals[S] = parI->getVal();
-            parErrs[S] = parI->getError();    
-        }
+	}
+	TString S = s.str().c_str();
+	RooRealVar* parI = (RooRealVar*) res->floatParsFinal().find(S);
+	double ratio = parI->getVal() / parI->getError();
+	ratios[S] = fabs(ratio);
+	parVals[S] = parI->getVal();
+	parErrs[S] = parI->getError();    
+      }
     }
 
     void Print(int inv = 0) {//0: pol, 1: inv, 2: chb

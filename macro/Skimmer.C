@@ -22,7 +22,15 @@
 #define HambTree_cxx
 #include "../interface/HambTree.h"
 using namespace std;
-
+template <class G>
+class btagSort{
+public:
+  btagSort(){}
+  ~btagSort(){}
+  bool operator()(G o1 ,G o2 ){
+    return (o1.second>o2.second);
+  }
+};
 
 /*
  * 
@@ -81,22 +89,41 @@ int main(int argc, char** argv) {
 	hamb->mkdir("Trees")->cd();
 	
 	particleinfo mH, mHReg, mHb, mHbReg;
-	float amuMass, bWTL, bWLL;
+	float amuMass, bWTL, bWLL, chiB, chiH, chiSum,higgsMass,abMass,higgsPt,abPt,amPt;
+   	bool passTL, passJetSize, passMuSize, passJet1Pt, passJet2Pt, passMu1Pt, passMu2Pt;
+	
         TTree * newTree = rds->fChain->CloneTree(0);
         if(Mode == "Opt"){
 	    newTree->Branch("mH", &mH, "pt:eta:phi:mass:b1Index:b2Index");
     	    newTree->Branch("mHb", &mHb, "pt:eta:phi:mass:b1Index:b2Index");
     	    newTree->Branch("mHReg", &mHReg, "pt:eta:phi:mass:b1Index:b2Index");
     	    newTree->Branch("mHbReg", &mHbReg, "pt:eta:phi:mass:b1Index:b2Index");
+    	    newTree->Branch("aMuMass", &amuMass);
 	} else if (Mode == "Reg") {
 	    newTree->Branch("higgs", &mH, "pt:eta:phi:mass:b1Index:b2Index");
     	    newTree->Branch("abjet", &mHb, "pt:eta:phi:mass:b1Index:b2Index");
     	    newTree->Branch("higgsReg", &mHReg, "pt:eta:phi:mass:b1Index:b2Index");
     	    newTree->Branch("abjetReg", &mHbReg, "pt:eta:phi:mass:b1Index:b2Index");		
+	}  else if (Mode == "mHcut") {
+	    	newTree->Branch("chi2B", &chiB);
+    	    newTree->Branch("chi2H", &chiH);
+    	    newTree->Branch("chi2Sum", &chiSum);
+	    	newTree->Branch("higgsMass", &higgsMass);
+    	    newTree->Branch("abMass", &abMass);
+    	    newTree->Branch("higgsPt", &higgsPt); 
+    	    newTree->Branch("abPt", &abPt);
+    	    newTree->Branch("amPt", &amPt);
+    	    newTree->Branch("passTL", &passTL); 
+    	    newTree->Branch("passJetSize", &passJetSize);
+    	    newTree->Branch("passMuSize", &passMuSize);
+    	    newTree->Branch("passJet1Pt", &passJet1Pt);
+    	    newTree->Branch("passJet2Pt", &passJet2Pt);
+    	    newTree->Branch("passMu1Pt", &passMu1Pt);
+    	    newTree->Branch("passMu2Pt", &passMu2Pt);
 	} else {
-	    newTree->Branch("aMuMass", &amuMass);
-	    newTree->Branch("bWeightTL", &bWTL);				        			
-	    newTree->Branch("bWeightLL", &bWLL);
+	    //newTree->Branch("aMuMass", &amuMass);
+	    //newTree->Branch("bWeightTL", &bWTL);				        			
+	    //newTree->Branch("bWeightLL", &bWLL);
 	}
         cout << rds->fChain->GetEntriesFast() << endl;
         for (int eventNumber = 0; eventNumber < rds->fChain->GetEntriesFast(); eventNumber++) {
@@ -123,15 +150,37 @@ int main(int argc, char** argv) {
 	    if (a.M() < 15 || a.M() > 70) continue;
 	    
 	    if(Mode == "Opt"){
-	      if (rds->muPt->size() <  2)  continue;
-    	      if (rds->jetsPt->size() <  2) continue;
-    	      if (rds->muPt->at(0) < 25 ) continue;
-    	      if (rds->muPt->at(1) < 10 )  continue;
-    	      if (rds->jetsPt->at(0) < 20 ) continue;
-    	      if (rds->jetsPt->at(1) < 15 )  continue;
-    	      if (rds->metSig > 2 )  continue;   	      
+	      	  if (rds->muPt->size() <  2)  continue;
+    	      if (rds->muPt->at(0) < 20 ) continue; //25
+    	      if (rds->muPt->at(1) < 9 )  continue; //10
+    	      std::vector<int> JetIndecies;
+    	      std::vector<int> bQuarkJetIndecies;    	          	      
+    	      for (unsigned int iJet = 0; iJet < rds->jetsPt->size(); iJet++){
+    	      	if (rds->jetsPt->at(iJet) < 15) continue;
+    	      	TLorentzVector jet;
+    	      	jet.SetPtEtaPhiM(rds->jetsPt->at(iJet),rds->jetsEta->at(iJet),rds->jetsPhi->at(iJet),rds->jetsE->at(iJet));
+    	      	if (jet.DeltaR(m1) < 0.4 || jet.DeltaR(m2) < 0.4) continue;
+    	        JetIndecies.push_back(iJet);
+    	        if (rds->jetsBtag->at(iJet) > 0.46) 
+			    	bQuarkJetIndecies.push_back(iJet);
+    	      }
+    	      if (JetIndecies.size()<2) continue;    	      
+    	      if (rds->jetsPt->at(JetIndecies.at(0)) < 20 ) continue;
+              //if (bQuarkJetIndecies.size() < 2) continue;    	      
+    	      /*bool lowJet = false;
+    	      for(unsigned int i = 2; i<rds->jetsPt->size(); i++){
+    	      	if (rds->jetsPt->at(i) < 15) {
+    	      		lowJet = true;
+    	      		break;
+    	      	}
+    	      }
+    	      if(lowJet) continue;*/
+    	      
+    	      
+    	      amuMass = a.M();
+    	      //if (rds->metSig > 2 )  continue;   	      
 	       //No b-flavor requested
-	       TLorentzVector bJet1,bJet2, H;
+	       /*TLorentzVector bJet1,bJet2, H;
     	       bJet1.SetPtEtaPhiE(rds->jetsPt->at(0), rds->jetsEta->at(0), rds->jetsPhi->at(0), rds->jetsE->at(0));
     	       bJet2.SetPtEtaPhiE(rds->jetsPt->at(1), rds->jetsEta->at(1), rds->jetsPhi->at(1), rds->jetsE->at(1));
 	       H = bJet1+bJet2+a;
@@ -160,7 +209,7 @@ int main(int argc, char** argv) {
 		 bQuarkJets[1] = R*bQuarkJets[1];
 		 H = bQuarkJets[0]+bQuarkJets[1]+a;
 		 mHbReg.set(H.Pt(), H.Eta(), H.Phi(), H.M(), 0,1);
-	       }
+	       }*/
 	       newTree->Fill();
 	} else  if (Mode == "Reg"){     
 	      //No b-flavor requested
@@ -180,18 +229,106 @@ int main(int argc, char** argv) {
 	      mHbReg.set(ab.Pt(), ab.Eta(), ab.Phi(), ab.M(), 0,1);
 	      newTree->Fill();	
 	    } else if(Mode == "mHcut"){
-	      if(fabs(rds->higgsReg_mass - 125)>20)
-		continue;
-	      newTree->Fill();		
+	      //if(fabs(rds->higgsReg_mass - 125)>20)
+		//	continue;
+		
+		   	// These cuts follow the optimization on Dec 15 (https://twiki.cern.ch/twiki/bin/viewauth/CMS/HigAmumuAbb#Optimization)
+	      	  if (rds->muPt->size() <  2){
+	      	  	passMuSize = false;
+	      	    //continue;
+	      	  } else  passMuSize = true;
+	      	  
+    	      if (rds->jetsPt->size() <  2){
+    	       	passJetSize = false;
+    	       	//continue;
+    	      } else passJetSize = true;
+    	      
+    	      
+    	      if (rds->muPt->at(0) < 20 ) {
+    	      	passMu1Pt = false;
+    	      	//continue;
+    	      } else passMu1Pt = true;
+    	      
+    	      if (rds->muPt->at(1) < 9 ) {
+    	      	passMu2Pt = false;
+    	      	//continue;
+    	      } else passMu2Pt = true;
+    	      
+    	      if (rds->jetsPt->at(0) < 20 ) {
+    	      	passJet1Pt = false;
+    	      	//continue;
+    	      } else passJet1Pt = true;
+    	      
+    	      if (rds->jetsPt->at(1) < 15 )  {
+    	      	passJet2Pt = false;
+    	      	//continue;
+    	      } passJet2Pt = true;
+    	      //if (rds->met > 60 )  continue;  
+    	      
+    	      //TL condition
+    	      std::vector<int> bQuarkJetIndecies;
+		      std::vector<std::pair<TLorentzVector,float> > bQuarkJets;
+    		  std::vector<std::pair<TLorentzVector,float> > bQuarkJetsBtagOrderd;
+    	      for(unsigned int iJet = 0; iJet < rds->jetsPt->size(); iJet++){
+    			if(!(rds->jetsBtag->at(iJet) > 0.5426)) continue;
+			    bQuarkJetIndecies.push_back(iJet);
+		        TLorentzVector b;
+			    b.SetPtEtaPhiE(rds->jetsPt->at(iJet), rds->jetsEta->at(iJet), rds->jetsPhi->at(iJet), rds->jetsE->at(iJet));
+			    bQuarkJets.push_back(make_pair(b,rds->jetsBtag->at(iJet)));	
+			    bQuarkJetsBtagOrderd.push_back(make_pair(b,rds->jetsBtag->at(iJet)));
+    		  }/*
+              if(bQuarkJets.size() >= 2){
+		    	btagSort<std::pair<TLorentzVector,float> > mybtag;
+				std::sort(bQuarkJetsBtagOrderd.begin(),bQuarkJetsBtagOrderd.end(),mybtag);
+				if (bQuarkJetsBtagOrderd[0].second < 0.9535 ){
+					passTL = false;
+					continue;
+				} else passTL = true;
+    		  }*/
+    		  //TL condition Check
+    		  if(bQuarkJets.size() >= 2){
+    		  	if ((bQuarkJets[0].second > 0.9535 && bQuarkJets[1].second >0.5426 ) || (bQuarkJets[1].second > 0.9535 && bQuarkJets[0].second >0.5426 ) ) 
+    		  		passTL = true;
+    		  	else {
+    		  		passTL = false;
+    		  		//continue;
+    		  	}
+    		  }
+    		  
+    		  
+    		  // Chi2 Evaluations and selections
+    		  abMass = (bQuarkJets[0].first+bQuarkJets[1].first).M();
+    		  higgsMass = ((bQuarkJets[0].first+bQuarkJets[1].first)+a).M();
+    		  abPt = (bQuarkJets[0].first+bQuarkJets[1].first).Pt();
+    		  higgsPt = ((bQuarkJets[0].first+bQuarkJets[1].first)+a).Pt();
+    		  amPt = a.Pt();
+    		  
+    		  double dmassB = fabs(abMass-a.M());
+    		  double dmassH = fabs(higgsMass-125);
+    
+    		  double width = 0.18 + 0.175*a.M();
+    
+    		  chiB = (dmassB*dmassB)/(width*width);
+    		  chiH = (dmassH*dmassH)/(10.6*10.6);
+    		  chiSum = chiB+chiH;
+    		  
+    		  //if(chiSum > 5) continue;
+    		  
+    		  newTree->Fill();		
 	    } else {
 	      
-	      //amuMass = rds->aMu_mass;
+
 	      //according to optimization of Dec. 2016
-	      if(rds->jetsPt->at(0) < 20) continue;
+	      //if(rds->jetsPt->at(0) < 20) continue;
 	      //
-	      amuMass = a.M();
-	      bWTL = rds->bWs_W1L1T;
-	      bWLL = rds->bWs_W2L;
+	      //amuMass = a.M();
+	      //bWTL = rds->bWs_W1L1T;
+	      //bWLL = rds->bWs_W2L;
+	      
+	      // for the control region for multipdf
+	      if(!rds->passTL) continue;
+	      if(rds->met > 60) continue;
+	      if(rds->chi2Sum < 5 || rds->chi2Sum > 11) continue;
 	      newTree->Fill();			
 	    }
 	}

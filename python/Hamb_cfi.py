@@ -5,10 +5,12 @@ Hamb = cms.EDFilter('TreeHamb',
                                       ),
 
                      HLT_Mu17Mu8 = cms.PSet( Input = cms.InputTag( "TriggerResults","","HLT" ), 
-                                     HLT_To_Or = cms.vstring()
+                                     HLT_To_Or = cms.vstring(),
+                                             PrintTrigNamesPerRun = cms.bool( False )
                                      ),
                      HLT_Mu17Mu8_DZ = cms.PSet( Input = cms.InputTag( "TriggerResults","","HLT" ), 
-                                     HLT_To_Or = cms.vstring()
+                                     HLT_To_Or = cms.vstring(),
+                                                PrintTrigNamesPerRun = cms.bool( False )
                                      ),
                      Vertex = cms.PSet( Input = cms.InputTag( "offlineSlimmedPrimaryVertices" ),
                                         pileupSrc = cms.InputTag("slimmedAddPileupInfo")

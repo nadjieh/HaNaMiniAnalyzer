@@ -1,7 +1,11 @@
 ./skimtree mc DoubleMuB.root Mode mHcut
 ./skimtree mc DoubleMuC.root Mode mHcut
 ./skimtree mc DoubleMuD.root Mode mHcut
-./skimtree mc DYBB1070.root Mode mHcut
+./skimtree mc DoubleMuE.root Mode mHcut
+./skimtree mc DoubleMuF.root Mode mHcut
+./skimtree mc DoubleMuG.root Mode mHcut
+./skimtree mc DoubleMuH2.root Mode mHcut
+./skimtree mc DoubleMuH3.root Mode mHcut
 ./skimtree mc DYJetsLowMass.root Mode mHcut
 ./skimtree mc DYJets.root Mode mHcut
 ./skimtree mc GGH15.root Mode mHcut
@@ -15,7 +19,8 @@
 ./skimtree mc GGH55.root Mode mHcut
 ./skimtree mc GGH60.root Mode mHcut
 ./skimtree mc TbarW.root Mode mHcut
-./skimtree mc TChannel.root Mode mHcut
+./skimtree mc TChannelT.root Mode mHcut
+./skimtree mc TChannelTbar.root Mode mHcut
 ./skimtree mc TTbar.root Mode mHcut
 ./skimtree mc TW.root Mode mHcut
 ./skimtree mc WJetsMG.root Mode mHcut

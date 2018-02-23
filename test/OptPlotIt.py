@@ -24,7 +24,8 @@ def GetSample( s ):
         return s
 
 
-nTuples = "/home/nadjieh/cernbox/Hamb13/Oct14_8020_Opt/Trees/"
+#nTuples = "/home/nadjieh/cernbox/Hamb13/Oct14_8020_Opt/Trees/"
+nTuples = "/home/nadjieh/cernbox/Hamb13/June06_Full2016_MassProd/"
 print ">>>>"
 from Haamm.HaNaMiniAnalyzer.SampleType import *
 from ROOT import kGray, kGreen, kOrange, kRed, kBlack, kCyan, kBlue, kAzure, kTeal, kPink, kYellow
@@ -137,22 +138,25 @@ masscut = "%s < %s && %s > %s" %(amuMass,highmass,amuMass,lowmass)
 mupt = masscut+" && muPt[0]>20 && muPt[1]>9"
 jetpt = mupt + "&& jetsPt[0]>20 && jetsPt[1]>15"
 metSig = jetpt+" && met < 60"
-mhdiff = jetpt+" && fabs(%s -125) < 15" %(mH)
+#mhdiff = jetpt+" && fabs(%s -125) < 15" %(mH)
+mhdiff = "abs(%s -125) < 15" %(mH)
 chi2HCut = "%s < 5" %(chi2H)
 chi2BCut = "%s < 5" %(chi2B)
 chi2SumCut = "%s < 5" %(chi2Sum)
 trueb = metSig + " && abs(jetsFlavour[0]) == 5 && abs(jetsFlavour[1]) == 5"
+metcut = "met < 50"
 
+#btagWP = [0.460, 0.800, 0.935] #ICHEP
+btagWP = [0.5426, 0.8484, 0.9535] # full2016
+Lumi = 35900
 
-
-LL =  "jetsBtag[0] > 0.460 && jetsBtag[1] > 0.460 && %s" %(masscut)
-ML =  "(jetsBtag[0] > 0.800 && jetsBtag[1] > 0.460) | (jetsBtag[0] > 0.460 && jetsBtag[1] > 0.800) && %s" %(masscut)
-#TL =  "(jetsBtag[0] > 0.935 && jetsBtag[1] > 0.460) | (jetsBtag[0] > 0.460 && jetsBtag[1] > 0.935) && %s" %(masscut)
-TL =  "(jetsBtag[0] > 0.935 && jetsBtag[1] > 0.460) | (jetsBtag[0] > 0.460 && jetsBtag[1] > 0.935) && %s && %s" %(chi2SumCut,metSig)
-MM =  "jetsBtag[0] > 0.800 && jetsBtag[1] > 0.800 && %s" %(masscut)
-TM =  "(jetsBtag[0] > 0.935 && jetsBtag[1] > 0.800) | (jetsBtag[0] > 0.800 && jetsBtag[1] > 0.935) && %s" %(masscut)
-TT =  "jetsBtag[0] > 0.935 && jetsBtag[1] > 0.935 && %s" %(masscut)
-
+LL =  "jetsBtag[0] > %f && jetsBtag[1] > %f && %s" %(btagWP[0], btagWP[0], masscut)
+ML =  "(jetsBtag[0] > %f && jetsBtag[1] > %f) | (jetsBtag[0] > %f && jetsBtag[1] > %f) && %s" %(btagWP[1], btagWP[0], btagWP[0], btagWP[1], masscut)
+#TL =  "(jetsBtag[0] > %f && jetsBtag[1] > %f) | (jetsBtag[0] > %f && jetsBtag[1] > %f) && %s && %s" %(btagWP[2], btagWP[0], btagWP[0], btagWP[2], chi2SumCut,metSig)
+TL =  "( (jetsBtag[0] > %f && jetsBtag[1] > %f) | (jetsBtag[0] > %f && jetsBtag[1] > %f) ) && %s" %(btagWP[2], btagWP[0], btagWP[0], btagWP[2], metcut)
+MM =  "jetsBtag[0] > %f && jetsBtag[1] > %f && %s" %(btagWP[1], btagWP[1], masscut)
+TM =  "(jetsBtag[0] > %f && jetsBtag[1] > %f) | (jetsBtag[0] > %f && jetsBtag[1] > %f) && %s" %(btagWP[2], btagWP[1], btagWP[1], btagWP[2], masscut)
+TT =  "jetsBtag[0] > %f && jetsBtag[1] > %f && %s" %(btagWP[2], btagWP[2], masscut)
 
 Cuts = {"LL":LL,
 	    "ML":ML,
@@ -170,6 +174,7 @@ cMM = CutInfo( "MM" , Cuts["MM"])
 cTM = CutInfo( "TM" , Cuts["TM"])
 cTT = CutInfo( "TT" , Cuts["TT"])
 
+print Cuts["TL"]
 
 cMetSig = CutInfo( "metSig" , Cuts["metSig"])
 
@@ -187,18 +192,18 @@ cML.AddHist( "chi2B" , chi2B, 25 , 0. , 50., False )
 cML.AddHist( "chi2H" , chi2H, 25 , 0. , 50., False )
 cML.AddHist( "chi2Sum" , chi2Sum, 25 , 0. , 50., False )
 
-cTL.AddHist( "MuPtLead" , "muPt[0]", 75 , 0. , 150., True )
-cTL.AddHist( "MuPtSubLead" , "muPt[1]", 75 , 0. , 150., True )
-cTL.AddHist( "JetPtLead" , "jetsPt[0]", 75 , 0. , 150., True )
-cTL.AddHist( "JetPtSubLead" , "jetsPt[1]", 75 , 0. , 150., True )
+#cTL.AddHist( "MuPtLead" , "muPt[0]", 75 , 0. , 150., True )
+#cTL.AddHist( "MuPtSubLead" , "muPt[1]", 75 , 0. , 150., True )
+#cTL.AddHist( "JetPtLead" , "jetsPt[0]", 75 , 0. , 150., True )
+#cTL.AddHist( "JetPtSubLead" , "jetsPt[1]", 75 , 0. , 150., True )
 cTL.AddHist( "Met" , "met", 100 , 0. , 200., False )
-cTL.AddHist( "MetSig" , "metSig", 50 , 0. , 10., False )
+#cTL.AddHist( "MetSig" , "metSig", 50 , 0. , 10., False )
 cTL.AddHist( "HiggsMDiff" , mHDiff, 20 , 0. , 100., False )
 cTL.AddHist( "amuMass" , amuMass, 55 , 15 , 70)
-cTL.AddHist( "chi2B" , chi2B, 25 , 0. , 50., False )
-cTL.AddHist( "chi2H" , chi2H, 25 , 0. , 50., False )
+#cTL.AddHist( "chi2B" , chi2B, 25 , 0. , 50., False )
+#cTL.AddHist( "chi2H" , chi2H, 25 , 0. , 50., False )
 cTL.AddHist( "chi2Sum" , chi2Sum, 25 , 0. , 50., False )
-cTL.AddHist( "DRbb" , DR, 25 , 0. , 10., True )
+#cTL.AddHist( "DRbb" , DR, 25 , 0. , 10., True )
 
 cMM.AddHist( "HiggsMDiff" , mHDiff, 20 , 0. , 100., False )
 cMM.AddHist( "amuMass" , amuMass, 55 , 15 , 70)
@@ -242,16 +247,16 @@ allcuts.append( cTL )
 if method == "significance":
 	for i in range(0, len(allcuts)):
 		plotter.AddTreePlots( allcuts[i] )
-	plotter.LoadHistos( 12900 )
+	plotter.LoadHistos( Lumi )
 	#plotter.CalcSignificances(2)
-	#plotter.CalcSignificances(3)
+	plotter.CalcSignificances(3)
 	plotter.CalcSignificances(4)
-	plotter.CalcSignificances(5)
+	#plotter.CalcSignificances(5)
 elif method == "limit":
 	for i in range(0, len(allcuts)):
 		if cuttoapply == allcuts[i].Name :
 			plotter.AddTreePlots( allcuts[i] )
-			plotter.LoadHistos( 12900 )
+			plotter.LoadHistos( Lumi )
 			break
 	plotter.CalcExpLimits()
 else:

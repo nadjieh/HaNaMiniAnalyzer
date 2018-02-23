@@ -69,9 +69,9 @@ using namespace RooFit;
 #include "RooRandom.h"
 #include <algorithm>
 #include <map>
-
-//const TString ParNames[]={"mean","mean_cb","sigma","sigma_cb"};
-const TString ParNames[]={/*"sigma",*/"sigma_cb"};
+const int nPar = 8;
+const TString ParNames[]={"sigma","sigma_cb","frac","n","alpha","width","mS","a1"};
+//const TString ParNames[]={/*"sigma",*/"sigma_cb"};
 
 struct VarInfo{
 	TString name;
@@ -262,7 +262,7 @@ void PrintFr(RooFitResult * fr, std::vector<int> tmpMasspoints, std::vector<VarI
             All.push_back(S.str().c_str());     
             cout << All[All.size() - 1] << endl;
         }
-        for(int ipar = 0; ipar <1; ipar++ ){
+        for(int ipar = 0; ipar <(nPar-varInfo.size()); ipar++ ){
             S.str("");
         	S << ParNames[ipar]<<"_M"<<tmpMasspoints[i];
             All.push_back(S.str().c_str());     
@@ -321,6 +321,7 @@ RooCBShape * CBMaker(double Mass, RooRealVar * mass, RooAbsReal * mean,
 	    alpha = new RooRealVar("alpha" + Name, "" + Name, 0,5);//1.25
     }
     if (sigma_cb == 0) {
+    	cout<< "sigma_cb is zero" <<endl;
         if (/*b0 != 0 &&*/ b1 != 0) {
             if (MH == 0)
                 sigma_cb = new RooPolyVar("sigma_cb" + Name, "sigma_cb" + Name, *mean, RooArgSet(*b0, *b1));
@@ -328,6 +329,7 @@ RooCBShape * CBMaker(double Mass, RooRealVar * mass, RooAbsReal * mean,
                 sigma_cb = new RooFormulaVar("sigma_cb" + Name, "-0.0089+@1*@0", RooArgSet(*MH, *b1));
             }
         } else {
+        	cout << "sigma_cb is defined"<<endl;
             sigma_cb = new RooRealVar("sigma_cb" + Name, "sigma_cb" + Name, 0, 2);
         }
     }
@@ -370,9 +372,11 @@ RooAddPdf * VoigCBMaker(double Mass, RooRealVar * mass, std::map< TString, RooRe
     RooAbsReal * mean_cb = 0;    
     RooRealVar * MH = new RooRealVar("MH" + Name, "MH" + Name, Mass);
     if (inputs["mS"] == 0 && inputs["mcbS"] == 0) {
+    	cout<< "No mS and mcbS"<<endl;
         mean = new RooRealVar("mean" + Name, "mean" + Name, Mass, 10,70);
         mean_cb = new RooRealVar("mean_cb" + Name, "mean_cb" + Name, Mass, 10,70);
     } else {
+    	cout<<"A linear mean with m"<<endl;
         mean = new RooFormulaVar("mean" + Name, "@0+@1", RooArgSet(*MH, *inputs["mS"]));
         //mean_cb = new RooFormulaVar("mean_cb" + Name, "@0+@1", RooArgSet(*MH, *inputs["mcbS"]));        
     }
@@ -398,31 +402,37 @@ void DrawEvolutions(RooFitResult * fr, std::vector<int> tmpMasspoints, std::vect
 		x[i] = tmpMasspoints[i];
 		x_e[i] = 0;
 	}  
-	
+	int Npar = nPar - varInfo.size();
 
 	std::vector<TGraphErrors*> gs;
 
+    	
     
-    
-    	for(int iPar = 0; iPar < 1; iPar++){
+    	for(int iPar = 0; iPar < Npar; iPar++){
     		stringstream S;
     		TGraphErrors * g = 0;
+    		bool exist = true;
        		for(int i = 0; i < Nmass; i++){
         	    S.str("");
       	    	S << ParNames[iPar] <<"_M" <<tmpMasspoints[i];
         	    cout << S.str().c_str() << endl;
         	    if (((RooRealVar*) fr->floatParsFinal().find(S.str().c_str())) != NULL){
+        	    	cout<<"Parameter "<<S.str().c_str() << " found" <<endl;
         	    	Mean[i] = ((RooRealVar*) fr->floatParsFinal().find(S.str().c_str()))->getVal();
         	    	MeanE[i] = ((RooRealVar*) fr->floatParsFinal().find(S.str().c_str()))->getError();
         	    } else {
-        	    	Mean[i] = 0;
-        	    	MeanE[i] = 0;        	    
+        	    	cout<<"Parameter "<<S.str().c_str() << " NOT found" <<endl;
+        	    	exist = false;
+        	    	//Mean[i] = 0;
+        	    	//MeanE[i] = 0;        	    
         	    }
         	    cout<< Mean[i]<<endl;
         	}
-        	g = new TGraphErrors(Nmass, x, Mean, x_e, MeanE);
-        	g->SetNameTitle(ParNames[iPar], ParNames[iPar]);
-        	gs.push_back(g);   	
+        	if(exist){
+	        	g = new TGraphErrors(Nmass, x, Mean, x_e, MeanE);
+    	    	g->SetNameTitle(ParNames[iPar], ParNames[iPar]);
+    	    	gs.push_back(g);
+    	    }
     	}
     	
     	for(unsigned int iPar = 0; iPar < varInfo.size(); iPar++){

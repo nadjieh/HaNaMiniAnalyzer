@@ -1,8 +1,11 @@
 #!/usr/bin/env python
+LUMI = 35900
 from ROOT import gROOT, TLatex, TCanvas, TFile, gROOT, TColor
 import math
-from Haamm.HaNaMiniAnalyzer.Yields_Oct14_MassProd  import *
+from Yields_Oct14_MassProd  import *
 #from Haamm.HaNaMiniAnalyzer.Yields_Oct14_Opt  import *
+
+#nTuples = "/home/nadjieh/cernbox/Hamb13/Oct14_8020_MassProd/Trees/withReg"
 
 gROOT.SetBatch(True)
 
@@ -23,13 +26,14 @@ def GetSample( s ):
         return None
     else:
         return s
+    
 from Haamm.HaNaMiniAnalyzer.SampleType import *
 from ROOT import kGray, kGreen, kOrange, kRed, kBlack, kCyan, kBlue, kAzure, kTeal, kPink, kYellow
 dataSamples = SampleType("Data" , kBlack , [GetSample(s) for s in MiniAOD80Samples if s.IsData] , nTuples ) #the first item must be data
 ci = TColor.GetColor("#ff6666")
 DYSamples = SampleType("DY" , ci , [ GetSample(DYJets80) , GetSample(DYJetsLowMass80), GetSample(WJetsMG80)] , nTuples )
 ci = TColor.GetColor("#ffff66")
-TopSamples = SampleType("Top" , ci , [ GetSample(TTBar80) , GetSample(TChannel80) , GetSample(TW80), GetSample(TbarW80) ] , nTuples )
+TopSamples = SampleType("Top" , ci , [ GetSample(TTBar80) , GetSample(TChannelT80) , GetSample(TChannelTbar80) , GetSample(TW80), GetSample(TbarW80) ] , nTuples )
 DibosonSamples = SampleType("Diboson" , kAzure-9 , [ GetSample(ZZ80) , GetSample(WZ80) , GetSample(WW80)] , nTuples )
 
 
@@ -52,7 +56,7 @@ from Haamm.HaNaMiniAnalyzer.Plotter import *
 plotter = Plotter()
 allSTs = [dataSamples ,DibosonSamples , TopSamples , DYSamples ]
 for iSt in mySignals:
-	allSTs.append(iSt)
+    allSTs.append(iSt)
 
 for st in allSTs :
     plotter.AddSampleType( st )
@@ -147,7 +151,7 @@ plotter.AddTreePlots( cChi2B )
 plotter.AddTreePlots( cChi2H )
 plotter.AddTreePlots( cChi2Sum )
 
-plotter.LoadHistos( 12900 )
+plotter.LoadHistos( LUMI )
 
 fout = TFile.Open("out_cft_normtolumi_unblind_"+outname+".root", "recreate")
 plotter.Write(fout, False)

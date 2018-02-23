@@ -163,6 +163,9 @@ public :
    Float_t         amuMass;
    Float_t         bW;
    
+   Float_t		   chi2Sum;
+   Bool_t		   passTL;
+   
    
 
    // List of branches
@@ -215,7 +218,9 @@ public :
    TBranch        *b_higgsReg;
    TBranch        *b_abjetReg;		
    TBranch        *b_amuMass;
-   TBranch        *b_bW;	   
+   TBranch        *b_bW;
+   TBranch 		  *b_chi2Sum;	   
+   TBranch 		  *b_passTL;
 
    HambTree(TTree *tree=0, TString dirName = "/Hamb/Trees", TString treeName = "Events", TFile * f = 0);
    virtual ~HambTree();
@@ -350,7 +355,8 @@ void HambTree::Init(TTree *tree)
    fChain->SetBranchAddress("abjetReg", &abjetReg_pt, &b_abjetReg);		
    fChain->SetBranchAddress("aMuMass", &amuMass, &b_amuMass);
    fChain->SetBranchAddress("bWeightLL", &bW, &b_bW);	
-   
+   fChain->SetBranchAddress("chi2Sum", &chi2Sum, &b_chi2Sum);   
+   fChain->SetBranchAddress("passTL", &passTL, &b_passTL);
    
    Notify();
 }

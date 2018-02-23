@@ -8,7 +8,7 @@ import fnmatch
 from Sample import *
 
 class ExtendedSample: #extend the sample object to store histograms
-    def __init__( self , sample ):
+    def __init__( self , sample , additionalCut = None  ):
         self.Name = sample.Name 
         self.XSection = sample.XSection 
         self.XSections = {0:self.XSection}
@@ -17,6 +17,8 @@ class ExtendedSample: #extend the sample object to store histograms
         self.Prefix = sample.Prefix
         self.IsData = sample.IsData
 
+        self.JSONInfo = sample.JSONInfo
+        
         self.Files = sample.Files
         self.Jobs = sample.Jobs
 
@@ -25,14 +27,26 @@ class ExtendedSample: #extend the sample object to store histograms
         else :
             self.ParentSample = None
 
+        if hasattr(sample, "TreeName") :
+            self.TreeName = sample.TreeName
+
+        self.AdditionalCut = additionalCut
+        
     def LoadJobs(self , Dir , pattern_ = "%s.root" ):
+        Dirs = Dir.split(";")            
+        self.JobFilesDir = Dirs[0]
         self.Jobs = []
         pattern = ( pattern_ % (self.Name) )
-        for fn, ff in [("%s/%s" % ( Dir , f) , f) for f in os.listdir(Dir)]:
+        for fn, ff in [("%s/%s" % ( Dirs[0] , f) , f) for f in os.listdir(Dirs[0])]:
+            #print fn
             if os.path.isfile(fn):
                 if fnmatch.fnmatch(ff , pattern):
                     self.Jobs.append( JobInformation( self , 0 , self.Files , fn ) )
-                                
+        if self.ParentSample and (len(Dirs) == 2):
+            self.ParentSample.LoadJobs( Dirs[1] , pattern_)
+        print self.Name
+        #print self.Jobs
+        
     def GetCFT(self , index = 0):
         if not hasattr( self, "CutFlowTableName" ):
             return None
@@ -62,35 +76,56 @@ class ExtendedSample: #extend the sample object to store histograms
         if self.IsData :
             return
         self.nTotal = self.GetNTotal()
+        #print self.Name, "nTotal : " , self.nTotal, "xSec: " , self.XSection
         if self.nTotal == 0:
             print "\tSample %s has no entries" % (self.Name)
             return
 
         for index in self.LoadedIndices:
             self.XSFactor = lumi*self.XSections[index]/self.nTotal
+            #print "\t XSFactor : " , self.XSFactor
             print "\t\tXSFactor[%d] for lumi %d is : %.4f" % (index , lumi , self.XSFactor)
             #print "%s factor : (%.2f*%.2f)/%.0f = %.3f" % (sample , lumi , self.XSections[sample] , ntotal  , factor)
             for h in self.AllHists :
                 if len(self.AllHists[h]):
                     self.AllHists[h][index].Scale(self.XSFactor)
 
+    def SetFriendTreeInfo(self , friendsDir , friendTreeName ):
+        self.FriendsDir = friendsDir
+        self.FriendTreeName = friendTreeName
+        
+    def LoadTree(self , treeName ):
+        if hasattr(self,"Tree"):
+            return
 
-    def DrawTreeHistos( self , treeselections ,  treeName = "Hamb/Trees/Events" ):
         self.Tree = TChain( treeName )
         for Job in self.Jobs:
             self.Tree.Add( Job.Output )
 
+        if hasattr( self , "FriendsDir"):
+            self.FriendFile = TFile.Open( "%s/%s.root" % (self.FriendsDir , self.Name ) )
+            self.FriendTree = self.FriendFile.Get( self.FriendTreeName )
+            self.Tree.AddFriend( self.FriendTree )
+            
+        
+    def DrawTreeHistos( self , treeselections ,  treeName = "Hamb/Trees/Events"):
+        if hasattr(self, "TreeName" ):
+            treeName = self.TreeName
+            print "Tree Name is : %s" % (treeName)
+        self.LoadTree(treeName)
+        
         if not hasattr( self, "LoadedIndices" ):
             print "call DrawTreeHistos after LoadHistos"
 
         for selection in treeselections:
-            treehists = selection.LoadHistos( self.Name , self.IsData , self.Tree , self.LoadedIndices )
+            treehists = selection.LoadHistos( self.Name , self.IsData , self.Tree , self.LoadedIndices , self.AdditionalCut )
             for hist in treehists :
                 if not hist in self.AllHists:
                     self.AllHists[hist] = {}
                 for n in treehists[hist]:
                     self.AllHists[hist][n] = treehists[hist][n]
 
+        self.Tree.GetFile().Close()
                     
     def LoadHistos(self , dirName = "Hamb" , cftName = "CutFlowTable" , loadonly = [] , indices = [0]):
         self.LoadedIndices = indices
@@ -108,7 +143,6 @@ class ExtendedSample: #extend the sample object to store histograms
                 print "File %d of sample %s doesn't exist, skip it , %s" % (Job.Index , self.Name , finame)
                 continue
             dir = ff.GetDirectory(dirName)
-            print dirName
             if not dir :
                 print "File %d of sample %s is not valid, skip it , %s" % (Job.Index , self.Name , finame)
                 continue
@@ -124,9 +158,18 @@ class ExtendedSample: #extend the sample object to store histograms
                 selectedHistos = {}
                 for index in indices:
                     if dircontents.GetEntries() <= index:
-                        continue
-                    thehisto = dir_.Get( dircontents.At(index).GetName() )
-                    if thehisto.ClassName().startswith("TH"):
+                        continue                    
+                    thehisto = None
+                    for dirindex in range( 0,dircontents.GetEntries() ):
+                        dircont = dircontents.At(dirindex).GetName()
+                        searchfor = "_%d" % (index)
+                        isitthat = dircont.endswith( searchfor  )
+                        #print "%s.endswith( %s ) = %r" % (dircont , searchfor , isitthat )
+                        if isitthat:
+                            thehisto = dir_.Get( dircont )
+                            break
+                    #print [propname , index]
+                    if thehisto and thehisto.ClassName().startswith("TH"):
                         selectedHistos[index] = thehisto 
 
                 if propname in self.AllHists.keys() :
@@ -225,12 +268,21 @@ class ExtendedSample: #extend the sample object to store histograms
 
         # open the target file
         print "fhadd Target file:", target
-        outfile = TFile(target, "RECREATE")
+        outfile = TFile.Open(target, "RECREATE")
 
         # open the seed file - contents is looked up from here
-        seedfilename = sources[0]
-        print "fhadd Source file 1", seedfilename
-        seedfile = TFile(seedfilename)
+        seedindex = 1
+        seedfilename = sources[seedindex-1]
+        while (not os.path.exists(seedfilename)) and (seedfilename < 2) : #len(sources)): 
+            seedfilename = sources[seedindex]
+            seedindex += 1
+            print "Seed file doesn't exist, moving to the next one"
+        if seedindex > len(sources) :
+            raise RuntimeError("none of the files are available")
+
+        print "fhadd Source file %d : %s" % (seedindex , seedfilename)
+        seedfile = TFile.Open(seedfilename)
+
 
         # get contents of seed file
         print "looping over seed file"
@@ -243,10 +295,15 @@ class ExtendedSample: #extend the sample object to store histograms
 
         # open remaining files
         otherfiles = []
-        for n, f in enumerate(sources[1:]):
+        notexistingfiles=[]
+        for n, f in enumerate(sources[seedindex:]):
             print "fhadd Source file %d: %s" % (n+2, f)
-            otherfiles.append(TFile(f))
+            if not os.path.exists(f):
+                notexistingfiles.append( f )
+                continue
+            otherfiles.append(TFile.Open(f))
 
+        print "The following files don't exist %s" % notexistingfiles
         
         # loop over contents and merge objects from other files to seed file objects
         for n, (path, hname) in enumerate(contents):
