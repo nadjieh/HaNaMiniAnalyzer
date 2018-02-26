@@ -134,6 +134,7 @@ int main(int argc, char** argv) {
     	    newTree->Branch("passJet2Pt", &passJet2Pt);
     	    newTree->Branch("passMu1Pt", &passMu1Pt);
     	    newTree->Branch("passMu2Pt", &passMu2Pt);
+			newTree->Branch("aMuMass", &amuMass);
 	} else {
 	    //newTree->Branch("aMuMass", &amuMass);
 	    //newTree->Branch("bWeightTL", &bWTL);				        			

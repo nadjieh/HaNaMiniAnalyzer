@@ -284,5 +284,5 @@ double DiMuonReader::MuonTrkEff(double abseta){
     else if (abseta < 2.2) iPoint = 10;
     else iPoint = 11;
     hTrk->GetPoint(iPoint,x,y);
-    return y*9.2/35.9;
+    return (y*9.2/35.9)+((35.9-9.2)/35.9);
 }
