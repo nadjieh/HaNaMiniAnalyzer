@@ -57,9 +57,10 @@ struct particleinfo{
 int main(int argc, char** argv) {
     HambTree * rds;
     TString names;
-    TString treename = "Hamb/Trees/Events";
+    TString treename = "/Trees/Events";
     TH1D * cutflow = 0;
     TString Mode = "";
+    TString dir = "";
     bool blind = false;
     for (int f = 1; f < argc; f++) {
       std::string arg_fth(*(argv + f));
@@ -68,10 +69,10 @@ int main(int argc, char** argv) {
 	std::string out(*(argv + f));
 	//TFile * fdata = TFile::Open((string("eos_cb/user/a/ajafari/Hamb13/Oct14_8020_Opt/Trees/")+out).c_str());
 	TFile * fdata = TFile::Open(out.c_str());            
-	rds = new HambTree((TTree*) fdata->Get(treename));
+	rds = new HambTree((TTree*) fdata->Get("Hamb"+dir+treename));
 	int pos = out.find(".root");
 	names = (out.substr(0, pos).c_str());
-	TDirectory * d = (TDirectory*)fdata->Get("Hamb/CutFlowTable");
+	TDirectory * d = (TDirectory*)fdata->Get("Hamb"+dir+"/CutFlowTable");
         TList * dlist = d->GetListOfKeys();
         //cutflow = new TH1D(*(TH1D*) fdata->Get(string("Hamb/CutFlowTable/CutFlowTable_").c_str()+names+string("_0").c_str()));
         cutflow = new TH1D(*(TH1D*) d->Get(dlist->At(0)->GetName()));
@@ -79,13 +80,17 @@ int main(int argc, char** argv) {
             f++;
             std::string out(*(argv + f));
             Mode = out.c_str();       
+      } else if(arg_fth == "dir"){
+            f++;
+            std::string out(*(argv + f));
+            dir = out.c_str();       
       }
     }
 
 
-    TFile * fout = new TFile("out/"+names + ".root", "recreate");
+    TFile * fout = new TFile("out/"+names +dir+".root", "recreate");
     fout->cd();
-	TDirectory* hamb = fout->mkdir("Hamb");
+	TDirectory* hamb = fout->mkdir("Hamb"+dir);
 	hamb->mkdir("Trees")->cd();
 	
 	particleinfo mH, mHReg, mHb, mHbReg;
