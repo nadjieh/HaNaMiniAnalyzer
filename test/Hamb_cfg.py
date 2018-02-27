@@ -57,6 +57,14 @@ process.source = cms.Source("PoolSource",
 process.load("Haamm.HaNaMiniAnalyzer.Hamb_cfi")
 #process.TTH 
 
+def AddSystematics( Name , Object , Property , NewValue ):
+    setattr( process , "Hamb" + Name , process.Hamb.clone() )
+    hamb_syst = getattr( process , "Hamb" +Name)
+    obj = getattr ( hamb_syst , Object )
+    prop = setattr( obj , Property , NewValue )
+
+    setattr( process , "PathSyst" + Name , cms.Path( hamb_syst ) )
+
 import FWCore.ParameterSet.VarParsing as opts
 options = opts.VarParsing ('analysis')
 options.register('sync',
@@ -203,38 +211,28 @@ else :
 	process.Hamb.HLT_Mu17Mu8.Input = cms.InputTag( "TriggerResults","","HLT2" )
 
     if theSample.Name.count("GGH") :
-        process.HambPUUp = process.Hamb.clone()
-        process.HambPUUp.Vertex.PUDataFileName = "pileUpDataUp.root"
-        process.HambPUDown = process.Hamb.clone()
-        process.HambPUDown.Vertex.PUDataFileName = "pileUpDataDown.root"
-        process.HambJECUP = process.Hamb.clone()
-        process.HambJECUP.Jets.JECUncertainty = 1
+        AddSystematics( "PUUp"  , "Vertex" , "PUDataFileName" , "pileUpDataUp.root")
+        AddSystematics( "PUDown"  , "Vertex" , "PUDataFileName" , "pileUpDataDown.root")
+        AddSystematics( "JECUP"  , "Jets" , "JECUncertainty"  , 1)
         process.HambJECUP.MET.Uncertainty = 2
-        process.HambJECDOWN = process.Hamb.clone()
-        process.HambJECDOWN.Jets.JECUncertainty = -1
+        AddSystematics( "JECDOWN"  , "Jets" , "JECUncertainty"  , -1)
         process.HambJECDOWN.MET.Uncertainty = 3
-        process.HambJERUP = process.Hamb.clone()
-        process.HambJERUP.Jets.JERUncertainty = 2
-        process.HambJERDOWN = process.Hamb.clone()
-        process.HambJERDOWN.Jets.JERUncertainty = 1
-        process.HambBUP = process.Hamb.clone()
-        process.HambBUP.Jets.BTagUncertainty = 1
-        process.HambBDOWN = process.Hamb.clone()
-        process.HambBDOWN.Jets.BTagUncertainty = -1                
-#        process.HambMETJESDOWN = process.Hamb.clone()
-#        process.HambMETJESDOWN.MET.Uncertainty = 3
-#        process.HambMETJESUP = process.Hamb.clone()
-#        process.HambMETJESUP.MET.Uncertainty = 2
-        process.HambMETUnClusDOWN = process.Hamb.clone()
-        process.HambMETUnClusDOWN.MET.Uncertainty = 11
-        process.HambMETUnClusUP = process.Hamb.clone()
-        process.HambMETUnClusUP.MET.Uncertainty = 10
-        process.HambHLTUP = process.Hamb.clone()
-        process.HambHLTUP.DiMuon.HLTUnc = 1
-        process.HambHLTDOWN = process.Hamb.clone()
-        process.HambHLTDOWN.DiMuon.HLTUnc = -1
-        process.pathSystematics = cms.Path( process.HambPUDown + process.HambPUUp + process.HambJECUP + process.HambJECDOWN + process.HambBUP + process.HambBDOWN + process.HambJERUP + process.HambJERDOWN + process.HambMETUnClusUP + process.HambMETUnClusDOWN + process.HambHLTDOWN + process.HambHLTUP )
 
+        AddSystematics( "JERUP"  , "Jets" , "JERUncertainty"  , 2)
+        AddSystematics( "JERDOWN"  , "Jets" , "JERUncertainty"  , 1)
+
+        AddSystematics( "BUP"  , "Jets" , "BTagUncertainty"  , 1)
+        AddSystematics( "BDOWN"  , "Jets" , "BTagUncertainty"  , -1)
+
+        AddSystematics( "METUnClusDOWN"  , "MET" , "Uncertainty"  , 11)
+        AddSystematics( "METUnClusUP"  , "MET" , "Uncertainty"  , 10)
+
+
+        AddSystematics( "HLTUP"  , "DiMuon" , "HLTUnc"  , 1)
+        AddSystematics( "HLTDOWN"  , "DiMuon" , "HLTUnc"  , -1)
+
+
+        
 process.outp1=cms.OutputModule("PoolOutputModule",
    outputCommands = cms.untracked.vstring('keep *'), 
    fileName = cms.untracked.string(job.Output2),

@@ -52,7 +52,8 @@ class SampleType:
             print "\tSample %s is loading :" % (s.Name)
             if s.LoadHistos( dirName , cftName , [] , Indices ):
                 if len(treeHistos):
-                    s.DrawTreeHistos( treeHistos )
+                    print "%s/Trees/Events" %(dirName)
+                    s.DrawTreeHistos( treeHistos, "%s/Trees/Events" %(dirName) )
                 s.NormalizeHistos( lumi )
                 print "\tAll Loaded and normalized, now they are being organized"
             for propname in s.AllHists:
