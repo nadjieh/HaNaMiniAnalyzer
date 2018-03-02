@@ -1,7 +1,60 @@
 #include "Haamm/HaNaMiniAnalyzer/interface/BTagWeight.h"
 
 
+float BTagWeight::weightShape(pat::JetCollection jets , int syst){
+  if(WPT != -100 )
+    return -100.0;
+
+  float csvWgtHF = 1., csvWgtLF = 1., csvWgtC = 1.;
+  //cout << "In the weightShape method -----------------"<<endl;
+  for( unsigned int iJet=0; iJet<jets.size(); iJet++ ){ 
+    bool doubleUnc = false;
+    float csv = jets[iJet].bDiscriminator(algo);
+    float jetPt = jets[iJet].pt();
+    // if(jetPt < 20){
+    //   jetPt = 20.;
+    //   doubleUnc = true;
+    // }
+    float jetAbsEta = fabs(jets[iJet].eta());
+    int flavor = jets[iJet].hadronFlavour();
+    //cout <<"Jet number "<<iJet+1 <<" >>>>>>>>>>>>>> Syst: "<< Systs[syst]<<endl;
+    //cout<<"csv\tjetPt\tjetAbsEta\tflavor"<<endl;
+    //cout<<csv<<"\t"<<jetPt<<"\t"<<jetAbsEta<<"\t"<<flavor<<endl;
+    if (abs(flavor) == 5 ){    //HF  
+      float iCSVWgtHF = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_B, jetAbsEta, jetPt, csv);  
+      // if(doubleUnc && syst != 0 ){
+      // 	float centralSF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_B, jetAbsEta, jetPt, csv);
+      // 	iCSVWgtHF = iCSVWgtHF-centralSF+iCSVWgtHF;
+      // }
+      if( iCSVWgtHF!=0 ) csvWgtHF *= iCSVWgtHF;
+    } else if( abs(flavor) == 4 ){  //C
+      double iCSVWgtC = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_C, jetAbsEta, jetPt, csv);
+      // if(doubleUnc && syst != 0 ){
+      // 	float centralSF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_C, jetAbsEta, jetPt, csv);
+      // 	iCSVWgtC = iCSVWgtC-centralSF+iCSVWgtC;
+      // }
+      if( iCSVWgtC!=0 ) csvWgtC *= iCSVWgtC;   
+    } else { //LF
+      double iCSVWgtLF = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_UDSG, jetAbsEta, jetPt, csv);
+      // if(doubleUnc && syst != 0 ){
+      // 	float centralSF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_UDSG, jetAbsEta, jetPt, csv);
+      // 	iCSVWgtLF = iCSVWgtLF-centralSF+iCSVWgtLF;
+      // }
+
+      if( iCSVWgtLF!=0 ) csvWgtLF *= iCSVWgtLF;
+    }
+    //cout<<"bf\tcf\tlf"<<endl;
+    //cout<<csvWgtHF <<"\t"<< csvWgtC <<"\t"<< csvWgtLF<<endl;
+  }
+  //if((csvWgtHF * csvWgtC * csvWgtLF)>5)throw 1000;
+
+  return csvWgtHF * csvWgtC * csvWgtLF;
+}
+
+
 float BTagWeight::weight(pat::JetCollection jets/*, int ntag*/){
+  if( WPT == -100 )
+    return -100;
 	//if (!filter(ntag)){
       		//   std::cout << "nThis event should not pass the selection, what is it doing here?" << std::endl;
         //	return 0;
@@ -138,49 +191,49 @@ float BTagWeight::TagScaleFactor(pat::Jet jet, bool LooseWP ){
 	else if(flavour == 4) flavour = BTagEntry::FLAV_C;
 	else flavour = BTagEntry::FLAV_UDSG;
 	
-	if(flavour != BTagEntry::FLAV_UDSG){
-	   if (JetPt>MaxBJetPt)  { // use MaxLJetPt for  light jets
-        	JetPt = MaxBJetPt; 
-        	DoubleUncertainty = true;
-      	   }
-	} else {
-	   if (JetPt>MaxLJetPt)  { // use MaxLJetPt for  light jets
-                JetPt = MaxBJetPt;
-                DoubleUncertainty = true;
-           }
-	}
-	if(JetPt<MinJetPt){
-	   JetPt = MinJetPt;
-	   DoubleUncertainty = true;
-	}
+	// if(flavour != BTagEntry::FLAV_UDSG){
+	//    if (JetPt>MaxBJetPt)  { // use MaxLJetPt for  light jets
+        // 	JetPt = MaxBJetPt; 
+        // 	DoubleUncertainty = true;
+      	//    }
+	// } else {
+	//    if (JetPt>MaxLJetPt)  { // use MaxLJetPt for  light jets
+        //         JetPt = MaxBJetPt;
+        //         DoubleUncertainty = true;
+        //    }
+	// }
+	// if(JetPt<MinJetPt){
+	//    JetPt = MinJetPt;
+	//    DoubleUncertainty = true;
+	// }
 
 	float jet_scalefactor = 1;
 	float jet_scalefactorCent = 1;
 
 	if((BTagEntry::JetFlavor)flavour != BTagEntry::FLAV_UDSG){
 	  jet_scalefactor = reader->eval_auto_bounds( Systs[syst], BTagEntry::FLAV_B, jet.eta(), JetPt); 
-	  if(DoubleUncertainty && syst != 0)
-	    jet_scalefactorCent = reader->eval_auto_bounds( Systs[0], BTagEntry::FLAV_B, jet.eta(), JetPt);
+	  // if(DoubleUncertainty && syst != 0)
+	  //   jet_scalefactorCent = reader->eval_auto_bounds( Systs[0], BTagEntry::FLAV_B, jet.eta(), JetPt);
 	  if(LooseWP){
 		  jet_scalefactor = readerExc->eval_auto_bounds( Systs[syst], BTagEntry::FLAV_B, jet.eta(), JetPt);
-		  if(DoubleUncertainty && syst != 0)
-		    jet_scalefactorCent= readerExc->eval_auto_bounds( Systs[0], BTagEntry::FLAV_B, jet.eta(), JetPt);
+		  // if(DoubleUncertainty && syst != 0)
+		  //   jet_scalefactorCent= readerExc->eval_auto_bounds( Systs[0], BTagEntry::FLAV_B, jet.eta(), JetPt);
 	  }
 	} else {
 	  jet_scalefactor = reader->eval_auto_bounds(Systs[syst], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
-	  if(DoubleUncertainty && syst != 0)
-	    jet_scalefactorCent = reader->eval_auto_bounds( Systs[0], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
+	  // if(DoubleUncertainty && syst != 0)
+	  //   jet_scalefactorCent = reader->eval_auto_bounds( Systs[0], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
 	  if(LooseWP){
 		  jet_scalefactor = readerExc->eval_auto_bounds(Systs[syst], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
-		  if(DoubleUncertainty && syst != 0)
-		    jet_scalefactorCent = readerExc->eval_auto_bounds( Systs[0], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
+		  // if(DoubleUncertainty && syst != 0)
+		  //   jet_scalefactorCent = readerExc->eval_auto_bounds( Systs[0], BTagEntry::FLAV_UDSG, jet.eta(), JetPt);
 	  }
 	}
 
 
-	if(DoubleUncertainty && syst != 0){
-	  jet_scalefactor = 2*(jet_scalefactor - jet_scalefactorCent) + jet_scalefactorCent; 
-	}
+	// if(DoubleUncertainty && syst != 0){
+	//   jet_scalefactor = jet_scalefactor - jet_scalefactorCent + jet_scalefactor; 
+	// }
 	return jet_scalefactor;
 }
 

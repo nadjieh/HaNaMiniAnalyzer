@@ -221,8 +221,8 @@ else :
         AddSystematics( "JERUP"  , "Jets" , "JERUncertainty"  , 2)
         AddSystematics( "JERDOWN"  , "Jets" , "JERUncertainty"  , 1)
 
-        AddSystematics( "BUP"  , "Jets" , "BTagUncertainty"  , 1)
-        AddSystematics( "BDOWN"  , "Jets" , "BTagUncertainty"  , -1)
+        #AddSystematics( "BUP"  , "Jets" , "BTagUncertainty"  , 1)
+        #AddSystematics( "BDOWN"  , "Jets" , "BTagUncertainty"  , -1)
 
         AddSystematics( "METUnClusDOWN"  , "MET" , "Uncertainty"  , 11)
         AddSystematics( "METUnClusUP"  , "MET" , "Uncertainty"  , 10)
@@ -231,6 +231,7 @@ else :
         AddSystematics( "HLTUP"  , "DiMuon" , "HLTUnc"  , 1)
         AddSystematics( "HLTDOWN"  , "DiMuon" , "HLTUnc"  , -1)
 
+        AddSystematics( "BShape"  , "Jets" , "BTagUncertainty"  , -1)
 
         
 process.outp1=cms.OutputModule("PoolOutputModule",

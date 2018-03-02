@@ -28,6 +28,7 @@ protected:
   float* Weight;
   float puWeight, met , metPhi, metSig;
   float* bSelWeights;
+  float* bShapeSelWeights;
   float nNonTagged;
   float nLooseNotMed;
   float nMedNotTight;
@@ -115,7 +116,9 @@ protected:
       Weight[i] = 1.0 ;
 
     for(unsigned int i=0 ; i < 9 ; i++)
-      bSelWeights[i] = 0.0;
+      bSelWeights[i] = 1;
+    for(unsigned int i=0 ; i <  19 ; i++)
+      bShapeSelWeights[i] = 1;
 
     puWeight = met = metPhi = metSig = -999;
 
@@ -177,6 +180,7 @@ void TreeHamb::beginJob()
   Weight = new float[nHistos];
 
   bSelWeights = new float[9];
+  bShapeSelWeights = new float[19];
 
   if( MakeTree ){
     edm::Service<TFileService> fs;
@@ -193,7 +197,14 @@ void TreeHamb::beginJob()
         theSelectionResultTree->Branch("nVertices" , &nVertices);
 	theSelectionResultTree->Branch("Weight", Weight , weightLeafList.c_str() );
 	theSelectionResultTree->Branch("puWeight", &puWeight);
-	theSelectionResultTree->Branch("bWs", bSelWeights , "W1L:W1M:W1T:W1L1M:W1L1T:W1M1T:W2L:W2M:W2T");
+
+	if( jetReader->BTagWeightNonShapes )
+	  theSelectionResultTree->Branch("bWs", bSelWeights , "W1L:W1M:W1T:W1L1M:W1L1T:W1M1T:W2L:W2M:W2T");
+	if( jetReader->BTagWeightShapes && jetReader->btagunc != 0 )
+	  theSelectionResultTree->Branch("bWsShape", bShapeSelWeights , "central:up_hfstats1:down_hfstats1:up_hfstats2:down_hfstats2:up_lfstats1:down_lfstats1:up_lfstats2:down_lfstats2:up_jes:down_jes:up_lf:down_lf:up_cferr1:down_cferr1:up_cferr2:down_cferr2:up_hf:down_hf");
+	else if(jetReader->BTagWeightShapes)
+	  theSelectionResultTree->Branch("bWsShape", bShapeSelWeights , "central");
+
 	theSelectionResultTree->Branch("hltWeights", &hltWs , "mu17mu8:mu17mu8dz");
         theSelectionResultTree->Branch("metPhi", &metPhi);
         theSelectionResultTree->Branch("passHLT_Mu17Mu8", &passHLT_Mu17Mu8);
@@ -374,6 +385,9 @@ bool TreeHamb::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   for(int i = 0; i < 9; i++){
 	bSelWeights[i] = jetReader->weights[i];
+  }
+  for(int i = 0; i < 19; i++){
+	bShapeSelWeights[i] = jetReader->shape_weights[i];
   }
 
   nTight = jetReader->nTight;

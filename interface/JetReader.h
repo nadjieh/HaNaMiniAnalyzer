@@ -39,12 +39,14 @@ public:
   pat::JetCollection selectedBJets;
   double W;
   float weights[9];
+  float shape_weights[19];
 
   JetCorrectionUncertainty *jecUnc;
   int unc, jerunc, btagunc;
 
 private :
   std::vector<BTagWeight*> weighters;
+  BTagWeight* BTagWeighterShape;
 
   bool IsData;
   /* JET SELECTION PARAMS */
@@ -63,9 +65,13 @@ public:
   float nLooseNotMed;
   float nMedNotTight;
   float nTight;
+
+  bool BTagWeightShapes;
+  bool BTagWeightNonShapes;
 private:
   unsigned int MinNBJets; 
   int MaxNBJets ;
+
   /* b-JET SELECTION PARAMS */
 
   /* JET TOOLS */

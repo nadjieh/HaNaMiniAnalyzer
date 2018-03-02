@@ -71,20 +71,51 @@ class BTagWeight
 	reader->load( *calib , BTagEntry::FLAV_B , "mujets" );
 	reader->load( *calib , BTagEntry::FLAV_UDSG , "incl" );
 	
-	/* reader = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint)WPT,"mujets",Systs[syst]); */
-        /* readerCent = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint)WPT,"mujets","central");   */
-	/* readerLight = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint)WPT,"incl",Systs[syst]); */
-        /* readerCentLight = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint)WPT,"incl","central");   */
 	if(WPL != -1){
 	  readerExc = new BTagCalibrationReader( (BTagEntry::OperatingPoint)WPL , "central" , {"up", "down"} );
 	  readerExc->load( *calib , BTagEntry::FLAV_B , "mujets" );
 	  readerExc->load( *calib , BTagEntry::FLAV_UDSG , "incl" );
 
-		/* readerExc = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint)WPL,"mujets",Systs[syst]); */
-        	/* readerCentExc = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint) WPL,"mujets","central");   */
-		/* readerExcLight = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint)WPL,"incl",Systs[syst]); */
-        	/* readerCentExcLight = new BTagCalibrationReader(calib,(BTagEntry::OperatingPoint) WPL,"incl","central");   */
 	}
+
+    };
+
+  BTagWeight(string fileweights , string algorithm,  string setupDir): 
+      algo(algorithm), WPT(-100), WPL(-1), minTag(-1), maxTag(-1), syst(-1), minTagL(-1), maxTagL(-1), readerExc(0),readerCentExc(0)
+    {
+	//for reshaping 
+	Systs[0] = "central";
+	Systs[-1] = "down_hfstats1";
+	Systs[1] = "up_hfstats1";
+	Systs[2] = "up_hfstats2";
+	Systs[-2] = "down_hfstats2";
+	Systs[3] = "up_lfstats1";
+	Systs[-3] = "down_lfstats1";
+	Systs[4] = "up_lfstats2";
+	Systs[-4] = "down_lfstats2";
+	Systs[5] = "up_jes";
+	Systs[-5] = "down_jes";
+	Systs[6] = "up_lf";
+	Systs[-6] = "down_lf";
+	Systs[7] = "up_cferr1";
+	Systs[-7] = "down_cferr1";
+	Systs[8] = "up_cferr2";
+	Systs[-8] = "down_cferr2";
+	Systs[9] = "up_hf";
+	Systs[-9] = "down_hf";
+
+	std::vector<string> allSystNames;
+	for(auto syst_ : Systs )
+	  if( syst_.first != 0 )
+	    allSystNames.push_back( syst_.second );
+
+	cout<< setupDir+"/"+algo+string(".csv")<<endl;
+	calib = new BTagCalibration(algo /*"CSVv2"*/, setupDir+"/"+fileweights+string(".csv"));
+	//formula: https://twiki.cern.ch/twiki/bin/view/CMS/SWGuideCMSPhysicsObjectSchoolVertBTag#Exercise_I_applying_the_BTV_scal
+	reader = new BTagCalibrationReader( BTagEntry::OP_RESHAPING, "central" , allSystNames );
+	reader->load(*calib, BTagEntry::FLAV_B, "iterativefit");
+	reader->load(*calib, BTagEntry::FLAV_C, "iterativefit");
+	reader->load(*calib, BTagEntry::FLAV_UDSG, "iterativefit");
 
 	/* Sanity checks
 	 * std::cout<< "---- BTag WPs ----\n\t" <<bTagMapCSVv2[0] <<",\t"<<bTagMapCSVv2[1] <<",\t"<<bTagMapCSVv2[2]
@@ -115,6 +146,7 @@ class BTagWeight
     }
     float weight(pat::JetCollection jets);
     float weight(pat::JetCollection jets, int);
+    float weightShape(pat::JetCollection , int);
     float weightExclusive(pat::JetCollection jetsTags);
     float TagScaleFactor(pat::Jet jet, bool LooseWP = false);
     float MCTagEfficiency(pat::Jet jet, int WP);
