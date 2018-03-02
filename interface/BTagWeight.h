@@ -65,7 +65,7 @@ class BTagWeight
 	Systs[-1] = "down";
 	Systs[1] = "up";
 	cout<< setupDir+"/"+algo+string(".csv")<<endl;
-	calib = new BTagCalibration(algo /*"CSVv2"*/, setupDir+"/"+algo+string(".csv"));
+	calib = new BTagCalibration(algo/*"CSVv2"*/, setupDir+"/"+algo+string(".csv"));
 	reader = new BTagCalibrationReader( (BTagEntry::OperatingPoint)WPT, "central" , {"up", "down"} );
 
 	reader->load( *calib , BTagEntry::FLAV_B , "mujets" );
@@ -126,40 +126,58 @@ class BTagWeight
 	 * End Sanity Checks
 	 */
     };
-    inline bool filter(int t){
+
+      bool isSystMatchFlavor(int flavor, int syst){ // only for reshaping
+	if (syst == 0) return false;
+	if(fabs(flavor) == 5){
+	  if(fabs(syst) == 1 || fabs(syst == 2) || fabs(syst == 6) || fabs(syst) == 5)
+	    return true;
+	  else return false;
+	} else if (fabs(flavor) == 4){
+	  if(fabs(syst) == 7 || fabs(syst) == 8)
+            return true;
+	  else return false;
+	} else {
+	  if(fabs(syst) == 3 || fabs(syst == 4) || fabs(syst) == 5 || fabs(syst) == 9)
+	    return true;
+	  else return false;
+	}
+	return false;
+      }
+      inline bool filter(int t){
 	if(maxTag != -1)
-		return (t >= minTag && t <= maxTag);
+	  return (t >= minTag && t <= maxTag);
 	else
-		return (t >= minTag);
-    }
-    inline bool filter(int tight, int looseNonTight){
+	  return (t >= minTag);
+      }
+      inline bool filter(int tight, int looseNonTight){
         bool OK = false;
 	if(maxTag != -1)
-		OK = (tight >= minTag && tight <= maxTag);
+	  OK = (tight >= minTag && tight <= maxTag);
 	else
-		OK = (tight >= minTag);
+	  OK = (tight >= minTag);
         if(maxTagL != -1)
-		OK = (OK && (looseNonTight >= minTagL && looseNonTight <= maxTagL));
+	  OK = (OK && (looseNonTight >= minTagL && looseNonTight <= maxTagL));
 	else
-		OK = (OK && (looseNonTight >= minTagL));
+	  OK = (OK && (looseNonTight >= minTagL));
 	return OK;
-    }
-    float weight(pat::JetCollection jets);
-    float weight(pat::JetCollection jets, int);
-    float weightShape(pat::JetCollection , int);
-    float weightExclusive(pat::JetCollection jetsTags);
-    float TagScaleFactor(pat::Jet jet, bool LooseWP = false);
-    float MCTagEfficiency(pat::Jet jet, int WP);
-    std::map<int, string> Systs;
-    BTagCalibration * calib;
-    BTagCalibrationReader * reader;
-    BTagCalibrationReader * readerCent;
-    BTagCalibrationReader * readerExc;
-    BTagCalibrationReader * readerCentExc;
-    BTagCalibrationReader * readerLight;
-    BTagCalibrationReader * readerCentLight;
-    BTagCalibrationReader * readerExcLight;
-    BTagCalibrationReader * readerCentExcLight;
+      }
+      float weight(pat::JetCollection jets);
+      float weight(pat::JetCollection jets, int);
+      float weightShape(pat::JetCollection , int);
+      float weightExclusive(pat::JetCollection jetsTags);
+      float TagScaleFactor(pat::Jet jet, bool LooseWP = false);
+      float MCTagEfficiency(pat::Jet jet, int WP);
+      std::map<int, string> Systs;
+      BTagCalibration * calib;
+      BTagCalibrationReader * reader;
+      BTagCalibrationReader * readerCent;
+      BTagCalibrationReader * readerExc;
+      BTagCalibrationReader * readerCentExc;
+      BTagCalibrationReader * readerLight;
+      BTagCalibrationReader * readerCentLight;
+      BTagCalibrationReader * readerExcLight;
+      BTagCalibrationReader * readerCentExcLight;
   };
 #endif
 

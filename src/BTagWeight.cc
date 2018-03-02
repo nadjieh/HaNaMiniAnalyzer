@@ -20,22 +20,35 @@ float BTagWeight::weightShape(pat::JetCollection jets , int syst){
     //cout <<"Jet number "<<iJet+1 <<" >>>>>>>>>>>>>> Syst: "<< Systs[syst]<<endl;
     //cout<<"csv\tjetPt\tjetAbsEta\tflavor"<<endl;
     //cout<<csv<<"\t"<<jetPt<<"\t"<<jetAbsEta<<"\t"<<flavor<<endl;
+    
     if (abs(flavor) == 5 ){    //HF  
-      float iCSVWgtHF = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_B, jetAbsEta, jetPt, csv);  
+      float iCSVWgtHF = 1;
+      if(isSystMatchFlavor(fabs(flavor), syst))
+	iCSVWgtHF = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_B, jetAbsEta, jetPt, csv);  
+      else
+	iCSVWgtHF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_B, jetAbsEta, jetPt, csv);  
       // if(doubleUnc && syst != 0 ){
       // 	float centralSF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_B, jetAbsEta, jetPt, csv);
       // 	iCSVWgtHF = iCSVWgtHF-centralSF+iCSVWgtHF;
       // }
       if( iCSVWgtHF!=0 ) csvWgtHF *= iCSVWgtHF;
     } else if( abs(flavor) == 4 ){  //C
-      double iCSVWgtC = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_C, jetAbsEta, jetPt, csv);
+      float iCSVWgtC = 1;
+      if(isSystMatchFlavor(fabs(flavor), syst))
+	iCSVWgtC = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_C, jetAbsEta, jetPt, csv);
+      else
+	iCSVWgtC = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_C, jetAbsEta, jetPt, csv);
       // if(doubleUnc && syst != 0 ){
       // 	float centralSF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_C, jetAbsEta, jetPt, csv);
       // 	iCSVWgtC = iCSVWgtC-centralSF+iCSVWgtC;
       // }
       if( iCSVWgtC!=0 ) csvWgtC *= iCSVWgtC;   
     } else { //LF
-      double iCSVWgtLF = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_UDSG, jetAbsEta, jetPt, csv);
+      float iCSVWgtLF = 1;
+      if(isSystMatchFlavor(fabs(flavor), syst))
+	iCSVWgtLF = reader->eval_auto_bounds(Systs[syst],BTagEntry::FLAV_UDSG, jetAbsEta, jetPt, csv);
+      else
+	iCSVWgtLF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_UDSG, jetAbsEta, jetPt, csv);
       // if(doubleUnc && syst != 0 ){
       // 	float centralSF = reader->eval_auto_bounds(Systs[0],BTagEntry::FLAV_UDSG, jetAbsEta, jetPt, csv);
       // 	iCSVWgtLF = iCSVWgtLF-centralSF+iCSVWgtLF;
