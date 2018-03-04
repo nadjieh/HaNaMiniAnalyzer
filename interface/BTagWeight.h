@@ -130,7 +130,7 @@ class BTagWeight
       bool isSystMatchFlavor(int flavor, int syst){ // only for reshaping
 	if (syst == 0) return false;
 	if(fabs(flavor) == 5){
-	  if(fabs(syst) == 1 || fabs(syst == 2) || fabs(syst == 6) || fabs(syst) == 5)
+	  if(fabs(syst) == 1 || fabs(syst) == 2 || fabs(syst) == 6 || fabs(syst) == 5)
 	    return true;
 	  else return false;
 	} else if (fabs(flavor) == 4){
@@ -138,7 +138,7 @@ class BTagWeight
             return true;
 	  else return false;
 	} else {
-	  if(fabs(syst) == 3 || fabs(syst == 4) || fabs(syst) == 5 || fabs(syst) == 9)
+	  if(fabs(syst) == 3 || fabs(syst) == 4 || fabs(syst) == 5 || fabs(syst) == 9)
 	    return true;
 	  else return false;
 	}
