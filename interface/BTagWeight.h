@@ -134,7 +134,7 @@ class BTagWeight
 	    return true;
 	  else return false;
 	} else if (fabs(flavor) == 4){
-	  if(fabs(syst) == 7 || fabs(syst) == 8)
+	  if(fabs(syst) == 7 || fabs(syst) == 8 || fabs(syst) == 5)
             return true;
 	  else return false;
 	} else {
