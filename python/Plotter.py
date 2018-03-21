@@ -295,9 +295,14 @@ class Plotter:
                 return st.AllHists[propname]
         return None
 
-    def LoadHistos(self  , lumi , dirName = "Hamb" , cftName = "CutFlowTable"):
+    def LoadHistos(self  , lumi , dirName_ = "Hamb" , cftName = "CutFlowTable"):
         for st in self.Samples :
             print "%sCreating histos for : %s%s" % (bcolors.OKGREEN , st.Name , bcolors.ENDC)
+            if not st.Name.count("Signal"):
+                dirName = "Hamb"
+            else:
+                dirName = dirName_
+            print dirName
             st.LoadHistos( lumi , dirName , cftName , self.TreePlots )
             for prop in st.AllHists:
                 if not prop in self.Props:

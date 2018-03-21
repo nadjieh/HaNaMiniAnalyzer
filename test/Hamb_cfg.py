@@ -57,6 +57,14 @@ process.source = cms.Source("PoolSource",
 process.load("Haamm.HaNaMiniAnalyzer.Hamb_cfi")
 #process.TTH 
 
+def AddSystematics( Name , Object , Property , NewValue ):
+    setattr( process , "Hamb" + Name , process.Hamb.clone() )
+    hamb_syst = getattr( process , "Hamb" +Name)
+    obj = getattr ( hamb_syst , Object )
+    prop = setattr( obj , Property , NewValue )
+
+    setattr( process , "PathSyst" + Name , cms.Path( hamb_syst ) )
+
 import FWCore.ParameterSet.VarParsing as opts
 options = opts.VarParsing ('analysis')
 options.register('sync',
@@ -201,10 +209,38 @@ else :
     if theSample.DSName.count( "_reHLT_" ):
 	process.Hamb.HLT_Mu17Mu8_DZ.Input = cms.InputTag( "TriggerResults","","HLT2" )
 	process.Hamb.HLT_Mu17Mu8.Input = cms.InputTag( "TriggerResults","","HLT2" )
+
+    if theSample.Name.count("GGH") :
+        AddSystematics( "PUUp"  , "Vertex" , "PUDataFileName" , "pileUpDataUp.root")
+        AddSystematics( "PUDown"  , "Vertex" , "PUDataFileName" , "pileUpDataDown.root")
+        AddSystematics( "JECUP"  , "Jets" , "JECUncertainty"  , 1)
+        process.HambJECUP.MET.Uncertainty = 2
+        AddSystematics( "JECDOWN"  , "Jets" , "JECUncertainty"  , -1)
+        process.HambJECDOWN.MET.Uncertainty = 3
+
+        AddSystematics( "JERUP"  , "Jets" , "JERUncertainty"  , 2)
+        AddSystematics( "JERDOWN"  , "Jets" , "JERUncertainty"  , 1)
+
+        #AddSystematics( "BUP"  , "Jets" , "BTagUncertainty"  , 1)
+        #AddSystematics( "BDOWN"  , "Jets" , "BTagUncertainty"  , -1)
+
+        AddSystematics( "METUnClusDOWN"  , "MET" , "Uncertainty"  , 11)
+        AddSystematics( "METUnClusUP"  , "MET" , "Uncertainty"  , 10)
+
+
+        AddSystematics( "HLTUP"  , "DiMuon" , "HLTUnc"  , 1)
+        AddSystematics( "HLTDOWN"  , "DiMuon" , "HLTUnc"  , -1)
+
+        AddSystematics( "BShape"  , "Jets" , "BTagUncertainty"  , -1)
+
+        
 process.outp1=cms.OutputModule("PoolOutputModule",
    outputCommands = cms.untracked.vstring('keep *'), 
    fileName = cms.untracked.string(job.Output2),
    SelectEvents = cms.untracked.PSet(  SelectEvents = cms.vstring('p')  )
 )
-process.ep = cms.EndPath( process.outp1 )
+
+
+#process.ep = cms.EndPath( process.outp1 )
+
 

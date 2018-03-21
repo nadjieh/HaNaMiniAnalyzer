@@ -18,6 +18,9 @@ public:
   bool passTrig;
 private :
   std::vector<std::string> HLT_To_Or;
+  bool PrintTrigNamesPerRun;
+
+  unsigned int latestRun;
 };
 
 #endif
