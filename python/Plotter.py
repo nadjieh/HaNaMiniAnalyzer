@@ -150,10 +150,9 @@ class CutInfo:
             return ("Weight.W%d" % (index) )
 
     def LoadHistos( self , samplename , isdata , tree , indices=[0] , additionalCut = None ):
-        #UseEventList = gROOT.GetVersionCode() > 600000
-	UseEventList = True
+        UseEventList = gROOT.GetVersionInt() > 60000
         
-        #print UseEventList, gROOT.GetVersionCode()
+        #print UseEventList, gROOT.GetVersionInt()
         if UseEventList :
             tree.SetEventList( None )
         else:
@@ -216,6 +215,7 @@ class CutInfo:
                             f.write("#{0:s}:[{1:d},{2:.2g},{3:.2g}]".format( hist.VarName , hist.nBins , hist.From , hist.To ) )
                         
 
+                    
                     tree.Draw( "%s>>cloned_%s(%s)" % ( hist.VarName , hname , hist.Bins() ) ,
                                "" if isdata else self.Weights( n , samplename , isdata) )
                     #print self.Weights(n,samplename,isdata)
