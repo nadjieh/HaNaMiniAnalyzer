@@ -317,11 +317,12 @@ int main(int argc, char** argv) {
       
       //amuMass = rds->aMu_mass;
       //according to optimization of Dec. 2016
-      if(rds->jetsPt->at(0) < 20) continue;
+      //if(rds->jetsPt->at(1) < 20) continue;
+      if(rds->jetsPt->size() !=2 ) continue;
       //
-      amuMass = a.M();
-      bWTL = rds->bWs_W1L1T;
-      bWLL = rds->bWs_W2L;
+      //amuMass = a.M();
+      //bWTL = rds->bWs_W1L1T;
+      //bWLL = rds->bWs_W2L;
       newTree->Fill();			
     }
   }
