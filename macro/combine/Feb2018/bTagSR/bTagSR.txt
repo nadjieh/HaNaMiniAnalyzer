@@ -1,0 +1,37 @@
+Combination of SRTT=hamb_shape_BrSRTT_ws.txt  SRTMexc=hamb_shape_BrSRTMexc_ws.txt  SRTLexc=hamb_shape_BrSRTLexc_ws.txt
+imax 3 number of bins
+jmax 1 number of processes minus 1
+kmax 11 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes bkg       SRTLexc   hamb-shapes-UnbinnedParam-BrSRTLexc-Data-fit.root w:bkgshapeSRTLexc
+shapes data_obs  SRTLexc   hamb-shapes-UnbinnedParam-BrSRTLexc-Data-fit.root w:data
+shapes signal    SRTLexc   hamb-shapes-UnbinnedParam-BrSRTLexc-Data-fit.root w:signal
+shapes bkg       SRTMexc   hamb-shapes-UnbinnedParam-BrSRTMexc-Data-fit.root w:bkgshapeSRTMexc
+shapes data_obs  SRTMexc   hamb-shapes-UnbinnedParam-BrSRTMexc-Data-fit.root w:data
+shapes signal    SRTMexc   hamb-shapes-UnbinnedParam-BrSRTMexc-Data-fit.root w:signal
+shapes bkg       SRTT      hamb-shapes-UnbinnedParam-BrSRTT-Data-fit.root w:bkgshapeSRTT
+shapes data_obs  SRTT      hamb-shapes-UnbinnedParam-BrSRTT-Data-fit.root w:data
+shapes signal    SRTT      hamb-shapes-UnbinnedParam-BrSRTT-Data-fit.root w:signal
+----------------------------------------------------------------------------------------------------------------------------------
+bin          SRTT         SRTMexc      SRTLexc    
+observation  -1.0         -1.0         -1.0       
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             SRTT         SRTT         SRTMexc      SRTMexc      SRTLexc      SRTLexc    
+process                         signal       bkg          signal       bkg          signal       bkg        
+process                         0            1            0            1            0            1          
+rate                            0.2700       0.1000       0.3200       0.6700       0.4100       0.2300     
+----------------------------------------------------------------------------------------------------------------------------------
+JER                     lnN     1.015/0.990  -            1.015/0.990  -            1.015/0.990  -          
+JES                     lnN     0.934/1.068  -            0.934/1.068  -            0.934/1.068  -          
+PDF                     lnN     0.989/1.008  -            0.989/1.008  -            0.989/1.008  -          
+btag                    lnN     0.955/1.001  -            0.955/1.001  -            0.955/1.001  -          
+lumi_8TeV               lnN     1.026        -            1.026        -            1.026        -          
+muon                    lnN     0.958/1.042  -            0.958/1.042  -            0.958/1.042  -          
+pileup                  lnN     1.012/0.988  -            1.012/0.988  -            1.012/0.988  -          
+signalTHunc             lnN     1.13         -            1.13         -            1.13         -          
+a1            param  0.0000 0.0004
+m1            param  0.0000 0.0001
+b1            param  0.0110 0.0001
+pdfindexSRTMexc  discrete
+pdfindexSRTLexc  discrete
+pdfindexSRTT  discrete
