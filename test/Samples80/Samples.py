@@ -102,3 +102,13 @@ MiniAOD80Samples.append(GGHbbtt4080)
 
 GGHbbtt6080 = Sample( "GGHbbtt60", 48.5800*1.7*0.0001,False, "/SUSYGluGluToHToAA_AToBB_AToTauTau_M-60_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM")
 MiniAOD80Samples.append(GGHbbtt6080)
+
+
+GGHmmtt2080 = Sample( "GGHmmtt20", 48.5800*1.7*0.0001,False, "/SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-20_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM")
+MiniAOD80Samples.append(GGHmmtt2080)
+
+GGHmmtt4080 = Sample( "GGHmmtt40", 48.5800*1.7*0.0001,False, "/SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-40_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM")
+MiniAOD80Samples.append(GGHmmtt4080)
+
+GGHmmtt6080 = Sample( "GGHmmtt60", 48.5800*1.7*0.0001,False, "/SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-60_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM")
+MiniAOD80Samples.append(GGHmmtt6080)

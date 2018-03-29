@@ -2,7 +2,7 @@
 #nFilesPerJob=15 #used for signal systematics on March 02 and before
 nFilesPerJob=3
 
-CheckFailedJobs=False
+CheckFailedJobs=True
 hname = "Hamb/CutFlowTable/CutFlowTable"
 prefix = "out"
 
@@ -41,8 +41,8 @@ FailedJobs = {}
 if CheckFailedJobs:
     for sample in samples:
     	#if not sample.Name.count("GGH") : #for signal sample systs 
-        if sample.Name.count("GGH") or sample.Name.count("DoubleMu"): #for signal sample systs 
-            continue
+        #if sample.Name.count("GGH") or sample.Name.count("DoubleMu"): #for signal sample systs 
+        #    continue
 
         ListOfFailedJobs = []
         for job_ in sample.Jobs :
@@ -75,8 +75,8 @@ file = open("%s/submit.sh" % (workingdir) , "w" )
 for sample in samples:
 
     #if not sample.Name.count("GGH") :                                                                                                                                                              
-    if sample.Name.count("GGH") or sample.Name.count("DoubleMu"):
-        continue
+    #if sample.Name.count("GGH") or sample.Name.count("DoubleMu"):
+    #    continue
 
 
     if CheckFailedJobs:
@@ -106,7 +106,7 @@ for sample in samples:
         print steps
         for i in range( 0 , len(steps)-1):
             #command = 'bsub -q 8nh -J "%(sample)s%(countor)d[%(init)d-%(nfiles)d]" -o %(sample)s%%I.out `pwd`/SetupAndRun.sh %(vomsaddress)s %(scram)s %(cmsver)s %(gitco)s %(sample)s %(out)s %(outdir)s %(nFilesPerJob)d' % {
-            command = 'bsub -q 1nw -J "%(sample)s%(countor)d[%(init)d-%(nfiles)d]" -o %(sample)s%%I.out `pwd`/SetupAndRun.sh %(vomsaddress)s %(scram)s %(cmsver)s %(gitco)s %(sample)s %(out)s %(outdir)s %(nFilesPerJob)d' % {
+            command = 'bsub -q 8nh -J "%(sample)s%(countor)d[%(init)d-%(nfiles)d]" -o %(sample)s%%I.out `pwd`/SetupAndRun.sh %(vomsaddress)s %(scram)s %(cmsver)s %(gitco)s %(sample)s %(out)s %(outdir)s %(nFilesPerJob)d' % {
                 "vomsaddress":"`pwd`/.x509up_u%d" % (os.getuid()) ,
                 "scram":os.getenv("SCRAM_ARCH") ,
                 "cmsver":os.getenv("CMSSW_VERSION"),
