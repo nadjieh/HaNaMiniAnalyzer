@@ -88,6 +88,7 @@
 #include "RooDataHist.h"
 #include "RooVoigtian.h"
 #include "RooPlot.h"
+#include "RooArgusBG.h"
 #include <stdio.h>
 #include <math.h>
 #include <map>
@@ -111,8 +112,10 @@ using namespace RooFit;
 class WSProvider {
 public:
 
-    WSProvider(MeanErr systYield, FixedParams fixed_, double UncSig, bool widerange = false) : sigNormUnc(UncSig), WR(widerange) {
+ WSProvider(MeanErr systYield, FixedParams fixed_, double UncSig, bool widerange = false, TString Btag = "") : sigNormUnc(UncSig), WR(widerange) {
         RooRandom::randomGenerator()->SetSeed(35);
+		sigEff = 1.0;
+		bkgEff = 1.0;
         for (auto& x : systYield) {
             MeanErrors[x.first] = make_pair(x.second.first, make_pair(x.second.second.first, x.second.second.second));
         }
@@ -121,11 +124,13 @@ public:
             Fixeds[x.first] = x.second;
         }
         w = new RooWorkspace("w", "w");
-        var = new RooRealVar("aMuMass", "aMuMass", 20, 70);
-        //var = new RooRealVar("aMuMass", "aMuMass", 25, 65);
+        //var = new RooRealVar("aMuMass", "aMuMass", 20, 70);
+        var = new RooRealVar("aMuMass", "aMuMass", 20, 62.5);
+	cout <<"------> "<<endl;
         w->import(*var);
-        w->factory("MH[20,70]");
-        //w->factory("MH[25,65]");
+	cout<<"++++++>"<<endl;
+        //w->factory("MH[20,70]");
+        w->factory("MH[20,62.5]");
 	(w->var("MH"))->setConstant();
 	/* if(!WR){ */
 	/* 	cout<<"---------------------------"<<endl; */
@@ -143,15 +148,40 @@ public:
         /*         w->factory("y1[0.0147822]"); */
 	/*         w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)\",{MH,y0,y1})"); */
 	/* } */
-	
-	w->factory("y0[-447.2139]");
-	w->factory("y1[83.12874]");
-	w->factory("y2[-6.396835]");
-	w->factory("y3,0.2676367]");
-	w->factory("y4,-0.006570802]");
-	w->factory("y5,9.461177e-05]");
-	w->factory("y6,-7.396847e-07]");
-	w->factory("y7,2.42384e-09]");
+	if(Btag == "" || Btag == "TL"){// TL selection, presented in July 2017
+	  w->factory("y0[-7.766578]");
+          w->factory("y1[1.147819]");
+	  w->factory("y2[-0.03078328]");
+          w->factory("y3[0.000269546]");
+	  w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)+(@3*@0*@0)+(@4*@0*@0*@0)\",{MH,y0,y1,y2,y3})");
+	  /*w->factory("y0[-447.2139]");
+	  w->factory("y1[83.12874]");
+	  w->factory("y2[-6.396835]");
+	  w->factory("y3[0.2676367]");
+	  w->factory("y4[-0.006570802]");
+	  w->factory("y5[9.461177e-05]");
+	  w->factory("y6[-7.396847e-07]");
+	  w->factory("y7[2.42384e-09]");
+	  w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)+(@3*@0*@0)+(@4*@0*@0*@0)+(@5*@0*@0*@0*@0)+(@6*@0*@0*@0*@0*@0)+(@7*@0*@0*@0*@0*@0*@0)\",{MH,y0,y1,y2,y3,y4,y5,y6,y7})");*/
+	} else if(Btag == "TM") {
+          w->factory("y0[-5.50377]");
+          w->factory("y1[0.8219784]");
+	  w->factory("y2[-0.02273557]");
+          w->factory("y3[0.0002002749]");
+	  w->factory("FormulaVar::signal_norm(\"1.11*(@1+(@2*@0)+(@3*@0*@0)+(@4*@0*@0*@0))\",{MH,y0,y1,y2,y3})");
+	} else if(Btag == "TT") {
+          w->factory("y0[-3.150947]");
+          w->factory("y1[0.4178976]");
+	  w->factory("y2[-0.01142106]");
+          w->factory("y3[9.880509e-05]");
+	  w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)+(@3*@0*@0)+(@4*@0*@0*@0)\",{MH,y0,y1,y2,y3})");
+	} else if(Btag == "MM") {
+          w->factory("y0[-5.852334]");
+          w->factory("y1[0.8548474]");
+	  w->factory("y2[-0.02355233]");
+          w->factory("y3[0.0002067976]");
+	  w->factory("FormulaVar::signal_norm(\"@1+(@2*@0)+(@3*@0*@0)+(@4*@0*@0*@0)\",{MH,y0,y1,y2,y3})");
+	}
 	
 
         stringstream s;
@@ -200,11 +230,19 @@ public:
         w->factory("RooAddPdf::signal(Voig,CB,frac)");
 
     };
-
+	void SetCatName(TString nameCat = ""){
+		catName = nameCat;
+	}
+	void SetSigEff(double eff = 1.0){
+		sigEff = eff;
+	}
+	void SetBkgEff(double eff = 1.0){
+		bkgEff = eff;
+	}
     void BackgroundConstructor(double myBkg) {
-        RooCategory pdfindex("pdfindex", "c");
+        RooCategory pdfindex("pdfindex"+catName, "c");
 
-        RooArgList storedPdfs("store");
+        RooArgList storedPdfs("store"+catName);
 
         RooDataHist * dataHist = 0;
         stringstream poly;
@@ -295,20 +333,32 @@ public:
 
         }
 
-        RooMultiPdf multipdfsbkg("bkgshape", "", pdfindex, storedPdfs);
+        //Argus 
+        TFile * fargus = TFile::Open("wsArgus.root");
+        if (fargus != NULL) {
+            RooWorkspace * ArgusWS = (RooWorkspace*) fargus->Get("argusWS");
+            cout << "--------------------  " << ArgusWS << endl;
+	    RooArgusBG * pdf = (RooArgusBG*) ArgusWS->pdf("argus");
+	    RooDataSet * dataArgus = (RooDataSet*) ArgusWS->data("data");           
+	    pdf->fitTo(*dataArgus);
+	    storedPdfs.add(*pdf);
+	}
+
+
+        RooMultiPdf multipdfsbkg("bkgshape"+catName, "", pdfindex, storedPdfs);
         w->import(multipdfsbkg);
         stringstream NBKG;
         NBKG << myBkg << ", 0, " << 2 * myBkg;
         TString bkgName_ = NBKG.str().c_str();
-        w->factory("bkgshape_norm[" + bkgName_ + "]");
+        w->factory("bkgshape"+catName+"_norm[" + bkgName_ + "]");
     }
 
     void cardMaker() {
         stringstream Mass_;
         if (sigNormUnc == 0)
-            Mass_ << "SigmaBr";
+            Mass_ << "SigmaBr"+catName;
         else
-            Mass_ << "Br";
+            Mass_ << "Br"+catName;
 
         TString Val = Mass_.str().c_str();
         TString outname = "hamb_shape_"+Val+"_ws.txt";
@@ -327,7 +377,7 @@ public:
 
         myfile << "\n------------" << endl;
         myfile << "shapes\tsignal\tdimu\thamb-shapes-UnbinnedParam-" + Val + "-Data-fit.root w:signal" << endl; //$PROCESS_$CHANNEL w:$PROCESS_$CHANNEL_$SYSTEMATIC" << endl;
-        myfile << "shapes\tbkg\tdimu\thamb-shapes-UnbinnedParam-" + Val + "-Data-fit.root w:bkgshape" << endl;
+        myfile << "shapes\tbkg\tdimu\thamb-shapes-UnbinnedParam-" + Val + "-Data-fit.root w:bkgshape"+catName << endl;
         myfile << "shapes\tdata_obs\tdimu\thamb-shapes-UnbinnedParam-" + Val + "-Data-fit.root w:data" << endl;
         myfile << "------------" << endl;
         myfile << "bin\tdimu" << endl;
@@ -336,7 +386,7 @@ public:
         myfile << "bin\tdimu\tdimu" << endl;
         myfile << "process\tsignal\tbkg" << endl;
         myfile << "process\t0\t1" << endl;
-        myfile << "rate\t1.0\t1.0" << endl;
+        myfile << "rate\t"<<sigEff<<"\t"<<bkgEff<< endl;
         myfile << "------------" << endl;
         myfile << "lumi_8TeV\tlnN\t1.026\t-" << endl;
         if (sigNormUnc != 0){
@@ -355,7 +405,7 @@ public:
 	    else
 		myfile << x.first << "\tparam\t" << x.second.first << "\t" << x.second.second.first << "/+" << x.second.second.second << endl;
         }
-        myfile << "pdfindex\tdiscrete" << endl;
+        myfile << "pdfindex"+catName+"\tdiscrete" << endl;
         myfile.close();
     }
 
@@ -368,12 +418,8 @@ public:
         YieldErrors["PDF"] = make_pair(0.989, 1.008);
     }
 
-    void WriteWS(bool blind = true) {
-	TFile * f = 0;
-	if(!blind)
-		f = new TFile("DoubleMu2012_final_6_6.root", "READ");
-	else
-        	f = new TFile("DoubleMu2012_Summer12_final_CR_4_4.root", "READ");
+    void WriteWS(TString inFile) {
+	TFile * f = new TFile(inFile, "READ");
         TTree* hh = (TTree*) f->Get("Hamb/Trees/Events");
         RooDataSet data("data", "data", hh, *var, "");
         w->import(data);
@@ -388,9 +434,9 @@ public:
         stringstream S;
         //S << mass;
         if (sigNormUnc == 0)
-            S << "SigmaBr";
+            S << "SigmaBr"+catName;
         else
-            S << "Br";
+            S << "Br"+catName;
         TString fname = S.str().c_str();
         fname = "hamb-shapes-UnbinnedParam-" + fname + "-Data-fit.root";
         w->writeToFile(fname);
@@ -399,13 +445,14 @@ public:
     virtual ~WSProvider() {
     };
 private:
-    double sigNormUnc;
+    double sigNormUnc, sigEff, bkgEff;
     bool WR;
     FixedParams Fixeds;
     MeanErr MeanErrors;
     std::map<TString, std::pair <double, double> > YieldErrors;
     RooRealVar * var;
     RooWorkspace * w;
+	TString catName;
 };
 
 #endif	/* WSPROVIDER_H */
