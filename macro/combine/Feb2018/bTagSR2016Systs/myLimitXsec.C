@@ -539,7 +539,11 @@ void myLimitXsec()
    TColor *color; // for color definition with alpha
    ci = TColor::GetColor("#00ff00");
    grae->SetFillColor(ci);
+   grae->SetName("graph2sigma");
    grae->Draw("ap3");
+
+   TFile* fout = TFile::Open("myLimitXsec.root" , "recreate");
+   grae->Write();
    
    Double_t g1_fx3005[86] = {
    20,
@@ -1070,7 +1074,10 @@ void myLimitXsec()
    ci = TColor::GetColor("#ffff00");
    grae->SetFillColor(ci);
    grae->Draw("p3");
-   
+   grae->SetName("graph1sigma");
+   fout->cd();
+   grae->Write();
+     
    Double_t g00_fx3006[86] = {
    20,
    20.5,
@@ -1603,6 +1610,8 @@ void myLimitXsec()
    grae->SetLineStyle(2);
    grae->SetLineWidth(2);
    grae->Draw("p");
+   fout->cd();
+   grae->Write("median");
    c1_n2->Modified();
    c1_n2->cd();
    c1_n2->SetSelected(c1_n2);

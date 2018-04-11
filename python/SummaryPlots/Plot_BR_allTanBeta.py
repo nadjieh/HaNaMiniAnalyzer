@@ -1,4 +1,4 @@
-from RecoLuminosity.LumiDB import argparse
+import argparse as argparse
 import math
 import os
 from HttStyles import GetStyleHtt
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     g1.Draw("AC")
     g1.GetXaxis().SetRangeUser(0.1,5);
     g1.GetXaxis().SetLimits(0.1,5);
-    g1.SetLineColor(ROOT.EColor.kOrange)
+    g1.SetLineColor(ROOT.kOrange)
     g1.SetMinimum(0.0000000001);
     g1.SetMaximum(1);
     g1.GetXaxis().SetTitle("tan #beta");
@@ -209,15 +209,15 @@ if __name__ == "__main__":
     g1.SetLineStyle(1)
     g1.Draw("AC")
     canvas.Update();
-    g2.SetLineColor(ROOT.EColor.kPink-3)
+    g2.SetLineColor(ROOT.kPink-3)
     g2.SetLineWidth(5)
     g2.SetLineStyle(2)
     g2.Draw("same")
-    g3.SetLineColor(ROOT.EColor.kGreen+1)
+    g3.SetLineColor(ROOT.kGreen+1)
     g3.SetLineWidth(5)
     g3.SetLineStyle(7)
     g3.Draw("same")
-    g4.SetLineColor(ROOT.EColor.kViolet-5)
+    g4.SetLineColor(ROOT.kViolet-5)
     g4.SetLineWidth(5)
     g4.SetLineStyle(8)
     g4.Draw("same")
