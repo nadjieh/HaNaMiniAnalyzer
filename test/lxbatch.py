@@ -41,7 +41,7 @@ FailedJobs = {}
 if CheckFailedJobs:
     for sample in samples:
     	#if not sample.Name.count("GGH") : #for signal sample systs 
-        if sample.Name.count("GGH") or sample.Name.count("DoubleMu"): #for signal sample systs 
+        if not sample.Name.count("DoubleMu"): #for signal sample systs 
             continue
 
         ListOfFailedJobs = []
@@ -79,7 +79,7 @@ file = open("%s/submit.sh" % (workingdir) , "w" )
 for sample in samples:
 
     #if not sample.Name.count("GGH") :                                                                                                                                                              
-    if sample.Name.count("GGH") or sample.Name.count("DoubleMu"):
+    if not sample.Name.count("DoubleMu"):
         continue
 
 

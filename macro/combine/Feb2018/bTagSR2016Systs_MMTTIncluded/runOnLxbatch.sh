@@ -2,10 +2,12 @@
 if [ ! -z "$LSB_JOBINDEX" ];
 then
     echo $LSB_JOBINDEX
-    export MASS=`echo "$LSB_JOBINDEX * MASSSTEP + 19.5" | bc`
+    export MASS=`echo "$LSB_JOBINDEX * MASSSTEP + 20 - MASSSTEP" | bc`
 else
     export MASS=35
 fi
+echo $MASS
+export MASS=`printf "%.0f" $MASS`
 echo $MASS
 
 cd /afs/cern.ch/user/h/hbakhshi/work/tHq/CMSSW_7_4_7/

@@ -26,13 +26,13 @@ masses = numpy.linspace( 20 , 62.5 , 17 , endpoint=False )
 total_points = 0
 for tanbeta in tanbetas:
     print tanbeta
-    dirName = "%s/model%d/tanbeta%d" % (cwd , modeltype ,tanbeta*100)
+    dirName = "%s/model%d/tanbeta%d" % (cwd , modeltype , tanbeta*100)
     os.makedirs( dirName )
 
     with open("runOnLxbatch.sh", "rt") as fin:
         with open( dirName + "/runOnLxbatch.sh" , "wt") as fout:
             for line in fin:
-                lout = line.replace( "MODEL" , "%d"%modeltype  ).replace( "TANBETA" , "%d"%tanbeta*10  ).replace( "MASSSTEP" , "%.4f" % (42.5 / 17) )
+                lout = line.replace( "MODEL" , "%d"%modeltype  ).replace( "TANBETA" , "%d"% (tanbeta*100)  ).replace( "MASSSTEP" , "%.4f" % (42.5 / 17) )
                 fout.write( lout )
 
     st = os.stat(dirName + "/runOnLxbatch.sh")
@@ -75,7 +75,8 @@ for tanbeta in tanbetas:
 
     total_points += len(mass_indices)
     print "\t" , len(mass_indices) # , [masses[i] for i in mass_indices]
-    submitLx.write( "cd " + dirName + "\n" )
-    submitLx.write( 'bsub -q 1nh -J "tanB%.1f' % (tanbeta) + str(mass_indices).replace(" " , "") + '" -o HambCombine%I.out `pwd`/runOnLxbatch.sh\n' )
+    if len(mass_indices) != 0:
+        submitLx.write( "cd " + dirName + "\n" )
+        submitLx.write( 'bsub -q 1nh -J "tanB%.1f' % (tanbeta) + str(mass_indices).replace(" " , "") + '" -o HambCombine%I.out `pwd`/runOnLxbatch.sh\n' )
         
 print total_points, 1.0*total_points/( len(masses)*len(tanbetas) )

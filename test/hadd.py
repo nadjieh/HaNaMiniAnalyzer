@@ -23,11 +23,11 @@ for sample in samples:
 
 from Haamm.HaNaMiniAnalyzer.ExtendedSample import *
 for sample in samples:
-    if "GGHmmtt" not in sample.Name :#in toAddSamples:
+    if "GGH" in sample.Name :#in toAddSamples:
 	continue
     #    print "skipping " + sample.Name
     #    continue
     ss = ExtendedSample(sample)
     #export EOS_MGM_URL=root://eosuser.cern.ch
     #eosmount eos_cb
-    ss.fhadd("./Hamb13_bbtt/")
+    ss.fhadd("./Hamb13_bbttUnderZPeak_andmmtt/")
