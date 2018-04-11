@@ -188,6 +188,8 @@ class LimitReader:
         self.AllGraphs = {-2:self.gm2sigma , -1:self.gm1sigma , 0:self.MedianGraph , +1:self.gp1sigma , +2:self.gp2sigma }
         self.MassLimits = {}
 
+        self.EfficiencyReader = EfficiencyReader()
+        
     def ProduceUpDownPlots(self, graph , w ):
         x_ = []
         y_ = []
@@ -209,20 +211,29 @@ class LimitReader:
         return ret
         
     def GetLimit(self , mass , index = 0 ):
-        return self.AllGraphs[index].Eval( mass , 0 , "S" )
-        
-    def GetModelLimit( self , modelType , mass , tanB , index = 0 ):
         if mass in self.MassLimits :
             limit = self.MassLimits[mass]
         else :
-            limit = self.GetLimit(mass , index)
+            limit = self.AllGraphs[index].Eval( mass , 0 , "S" )/1.114
             self.MassLimits[mass] = limit
+
+        return limit
+        
+    def GetModelLimit( self , modelType , mass , tanB , index = 0 ):
+        limit = self.GetLimit(mass , index)
         width=get_total_width(modelType,mass,tanB)
     	BRmm=gamma_mu(tanB,mass,modelType)/width
   	BRbb=gamma_quarks(tanB,mass,modelType,6)/width
         ysm=(limit/(2*BRmm*BRbb))
         return ysm , limit , width , BRmm , BRbb
 
+    def GetModelLimitTTNormalized(self , modelType , mass , tanB , index = 0 ):
+        mmbb = self.EfficiencyReader.GetSignalYields( "mmbb" , "total" , tanB , mass , modelType , 1. , 1. , 1.)
+        mmtt = self.EfficiencyReader.GetSignalYields( "mmtt" , "total" , tanB , mass , modelType , 1. , 1. , 1. )
+        upperbound = self.GetModelLimit( modelType , mass , tanB , index )[0]
+        ratio = 1.0 + mmtt/mmbb
+        return upperbound/ratio , ratio , upperbound
+    
     def ProduceGraphTanbBeta( self, modelType , tanB , minM = 20 , maxM = 62.5 , bins = 200 , ymax = None ):
         name = "vsMass%.2f_%.2f_%d_tbeta%.2f_model%d" % (minM , maxM , bins , tanB , modelType )
         if hasattr( self , name ):

@@ -2,7 +2,7 @@
 if [ ! -z "$LSB_JOBINDEX" ];
 then
     echo $LSB_JOBINDEX
-    export MASS=$LSB_JOBINDEX
+    export MASS=`echo "$LSB_JOBINDEX * MASSSTEP + 19.5" | bc`
 else
     export MASS=35
 fi
