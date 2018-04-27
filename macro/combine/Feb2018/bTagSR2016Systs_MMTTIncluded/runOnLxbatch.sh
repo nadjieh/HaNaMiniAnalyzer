@@ -7,7 +7,7 @@ else
     export MASS=35
 fi
 echo $MASS
-export MASS=`printf "%.0f" $MASS`
+export MASS=`printf "%.2f" $MASS`
 echo $MASS
 
 cd /afs/cern.ch/user/h/hbakhshi/work/tHq/CMSSW_7_4_7/

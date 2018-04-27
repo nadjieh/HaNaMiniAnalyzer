@@ -112,3 +112,37 @@ MiniAOD80Samples.append(GGHmmtt4080)
 
 GGHmmtt6080 = Sample( "GGHmmtt60", 48.5800*1.7*0.0001,False, "/SUSYGluGluToHToAA_AToMuMu_AToTauTau_M-60_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM")
 MiniAOD80Samples.append(GGHmmtt6080)
+
+DYMGInclusive10To50 = Sample( "DYMGInclusive10To50" , 1 , True , "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMGInclusive10To50 )
+
+DYMGInclusive50Ext1 = Sample( "DYMGInclusive50Ext1" , 1 , True , "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/MINIAODSIM" )
+MiniAOD80Samples.append( DYMGInclusive50Ext1 )
+
+DYMGInclusive50Ext2 = Sample( "DYMGInclusive50Ext2" , 1 , True , "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMGInclusive50Ext2 )
+
+DYMG1J10To50 = Sample( "DYMG1J10To50" , 1 , True , "/DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG1J10To50 )
+
+DYMG1J50 = Sample( "DYMG1J50" , 1 , True , "/DY1JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG1J50 )
+
+DYMG2J10To50 = Sample( "DYMG2J10To50" , 1 , True , "/DY2JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG2J10To50 )
+
+DYMG2J50 = Sample( "DYMG2J50" , 1 , True , "/DY2JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG2J50 )
+
+DYMG3J10To50 = Sample( "DYMG3J10To50" , 1 , True , "/DY3JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG3J10To50 )
+
+DYMG3J50 = Sample( "DYMG3J50" , 1 , True , "/DY3JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG3J50 )
+
+DYMG4J10To50 = Sample( "DYMG4J10To50" , 1 , True , "/DY4JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG4J10To50 )
+
+DYMG4J50 = Sample( "DYMG4J50" , 1 , True , "/DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG4J50 )
+

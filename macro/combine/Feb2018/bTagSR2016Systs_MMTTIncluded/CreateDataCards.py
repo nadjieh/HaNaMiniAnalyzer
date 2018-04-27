@@ -14,13 +14,13 @@ mass_var = InWS.arg("MH")
 
 efficiencies = mmbb.EfficiencyReader()
 limitReader = mmbb.LimitReader( "../bTagSR2016Systs/myLimitXsec.root" )
-modeltype = 3
+modeltype = 4
 
-os.mkdir( "model%d" % modeltype )
+os.makedirs( "model%d" % modeltype )
 submitLx = open( "model%d/submit.sh" % modeltype , "w")
 
 #masses = [20 , 30 , 40 , 45 , 50 , 55 , 60]
-tanbetas = numpy.linspace( 0.01 , 10.01 , 100 )
+tanbetas = numpy.linspace( 0.01 , 10.01 , 100 , endpoint=False )
 masses = numpy.linspace( 20 , 62.5 , 17 , endpoint=False )
 
 total_points = 0
@@ -42,16 +42,23 @@ for tanbeta in tanbetas:
     for mass_i in range(len(masses)):
         mass = masses[mass_i]
 
-        newupperbound, tb_ratio , old_limit = limitReader.GetModelLimitTTNormalized(modeltype , mass , tanbeta , index = 0 )
-        if newupperbound > 2.0 or tb_ratio < 0.01 :
-            continue
+        #newupperbound, tb_ratio , old_limit = limitReader.GetModelLimitTTNormalized(modeltype , mass , tanbeta , index = 0 )
+        #if not( newupperbound > 2.0 or tb_ratio < 0.01 ):
+        #    continue
 
         mass_indices.append( mass_i+1 )
         mass_var.setVal( float(mass) )
         yieldinws = signalNorm.getVal()
+        #defaultBRammbb = 1.7*0.001
+        #crossSecCorr = 1.1137
+        #HtoaaYieldWs = yieldinws*crossSecCorr/defaultBRammbb
         totalyields = efficiencies.GetSignalYields( "mmbb" , "total" , 2.0 , mass , 3. )
+        #HtoaaHamedYield = totalyields/efficiencies.GetBR( "mmbb" , 2.0 , mass , 3. )
+        #myCF = HtoaaYieldWs/HtoaaHamedYield
         correctedTotalYield = (1.7*0.001*totalyields)/(efficiencies.GetBR( "mmbb" , 2.0 , mass , 3. )*1.114)
         correctionfactor = 1.0/correctedTotalYield
+        #correctionfactor = 1.0/yieldinws
+
         
         Ratio_TTM , Ratio_TTT = efficiencies.GetSignalYields( "mmbb" , "TT" , tanbeta , mass , modeltype ) ,  efficiencies.GetSignalYields( "mmtt" , "TT" , tanbeta , mass , modeltype ) 
         Ratio_TMM , Ratio_TMT = efficiencies.GetSignalYields( "mmbb" , "TM" , tanbeta , mass , modeltype ) ,  efficiencies.GetSignalYields( "mmtt" , "TM" , tanbeta , mass , modeltype )
@@ -68,7 +75,7 @@ for tanbeta in tanbetas:
         # print "\t\t" , "TL" , Ratio_TL , Ratio_TLT/(Ratio_TLM+Ratio_TLT)
         
         with open("bTagSR2016Systs.txt", "rt") as fin:
-            with open( dirName + "/Mass%d.txt"%(mass), "wt") as fout:
+            with open( dirName + "/Mass%.2f.txt"%(mass), "wt") as fout:
                 for line in fin:
                     lout = line.replace( "TLSIG" , "%.6f"%Ratio_TL  ).replace( "TMSIG" , "%.6f"%Ratio_TM  ).replace( "TTSIG" , "%.6f"%Ratio_TT  )
                     fout.write( lout )

@@ -32,6 +32,15 @@ class EfficiencyReader:
         self.TempList = []
 
     def GetEfficiency(self , sample , catName , mass ):
+        # if sample == "mmbb" and catName != "total":
+        #     totalEff = self.GetTotalEff( sample , mass )
+        #     if catName == "TT" :
+        #         return 0.27*totalEff
+        #     elif catName == "TM" :
+        #         return 0.32*totalEff
+        #     elif catName == "TL" :
+        #         return 0.41*totalEff
+
         if catName == "total":
             return self.GetTotalEff( sample , mass )
         else :
@@ -46,7 +55,10 @@ class EfficiencyReader:
     def GetTotalEff(self, sample , mass):
         eff = 0.0
         for cat in self.CatNames :
-            eff += self.GetEfficiency(sample , cat , mass )
+            if sample == "mmbb" :
+                eff += self.GetMMBBEfficiency( cat , mass )
+            else :
+                eff += self.GetEfficiency(sample , cat , mass )
         return eff
         
 
