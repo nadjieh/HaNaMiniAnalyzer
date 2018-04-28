@@ -1,7 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 Hamb = cms.EDFilter('TreeHamb',
                     LHE = cms.PSet ( useLHEW = cms.bool( False ),
-                                     Input = cms.InputTag("externalLHEProducer")
+                                     Input = cms.InputTag("externalLHEProducer"),
+                                     cutOnNGenJets = cms.untracked.int32( -1 )
                                      ),
 
                     HLT_Mu17Mu8 = cms.PSet( Input = cms.InputTag( "TriggerResults","","HLT" ), 

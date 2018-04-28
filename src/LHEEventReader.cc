@@ -3,7 +3,7 @@
 LHEEventReader::LHEEventReader( edm::ParameterSet const& iPS, edm::ConsumesCollector && iC) :
   BaseEventReader< LHEEventProduct >( iPS , &iC )
 {
-  
+  cutOnNGenJets = iPS.getUntrackedParameter<int>("cutOnNGenJets" , -1 );
 }
 
 double LHEEventReader::Read( const edm::Event& iEvent ){
@@ -23,6 +23,10 @@ double LHEEventReader::Read( const edm::Event& iEvent ){
       ++NGenJets;
     }
   } 
+
+  if( cutOnNGenJets > -1 )
+    if( NGenJets != cutOnNGenJets )
+      return 0.0 ;
 
   return WeightSign;
 }

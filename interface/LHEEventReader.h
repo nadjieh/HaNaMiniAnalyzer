@@ -15,6 +15,7 @@ public:
   double WeightSign;
 
   int NGenJets ;
+  int cutOnNGenJets ;
 private :
 
 };
