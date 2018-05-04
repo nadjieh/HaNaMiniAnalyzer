@@ -1,0 +1,31 @@
+imax 1 number of bins
+jmax 1 number of processes minus 1
+kmax 14 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes bkg       TLexc       HAMB2016.root wTLexc:bkgshape_TLexc
+shapes data_obs  TLexc       HAMB2016.root wTLexc:data
+shapes signal    TLexc       HAMB2016.root wTLexc:signal_TLexc
+----------------------------------------------------------------------------------------------------------------------------------
+bin          TLexc
+observation  -1.0
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             TLexc	TLexc
+process                         signal       bkg    
+process                         0            1      
+rate                            0.4100	     0.2300
+----------------------------------------------------------------------------------------------------------------------------------
+JES                     lnN     1.005/0.980  -
+MET                     lnN     1.005/0.990  -
+PDF                     lnN     0.989/1.008  -
+btag_JES                lnN     0.890/1.430  -
+btag_lf                 lnN     0.840/1.220  -
+lumi	                lnN     1.025        -
+muonHLT                 lnN     1.006/0.994  -
+muonID                  lnN     0.986/1.014  -
+muonIso                 lnN     0.986/1.014  -
+pileup                  lnN     0.980/1.020  -
+signalTHunc             lnN     1.13         -
+a1            param  0.0000 0.0004
+m1            param  0.0000 0.0001
+b1            param  0.0110 0.0001
+pdfindex_TLexc  discrete
