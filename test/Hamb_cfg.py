@@ -233,6 +233,13 @@ else :
 
         AddSystematics( "BShape"  , "Jets" , "BTagUncertainty"  , -1)
 
+    if theSample.Name.count("DYMGInclusive"):
+        process.Hamb.LHE.cutOnNGenJets = 0
+        for nJ in range(1,10):
+            setattr( process , "Hamb%dJ" % nJ , process.Hamb.clone() )
+            getattr( process , "Hamb%dJ" % nJ ).LHE.cutOnNGenJets=nJ
+            setattr( process , "Path%dJ" % nJ , cms.Path( getattr( process , "Hamb%dJ" % nJ ) ) )
+
         
 process.outp1=cms.OutputModule("PoolOutputModule",
    outputCommands = cms.untracked.vstring('keep *'), 

@@ -14,6 +14,8 @@ public:
   double Read( const edm::Event& iEvent ) override;
   double WeightSign;
 
+  int NGenJets ;
+  int cutOnNGenJets ;
 private :
 
 };

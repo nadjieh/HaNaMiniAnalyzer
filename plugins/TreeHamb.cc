@@ -55,6 +55,9 @@ protected:
   std::vector<float> muIsoNeutralHadronEt;
   std::vector<float> muIsoPhotonEt;
   std::vector<float> muPUPt;
+
+  int nGenJets ;
+
   TTree* theSelectionResultTree;
   unsigned int nHistos;
   bool MakeTree,forOptimization;
@@ -144,6 +147,7 @@ protected:
     muIsoNeutralHadronEt.clear();
     muIsoPhotonEt.clear();
     muPUPt.clear();
+    nGenJets = 0;
     particleinfo tmp;
     aMu = aBjetPtOrdered =  higgsjetPtOrdered = aBjetBtagOrdered = higgsjetBtagOrdered = tmp ;
     hltWeights tmp2;
@@ -223,6 +227,7 @@ void TreeHamb::beginJob()
     	theSelectionResultTree->Branch("muPUPt",(&muPUPt));
     }
 
+    theSelectionResultTree->Branch("nGenJets", &nGenJets);
     theSelectionResultTree->Branch("met", &met);
     theSelectionResultTree->Branch("metSig", &metSig);
 
@@ -266,15 +271,18 @@ bool TreeHamb::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 
   
-  if( nHistos > 1 && SampleName == "Signal" ) {
-    LHEReader->Read( iEvent );
-    //W = LHEReader->ExtractWeightsInRange( 446 , 495 ); // To be checked for HiggsExo
-  }
-
   stepEventSelection = 0;
 
-  if( geninfoReader )
+  if( geninfoReader ){
     W *= geninfoReader->Read( iEvent );
+
+    double passLHECuts = LHEReader->Read( iEvent );
+    if( passLHECuts == 0.0 )
+      return false;
+    nGenJets = LHEReader->NGenJets;
+    cout << "event with " << nGenJets << " passed the criteria" << endl;
+    //W = LHEReader->ExtractWeightsInRange( 446 , 495 ); // To be checked for HiggsExo
+  }
   hCutFlowTable->Fill( ++stepEventSelection , W );
 
 //---------- HLT --------

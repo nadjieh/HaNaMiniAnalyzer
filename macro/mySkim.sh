@@ -125,3 +125,19 @@
 ./skimtree dir Hamb mc DYMGInclusive10To50.root  Mode mHcut 
 ./skimtree dir Hamb mc DYMGInclusive50Ext1.root  Mode mHcut 
 ./skimtree dir Hamb mc DYMGInclusive50Ext2.root  Mode mHcut 
+
+###auto loop!
+#mkdir out
+#for f in ../test/Hamb13_bbttUnderZPeak_andmmtt/*.root
+#do
+#    ln -s $f
+#    base=`basename $f`
+#    echo $f $base
+#    ./skimtree dir Hamb mc $base Mode Opt
+#     echo "\tOpt done"
+#     rm -f $base
+#     mv out/Hamb$base $base
+#     ./skimtree dir Hamb mc $base Mode mHcut
+#     rm -f $base
+#     echo "\tmHcut done"
+# done

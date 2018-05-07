@@ -30,8 +30,8 @@ def GetSample( s ):
 
 
 nTuples = "%s/Hamb13/June06_Full2016_MassProd/withSelVariables/withMoreBtags/" %(LOCATION)
-#nSystTuples = "%s/Hamb13/March02_Full2016_MassProd_CorrectBtag/withSelVariables/withMoreBtags/" %(LOCATION)
-nSystTuples = "%s/Hamb13/March02_Full2016_MassProd_CorrectBtag/withSelVariables/withMoreBtags/2jets/" %(LOCATION)
+nSystTuples = "%s/Hamb13/March02_Full2016_MassProd_CorrectBtag/withSelVariables/withMoreBtags/" %(LOCATION)
+#nSystTuples = "%s/Hamb13/March02_Full2016_MassProd_CorrectBtag/withSelVariables/withMoreBtags/2jets/" %(LOCATION)
 
 #nSystTuples = "%s/Hamb13/June06_Full2016_MassProd/SystSignal27Feb/withSelVariables/withMoreBtags/" %(LOCATION)
 #nTuples = "/home/hbakhshi/Downloads/Hamb_Nadjieh/withSelVariables/"
@@ -69,14 +69,20 @@ if len(sys.argv) == 3:
 
 signalsamples = []
 #signalsamples.append (SampleType( "Signal15" , kAzure+10 , [ GetSample(GGH1580) ] , nTuples , True ))
-signalsamples.append (SampleType( "Signal20" , kBlue+2 , [ GetSample(GGH2080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signal25" , kCyan+2	, [ GetSample(GGH2580) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signal30" , kTeal+10 , [ GetSample(GGH3080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signal40" , kYellow+2 , [ GetSample(GGH4080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signal45" , kOrange-2 , [ GetSample(GGH4580) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signal50" , kOrange+10 , [ GetSample(GGH5080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signal55" , kRed+2 , [ GetSample(GGH5580) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signal60" , kPink+10 , [ GetSample(GGH6080) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal20" , kBlue+2 , [ GetSample(GGH2080) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal25" , kCyan+2	, [ GetSample(GGH2580) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal30" , kTeal+10 , [ GetSample(GGH3080) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal40" , kYellow+2 , [ GetSample(GGH4080) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal45" , kOrange-2 , [ GetSample(GGH4580) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal50" , kOrange+10 , [ GetSample(GGH5080) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal55" , kRed+2 , [ GetSample(GGH5580) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signal60" , kPink+10 , [ GetSample(GGH6080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt20" , kBlue+2 , [ GetSample(GGHmmtt2080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt40" , kYellow+2 , [ GetSample(GGHmmtt4080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt60" , kPink+10 , [ GetSample(GGHmmtt6080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalbbtt20" , kOrange-2 , [ GetSample(GGHbbtt2080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalbbtt40" , kOrange+10 , [ GetSample(GGHbbtt4080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalbbtt60" , kRed+2 , [ GetSample(GGHbbtt6080) ] , nSystTuples , True ))
 
 nTotals = {}
             
@@ -84,9 +90,9 @@ from Haamm.HaNaMiniAnalyzer.Plotter import *
 plotter = Plotter()
 listofdata = [GetSample(s) for s in MiniAOD80Samples if s.IsData]
 dataSamples2 = SampleType("Data" , kBlack , listofdata  , nTuples  ) # , additionalCut="(higgsMass > 135 || higgsMass < 115)"
-allSTs = [ dataSamples2 , DiBosonSamples, TopSamples, DYSamples ]
-if(len(sys.argv) == 3):
-    allSTs = [ dataSamples2 , SampleType( "Signal200" , kBlue+2 , [ GetSample(GGH2080) ] , nSystTuples )]#DiBosonSamples, TopSamples, DYSamples ]
+#allSTs = [ dataSamples2 , DiBosonSamples, TopSamples, DYSamples ]
+#if(len(sys.argv) == 3):
+allSTs = [ dataSamples2, SampleType( "Signalmmtt2000" , kBlue+2 , [ GetSample(GGHmmtt2080) ] , nSystTuples , True )]#DiBosonSamples, TopSamples, DYSamples ]
 
 allSTs.extend(signalsamples)
 for st in allSTs :

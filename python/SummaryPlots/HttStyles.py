@@ -1,6 +1,6 @@
 #include "/user/ccaillol/VH/Combinaison_VH_13/CMSSW_5_3_7/src/HiggsAnalysis/HiggsToTauTau/interface/HttStyles.h"
 import ROOT
-ROOT.gROOT.SetBatch(True)
+#ROOT.gROOT.SetBatch(True)
 from array import array
 #ROOT.gROOT.ProcessLine('.x tdrStyle.C')
 

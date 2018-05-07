@@ -28,6 +28,9 @@ def GetSample( s ):
         return s
 
 nTuples = "%s/Hamb13/March02_Full2016_MassProd_CorrectBtag/withSelVariables/withMoreBtags/" %(LOCATION)
+nSystTuples = "%s/Hamb13/March02_Full2016_MassProd_CorrectBtag/withSelVariables/withMoreBtags/" %(LOCATION)
+nTuples = nSystTuples
+
 datanTuples = "%s/Hamb13/June06_Full2016_MassProd/withSelVariables/withMoreBtags/" %(LOCATION)
 #nTuples = "/home/hbakhshi/Downloads/Hamb_Nadjieh/withSelVariables/"
 
@@ -68,6 +71,13 @@ signalsamples.append (SampleType( "Signal45" , kOrange-2 , [ GetSample(GGH4580) 
 signalsamples.append (SampleType( "Signal50" , kOrange+10 , [ GetSample(GGH5080) ] , nTuples , True ))
 signalsamples.append (SampleType( "Signal55" , kRed+2 , [ GetSample(GGH5580) ] , nTuples , True ))
 signalsamples.append (SampleType( "Signal60" , kPink+10 , [ GetSample(GGH6080) ] , nTuples , True ))
+
+signalsamples.append (SampleType( "Signalmmtt20" , kBlue+2 , [ GetSample(GGHmmtt2080) ] , nTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt40" , kYellow+2 , [ GetSample(GGHmmtt4080) ] , nTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt60" , kPink+10 , [ GetSample(GGHmmtt6080) ] , nTuples , True ))
+signalsamples.append (SampleType( "Signalbbtt20" , kOrange-2 , [ GetSample(GGHbbtt2080) ] , nTuples , True ))
+signalsamples.append (SampleType( "Signalbbtt40" , kOrange+10 , [ GetSample(GGHbbtt4080) ] , nTuples , True ))
+signalsamples.append (SampleType( "Signalbbtt60" , kRed+2 , [ GetSample(GGHbbtt6080) ] , nTuples , True ))
 
 nTotals = {}
             
@@ -162,7 +172,7 @@ for cut in cuts :
         cut.AddHist( "Jet1Eta" , "jetsEta[0]" , 10 ,-2.5 , 2.5 , False , Title="jet_{lead.} #eta" , dirName="Jets")
         cut.AddHist( "Jet2Eta" , "jetsEta[1]" , 10 , -2.5 , 2.5 , False , Title="jet_{sub-lead.} #eta" , dirName="Jets"  )
     chi2sum = cut.AddHist( "chi2Sum" , "chi2Sum", 25 , 0. , 50., False , Title="#chi^{2}_{H}+#chi^{2}_{a#rightarrowbb}", dirName="Jets")
-    amuMass = cut.AddHist( "amuMass" , "aMuMass", 25 , 20 , 70 , Title="#mu#mu mass" , dirName="General")
+    amuMass = cut.AddHist( "amuMass" , "aMuMass", 95 , 10 , 200 , Title="#mu#mu mass" , dirName="General")
     cut.AddHist( "HiggsMass" , "higgsMass" , 46 , 75 , 305, False , Title="m_{#mu#mubb}" , dirName="MuMU" )
     cut.AddHist( "HiggsPt" , "higgsPt" , 30 , 0. , 300., False , Title="p_{T}^{#mu#mubb}", dirName="MuMubb")
     cut.AddHist( "chi2B" , "chi2B", 25 , 0. , 50., False , Title="#chi^{2}_{a#rightarrowbb}" , dirName="bb")

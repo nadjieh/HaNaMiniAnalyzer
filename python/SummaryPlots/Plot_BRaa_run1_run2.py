@@ -1,10 +1,12 @@
-from RecoLuminosity.LumiDB import argparse
+import argparse as argparse
+#from RecoLuminosity.LumiDB import argparse
 import math
 import os
 from HttStyles import GetStyleHtt
 from HttStyles import MakeCanvas
 import ROOT
 import numpy as np
+from MuMu_bb import *
 from array import array
 from BR import get_total_width
 from BR import gamma_quarks
@@ -12,6 +14,7 @@ from BR import gamma_mu
 from BR import gamma_tau
 from BR import gamma_photon
 from BR import gamma_gg
+
 
 def add_lumi():
     lowX=0.355
@@ -108,6 +111,7 @@ def add_arxiv(channel,ma):
     lumi.AddText("arXiv:1312.4992")
     return lumi
 
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
@@ -121,6 +125,7 @@ if __name__ == "__main__":
 
     #### h->aa->mmtt ####
     x_mmtt1, y_mmtt1 = np.loadtxt('mmtt_obs.txt', unpack=True)
+    print x_mmtt1
     x_mmtt=array("d",x_mmtt1)
     y_mmtt=array("d",y_mmtt1)
     for i in range(0,len(x_mmtt)):
@@ -301,9 +306,8 @@ if __name__ == "__main__":
       gmmtt_shade.SetPoint(i,x_mmtt[i],ymax)
       gmmtt_shade.SetPoint(len(x_mmtt)+i,x_mmtt[len(x_mmtt)-i-1],y_mmtt[len(x_mmtt)-i-1])
     gmmtt_shade.SetFillStyle(3001)
-    adapt1=ROOT.gROOT.GetColor(ROOT.EColor.kPink+7)
-    new_idx1=ROOT.gROOT.GetListOfColors().GetSize() + 1
-    trans1=ROOT.TColor(new_idx1, adapt1.GetRed(), adapt1.GetGreen(),adapt1.GetBlue(), "",0.8)
+    adapt1=ROOT.gROOT.GetColor(ROOT.kPink+7)
+    trans1, new_idx1=newColor(adapt1.GetRed(), adapt1.GetGreen(),adapt1.GetBlue() )
     gmmtt_shade.SetFillColor(new_idx1)
 
     gmmttR2_shade = ROOT.TGraph(len(x_mmttR2))
@@ -311,9 +315,8 @@ if __name__ == "__main__":
       gmmttR2_shade.SetPoint(i,x_mmttR2[i],ymax)
       gmmttR2_shade.SetPoint(len(x_mmttR2)+i,x_mmttR2[len(x_mmttR2)-i-1],y_mmttR2[len(x_mmttR2)-i-1])
     gmmttR2_shade.SetFillStyle(3001)
-    adapt7=ROOT.gROOT.GetColor(ROOT.EColor.kCyan)
-    new_idx7=ROOT.gROOT.GetListOfColors().GetSize() + 1
-    trans7=ROOT.TColor(new_idx7, adapt7.GetRed(), adapt7.GetGreen(),adapt7.GetBlue(), "",0.8)
+    adapt7=ROOT.gROOT.GetColor(ROOT.kCyan)
+    trans7, new_idx7=newColor( adapt7.GetRed(), adapt7.GetGreen(),adapt7.GetBlue() )
     gmmttR2_shade.SetFillColor(new_idx7)
 
     gmmbb_shade = ROOT.TGraph(len(x_mmbb))
@@ -321,9 +324,8 @@ if __name__ == "__main__":
       gmmbb_shade.SetPoint(i,x_mmbb[i],ymax)
       gmmbb_shade.SetPoint(len(x_mmbb)+i,x_mmbb[len(x_mmbb)-i-1],y_mmbb[len(x_mmbb)-i-1])
     gmmbb_shade.SetFillStyle(3001)
-    adapt2=ROOT.gROOT.GetColor(ROOT.EColor.kGreen-3)
-    new_idx2=ROOT.gROOT.GetListOfColors().GetSize() + 1
-    trans2=ROOT.TColor(new_idx2, adapt2.GetRed(), adapt2.GetGreen(),adapt2.GetBlue(), "",0.8)
+    adapt2=ROOT.gROOT.GetColor(ROOT.kGreen-3)
+    trans2 , new_idx2 =newColor( adapt2.GetRed(), adapt2.GetGreen(),adapt2.GetBlue())
     gmmbb_shade.SetFillColor(new_idx2)
 
     gbbtt_shade = ROOT.TGraph(len(x_bbtt))
@@ -331,9 +333,8 @@ if __name__ == "__main__":
       gbbtt_shade.SetPoint(i,x_bbtt[i],ymax)
       gbbtt_shade.SetPoint(len(x_bbtt)+i,x_bbtt[len(x_bbtt)-i-1],y_bbtt[len(x_bbtt)-i-1])
     gbbtt_shade.SetFillStyle(3001)
-    adapt22=ROOT.gROOT.GetColor(ROOT.EColor.kRed+3)
-    new_idx22=ROOT.gROOT.GetListOfColors().GetSize() + 1
-    trans22=ROOT.TColor(new_idx22, adapt22.GetRed(), adapt22.GetGreen(),adapt22.GetBlue(), "",0.8)
+    adapt22=ROOT.gROOT.GetColor(ROOT.kRed+3)
+    trans22 , new_idx22 = newColor( adapt22.GetRed(), adapt22.GetGreen(),adapt22.GetBlue() )
     gbbtt_shade.SetFillColor(new_idx22)
 
 
@@ -342,9 +343,8 @@ if __name__ == "__main__":
       gtttt1_shade.SetPoint(i,x_tttt1[i],ymax)
       gtttt1_shade.SetPoint(len(x_tttt1)+i,x_tttt1[len(x_tttt1)-i-1],y_tttt1[len(x_tttt1)-i-1])
     gtttt1_shade.SetFillStyle(3001)
-    adapt3=ROOT.gROOT.GetColor(ROOT.EColor.kBlue-3)
-    new_idx3=ROOT.gROOT.GetListOfColors().GetSize() + 1
-    trans3=ROOT.TColor(new_idx3, adapt3.GetRed(), adapt3.GetGreen(),adapt3.GetBlue(), "",0.8)
+    adapt3=ROOT.gROOT.GetColor(ROOT.kBlue-3)
+    trans3 , new_idx3=newColor( adapt3.GetRed(), adapt3.GetGreen(),adapt3.GetBlue() )
     gtttt1_shade.SetFillColor(new_idx3)
 
     gtttt2_shade = ROOT.TGraph(len(x_tttt2))
@@ -352,20 +352,18 @@ if __name__ == "__main__":
       gtttt2_shade.SetPoint(i,x_tttt2[i],ymax)
       gtttt2_shade.SetPoint(len(x_tttt2)+i,x_tttt2[len(x_tttt2)-i-1],y_tttt2[len(x_tttt2)-i-1])
     gtttt2_shade.SetFillStyle(3001)
-    adapt4=ROOT.gROOT.GetColor(ROOT.EColor.kOrange-3)
-    new_idx4=ROOT.gROOT.GetListOfColors().GetSize() + 1
-    trans4=ROOT.TColor(new_idx4, adapt4.GetRed(), adapt4.GetGreen(),adapt4.GetBlue(), "",0.8)
-    gtttt2_shade.SetFillColor(ROOT.EColor.kOrange-3)
+    adapt4=ROOT.gROOT.GetColor(ROOT.kOrange-3)
+    trans4 , new_idx4 =newColor( adapt4.GetRed(), adapt4.GetGreen(),adapt4.GetBlue())
+    gtttt2_shade.SetFillColor(ROOT.kOrange-3)
 
     gmmmm_shade = ROOT.TGraph(len(xsm))
     for i in range(0,len(xsm)):
       gmmmm_shade.SetPoint(i,xsm[i],ymax)
       gmmmm_shade.SetPoint(len(xsm)+i,xsm[len(xsm)-i-1],ysm[len(xsm)-i-1])
     gmmmm_shade.SetFillStyle(3001)
-    adapt5=ROOT.gROOT.GetColor(ROOT.EColor.kViolet-3)
-    new_idx5=ROOT.gROOT.GetListOfColors().GetSize() + 1
-    trans5=ROOT.TColor(new_idx5, adapt5.GetRed(), adapt5.GetGreen(),adapt5.GetBlue(), "",0.8)
-    gmmmm_shade.SetFillColor(ROOT.EColor.kViolet-3)
+    adapt5=ROOT.gROOT.GetColor(ROOT.kViolet-3)
+    trans5 , new_idx5=newColor( adapt5.GetRed(), adapt5.GetGreen(),adapt5.GetBlue() )
+    gmmmm_shade.SetFillColor(ROOT.kViolet-3)
 
     #### Vertical shaded areas for not valid computations ####
     shade1=ROOT.TGraph(2)
@@ -373,33 +371,33 @@ if __name__ == "__main__":
     shade1.SetPoint(2,5.2,0.00000000001)
     shade1.SetPoint(1,5.2,ymax)
     shade1.SetPoint(3,3,0.000000000001)
-    shade1.SetFillColor(ROOT.EColor.kWhite)
+    shade1.SetFillColor(ROOT.kWhite)
     shade1_2=shade1.Clone()
     shade1_2.SetFillStyle(3005)
-    shade1_2.SetFillColor(ROOT.EColor.kGray+1)
-    shade1_2.SetLineColor(ROOT.EColor.kWhite)
+    shade1_2.SetFillColor(ROOT.kGray+1)
+    shade1_2.SetLineColor(ROOT.kWhite)
 
     shade2=ROOT.TGraph(2)
     shade2.SetPoint(0,9.4,ymax)
     shade2.SetPoint(2,11.6,0.0000000000001)
     shade2.SetPoint(1,11.6,ymax)
     shade2.SetPoint(3,9.4,0.000000000001)
-    shade2.SetFillColor(ROOT.EColor.kWhite)
+    shade2.SetFillColor(ROOT.kWhite)
     shade2_2=shade2.Clone()
     shade2_2.SetFillStyle(3005)
-    shade2_2.SetFillColor(ROOT.EColor.kGray+1)
+    shade2_2.SetFillColor(ROOT.kGray+1)
 
     shade3=ROOT.TGraph(2)
     shade3.SetPoint(0,0.25,ymax)
     shade3.SetPoint(2,1,0.0000000000001)
     shade3.SetPoint(1,1,ymax)
     shade3.SetPoint(3,0.25,0.000000000001)
-    shade3.SetFillColor(ROOT.EColor.kWhite)
+    shade3.SetFillColor(ROOT.kWhite)
     shade3_2=shade3.Clone()
     shade3_2.SetFillStyle(3005)
-    shade3_2.SetFillColor(ROOT.EColor.kGray+1)
+    shade3_2.SetFillColor(ROOT.kGray+1)
 
-    adapt1=ROOT.gROOT.GetColor(ROOT.EColor.kPink+7)
+    adapt1=ROOT.gROOT.GetColor(ROOT.kPink+7)
 
     #### Plotting ####
     canvas = MakeCanvas("asdf","asdf",800,800)
@@ -423,22 +421,22 @@ if __name__ == "__main__":
     gmmttR2.SetLineWidth(1)
     gmmbb.SetLineWidth(1)
     gbbtt.SetLineWidth(1)
-    gmmtt.SetLineColor(ROOT.EColor.kPink+7)
-    gmmttR2.SetLineColor(ROOT.EColor.kCyan)
-    gmmbb.SetLineColor(ROOT.EColor.kGreen-3)
-    gbbtt.SetLineColor(ROOT.EColor.kRed+3)
-    gmmtt_e.SetLineColor(ROOT.EColor.kPink+7)
-    gmmtt_shade.SetLineColor(ROOT.EColor.kPink+7)
-    gmmttR2_e.SetLineColor(ROOT.EColor.kCyan)
-    gmmttR2_shade.SetLineColor(ROOT.EColor.kCyan)
-    gmmbb_e.SetLineColor(ROOT.EColor.kGreen-3)
-    gbbtt_e.SetLineColor(ROOT.EColor.kRed+3)
-    gmmtt_e.SetFillColor(ROOT.EColor.kPink+7)
-    gmmttR2_e.SetFillColor(ROOT.EColor.kCyan)
-    gmmbb_e.SetFillColor(ROOT.EColor.kGreen-3)
-    gmmbb_shade.SetLineColor(ROOT.EColor.kGreen-3)
-    gbbtt_e.SetFillColor(ROOT.EColor.kRed+3)
-    gbbtt_shade.SetLineColor(ROOT.EColor.kRed+3)
+    gmmtt.SetLineColor(ROOT.kPink+7)
+    gmmttR2.SetLineColor(ROOT.kCyan)
+    gmmbb.SetLineColor(ROOT.kGreen-3)
+    gbbtt.SetLineColor(ROOT.kRed+3)
+    gmmtt_e.SetLineColor(ROOT.kPink+7)
+    gmmtt_shade.SetLineColor(ROOT.kPink+7)
+    gmmttR2_e.SetLineColor(ROOT.kCyan)
+    gmmttR2_shade.SetLineColor(ROOT.kCyan)
+    gmmbb_e.SetLineColor(ROOT.kGreen-3)
+    gbbtt_e.SetLineColor(ROOT.kRed+3)
+    gmmtt_e.SetFillColor(ROOT.kPink+7)
+    gmmttR2_e.SetFillColor(ROOT.kCyan)
+    gmmbb_e.SetFillColor(ROOT.kGreen-3)
+    gmmbb_shade.SetLineColor(ROOT.kGreen-3)
+    gbbtt_e.SetFillColor(ROOT.kRed+3)
+    gbbtt_shade.SetLineColor(ROOT.kRed+3)
     gmmtt_e.SetFillStyle(3004)
     gmmttR2_e.SetFillStyle(3004)
     gmmbb_e.SetFillStyle(3004)
@@ -466,10 +464,16 @@ if __name__ == "__main__":
     #gmmbb_e.Draw("lsame")
     gmmbb.Draw("lsame")
 
-    gtttt1.SetLineColor(ROOT.EColor.kBlue-3)
-    gtttt1_e.SetLineColor(ROOT.EColor.kBlue-3)
-    gtttt1_shade.SetLineColor(ROOT.EColor.kBlue-3)
-    gtttt1_e.SetFillColor(ROOT.EColor.kBlue-3)
+    limitsMMBB2016 = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" , ROOT.kAzure-7 )
+    gMMBB2016_shade = limitsMMBB2016.ProduceGraphTanbBeta( args.model,args.tanbeta, ymax = ymax )
+    gMMBB2016 = limitsMMBB2016.ProduceGraphTanbBeta( args.model,args.tanbeta  )
+    gMMBB2016_shade.Draw("fsame")
+    gMMBB2016.Draw("lsame")
+    
+    gtttt1.SetLineColor(ROOT.kBlue-3)
+    gtttt1_e.SetLineColor(ROOT.kBlue-3)
+    gtttt1_shade.SetLineColor(ROOT.kBlue-3)
+    gtttt1_e.SetFillColor(ROOT.kBlue-3)
     #gtttt1_e.SetLineWidth(602)
     gtttt1_e.SetFillStyle(3004)
     gtttt1_shade.SetLineWidth(1)
@@ -481,16 +485,16 @@ if __name__ == "__main__":
     gtttt1_shade.Draw("fsame")
     #gtttt1_e.Draw("lsame")
     gtttt1.Draw("lsame")
-    gtttt2.SetLineColor(ROOT.EColor.kOrange-3)
-    gtttt2_shade.SetLineColor(ROOT.EColor.kOrange-3)
-    gtttt2_e.SetLineColor(ROOT.EColor.kOrange-3)
-    gtttt2_e.SetFillColor(ROOT.EColor.kOrange-3)
+    gtttt2.SetLineColor(ROOT.kOrange-3)
+    gtttt2_shade.SetLineColor(ROOT.kOrange-3)
+    gtttt2_e.SetLineColor(ROOT.kOrange-3)
+    gtttt2_e.SetFillColor(ROOT.kOrange-3)
     gtttt2_e.SetFillStyle(3004)
     gtttt2_shade.Draw("fsame")
     #gtttt2_e.Draw("lsame")
     gtttt2.Draw("lsame")
-    gmmmm.SetLineColor(ROOT.EColor.kViolet-3)
-    gmmmm_shade.SetLineColor(ROOT.EColor.kViolet-3)
+    gmmmm.SetLineColor(ROOT.kViolet-3)
+    gmmmm_shade.SetLineColor(ROOT.kViolet-3)
     gmmmm_shade.Draw("fsame")
     gmmmm.Draw("lsame")
     shade1.Draw("fsame")
@@ -501,11 +505,11 @@ if __name__ == "__main__":
     shade3_2.Draw("fsame")
     line = ROOT.TLine(1,1,62.5,1)
     line.SetLineStyle(2)
-    line.SetLineColor(ROOT.EColor.kRed)
+    line.SetLineColor(ROOT.kRed)
     line.Draw("lsame")
     ROOT.gPad.RedrawAxis()
     canvas.Update()
-    shade1.SetLineColor(ROOT.EColor.kGray)
+    shade1.SetLineColor(ROOT.kGray)
 
     legend=make_legend()
     #legend.SetHeader("#it{h(125)#rightarrowaa searches}")
@@ -519,14 +523,15 @@ if __name__ == "__main__":
     legend.AddEntry(gmmtt_shade,"h#rightarrowaa#rightarrow#mu#mu#tau#tau (8 TeV)","fl")
     legend.AddEntry(gmmttR2_shade,"h#rightarrowaa#rightarrow#mu#mu#tau#tau (13 TeV)","fl")
     legend.AddEntry(gbbtt_shade,"h#rightarrowaa#rightarrow#tau#taubb (13 TeV)","fl")
+    legend.AddEntry(gMMBB2016_shade,"h#rightarrowaa#rightarrow#mu#mubb (13 TeV)","fl")
     legend.Draw("same")
 
     go=gmmtt_shade.Clone()
-    go.SetFillColor(ROOT.EColor.kGray+1)
-    go.SetLineColor(ROOT.EColor.kGray+1)
+    go.SetFillColor(ROOT.kGray+1)
+    go.SetLineColor(ROOT.kGray+1)
     ge=gmmtt_e.Clone()
-    ge.SetFillColor(ROOT.EColor.kGray+1)
-    ge.SetLineColor(ROOT.EColor.kGray+1)
+    ge.SetFillColor(ROOT.kGray+1)
+    ge.SetLineColor(ROOT.kGray+1)
     legend2=make_legend2()
     legend2.AddEntry(ge,"expected","l")
     legend2.AddEntry(go,"observed","fl")

@@ -152,6 +152,7 @@ class ExtendedSample: #extend the sample object to store histograms
             else:
                 print "File %d of sample %s doesn't exist, skip it , %s" % (Job.Index , self.Name , finame)
                 continue
+            print "looking ofr" , dirName
             dir = ff.GetDirectory(dirName)
             if not dir :
                 print "File %d of sample %s is not valid, skip it , %s" % (Job.Index , self.Name , finame)

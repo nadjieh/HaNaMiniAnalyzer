@@ -62,13 +62,15 @@ int main(int argc, char** argv) {
   TString Mode = "";
   TString dir ="";
   bool blind = false;
+  bool isZ = false;
   for (int f = 1; f < argc; f++) {
     std::string arg_fth(*(argv + f));
     if (arg_fth == "mc") {
       f++;
       std::string out(*(argv + f));
       //TFile * fdata = TFile::Open((string("eos_cb/user/a/ajafari/Hamb13/Oct14_8020_Opt/Trees/")+out).c_str());
-      TFile * fdata = TFile::Open(out.c_str());            
+      TFile * fdata = TFile::Open(out.c_str());
+      cout<< dir+treename <<endl;
       rds = new HambTree((TTree*) fdata->Get(dir+treename));
       int pos = out.find(".root");
       names = (out.substr(0, pos).c_str());
@@ -84,7 +86,10 @@ int main(int argc, char** argv) {
       f++;
       std::string out(*(argv + f));
       dir = out.c_str();       
-    }
+    } else if(arg_fth == "isZ"){
+      f++;
+      isZ = true;
+	}  
   }
 
   
@@ -156,7 +161,8 @@ int main(int argc, char** argv) {
 		    rds->muEta->at(myIndex),
 		    rds->muPhi->at(myIndex),0);                   
     a = m1+m2;       
-    if (a.M() < 15 || a.M() > 70) continue;
+	if(!isZ && (a.M() < 15 || a.M() > 70))
+    	continue;
     
     if(Mode == "Opt"){
       if (rds->muPt->size() <  2)  continue;
