@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     double minpar = -10.;
     double maxpar = 10.;
     double mL = 20.;
-    double mH = 70.;
+    double mH = 63.;
     vector<double> degrees;
     int inv = 0;
     TString inputFileName = "";
@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
             w->import(*dataHist);
         }
         bool keep = mytest.keepPdf(inv);
-        if (keep) {
+	if (keep) {
             RooAbsPdf * genPdf;
             if (inv == 0)
                 genPdf = mytest.getFinalPolynomial();
@@ -177,7 +177,7 @@ int main(int argc, char** argv) {
             P->Draw();
             name = name + ".C";
             c->SaveAs(name);
-        }
+	}
 	cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> With NLL Cross Check:"<<endl;
 	double nll = mytest.getNLL(inv);
 	cout<<">>>>>>> dop: "<< nll <<endl;

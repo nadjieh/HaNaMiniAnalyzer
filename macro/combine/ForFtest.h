@@ -35,6 +35,7 @@
 #include "RooNLLVar.h"
 #include "RooMinuit.h"
 #include "RooChi2Var.h"
+#include "RooArgusBG.h"
 #include <stdio.h>
 #include <math.h>
 using namespace RooFit;
@@ -46,6 +47,7 @@ public:
     Ttest(TString name_, int Nbins_, int dop, RooRealVar * var_, RooDataSet * data_, double parmin_ = -100.,
             double parmax_ = 100.) : name(name_), Nbins(Nbins_), degreeOfPolyNom(dop), parmin(parmin_), parmax(parmax_) {
         var = var_;
+	var->setBin(Nbins);
         data = data_;
         hdata = (TH1D*) data->createHistogram("hdata", *var, RooFit::Binning(Nbins));
         Ndata = data->sumEntries(0);
@@ -154,6 +156,7 @@ public:
     ~Ttest() {
     }
 
+    
     RooPolynomial * pol() {
         if (degreeOfPolyNom == 0) {
             RooPolynomial * ret = new RooPolynomial(name + "_pol0", name + "_pol0", *var, RooArgList());
@@ -278,7 +281,14 @@ public:
       m.migrad() ;
       m.hesse() ;
       RooFitResult* r = m.save() ;
-      cout << "result of chi2 fit" << endl ;
+      cout << "---- result of chi2 fit ----" << endl ;
+      cout << "---- "<<chi2.getVal() << " ----" <<endl;
+      RooPlot * myp = var->frame();
+      datahistChi.plotOn(myp, RooFit::Name("mydata"));
+      pext.plotOn(myp);
+      cout<< "--1: "<<myp->chiSquare()<<endl;
+      TF1 * function = pext.asTF(RooArgList(*var));
+      cout<< "--2: "<< pext.createChi2(datahistChi)->getVal()/Nbins <<endl;
       //r3->Print("v") ;
       return chi2.getVal()/Nbins;
     }
