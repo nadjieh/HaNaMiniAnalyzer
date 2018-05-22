@@ -180,24 +180,29 @@ class EfficiencyReader:
         return graph
 
 class LimitReader:
-    def __init__(self, fname , color = ROOT.kOrange-4):
+    def __init__(self, fname , color = ROOT.kOrange-4 , is2d = False):
         self.Color = color
 
         tColor=ROOT.gROOT.GetColor(color)
         trans1, ShadeColor =newColor(tColor.GetRed(), tColor.GetGreen(),tColor.GetBlue() , 0.9 )
-        self.ShadeColor = ShadeColor 
+        self.ShadeColor = ShadeColor
+        self.Is2D = is2d
         self.File = ROOT.TFile.Open( fname )
         ROOT.gROOT.cd()
-        self.MedianGraph = self.File.Get("median").Clone()
-        self.g2sigmaBand = self.File.Get("graph2sigma").Clone()
-        self.g1sigmaBand = self.File.Get("graph1sigma").Clone()
+        
+        if not is2d :
+            self.MedianGraph = self.File.Get("median").Clone()
+            self.g2sigmaBand = self.File.Get("graph2sigma").Clone()
+            self.g1sigmaBand = self.File.Get("graph1sigma").Clone()
+            ROOT.gROOT.cd()
+            self.gp2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , +1 )
+            self.gm2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , -1 )
+            self.gp1sigma = self.ProduceUpDownPlots( self.g1sigmaBand , +1 )
+            self.gm1sigma = self.ProduceUpDownPlots( self.g1sigmaBand , -1 )
+            self.AllGraphs = {-2:self.gm2sigma , -1:self.gm1sigma , 0:self.MedianGraph , +1:self.gp1sigma , +2:self.gp2sigma }
+        else:
+            self.Median2dHist = self.File.Get("hLimitMedian").Clone()
         self.File.Close()
-        ROOT.gROOT.cd()
-        self.gp2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , +1 )
-        self.gm2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , -1 )
-        self.gp1sigma = self.ProduceUpDownPlots( self.g1sigmaBand , +1 )
-        self.gm1sigma = self.ProduceUpDownPlots( self.g1sigmaBand , -1 )
-        self.AllGraphs = {-2:self.gm2sigma , -1:self.gm1sigma , 0:self.MedianGraph , +1:self.gp1sigma , +2:self.gp2sigma }
         self.MassLimits = {}
 
         self.EfficiencyReader = EfficiencyReader()
@@ -221,7 +226,42 @@ class LimitReader:
         ret = ROOT.TGraph( graph.GetN() , x , y )
         ret.SetName( "graph%s%d" % ( "p" if w > 0 else "m" , abs( w ) ) )
         return ret
+
+    def ExtractLimit(self , fInName):
+        #print fInName
+        xsec = 1.0
+        fIn = ROOT.TFile.Open( fInName )
+        t = fIn.Get("limit")
+        if not t :
+            print fInName, "has a problem"
+            return 0.0000001
         
+        res=[-1.,-1.,-1.-1.,-1.,-1.]
+        ret = []
+	for event in t :
+	    quant_ = event.quantileExpected
+            limit_ = event.limit
+	    if abs(quant_ - 0.5) < 0.001 :
+		res[2] = xsec*limit_
+	    elif abs(quant_ - 0.025) < 0.001 :
+		res[0] = xsec*limit_
+	    elif abs(quant_ - 0.16) < 0.001 :
+		res[1] = xsec*limit_
+	    elif abs(quant_ - 0.84) < 0.001 :
+		res[3] = xsec*limit_
+	    elif abs(quant_ - 0.975) < 0.001 :
+		res[4] = xsec*limit_
+	    elif abs(quant_ + 1) < 0.001 :
+		res[5] = xsec*limit_
+	for i in range(5):
+	    if i != 2 :
+		ret.append( abs(res[i] - res[2]) )
+	    else :
+		ret.append(res[i])
+
+	return res[2]*0.1
+
+    
     def GetLimit(self , mass , index = 0 ):
         if mass in self.MassLimits :
             limit = self.MassLimits[mass]
@@ -232,12 +272,16 @@ class LimitReader:
         return limit
         
     def GetModelLimit( self , modelType , mass , tanB , index = 0 ):
-        limit = self.GetLimit(mass , index)
-        width=get_total_width(modelType,mass,tanB)
-    	BRmm=gamma_mu(tanB,mass,modelType)/width
-  	BRbb=gamma_quarks(tanB,mass,modelType,6)/width
-        ysm=(limit/(2*BRmm*BRbb))
-        return ysm , limit , width , BRmm , BRbb
+        if self.Is2D :
+            bin_id = self.Median2dHist.FindBin( mass , tanB )
+            return [self.Median2dHist.GetBinContent( bin_id )]
+        else:
+            limit = self.GetLimit(mass , index)
+            width=get_total_width(modelType,mass,tanB)
+    	    BRmm=gamma_mu(tanB,mass,modelType)/width
+  	    BRbb=gamma_quarks(tanB,mass,modelType,6)/width
+            ysm=(limit/(2*BRmm*BRbb))
+            return ysm , limit , width , BRmm , BRbb
 
     def GetModelLimitTTNormalized(self , modelType , mass , tanB , index = 0 ):
         mmbb = self.EfficiencyReader.GetSignalYields( "mmbb" , "total" , tanB , mass , modelType , 1. , 1. , 1.)

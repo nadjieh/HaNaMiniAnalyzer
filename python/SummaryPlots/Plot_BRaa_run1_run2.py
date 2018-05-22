@@ -465,6 +465,7 @@ if __name__ == "__main__":
     gmmbb.Draw("lsame")
 
     limitsMMBB2016 = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" , ROOT.kAzure-7 )
+    #limitsMMBB2016 = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs_MMTTIncluded/limits%d.root" % args.model , ROOT.kAzure-7 , is2d = True)
     gMMBB2016_shade = limitsMMBB2016.ProduceGraphTanbBeta( args.model,args.tanbeta, ymax = ymax )
     gMMBB2016 = limitsMMBB2016.ProduceGraphTanbBeta( args.model,args.tanbeta  )
     gMMBB2016_shade.Draw("fsame")
@@ -554,6 +555,8 @@ if __name__ == "__main__":
         postfix="_tanbeta"+str(int(args.tanbeta))
     canvas.SaveAs('plots/run2_plot_BRaa_Type'+str(args.model)+postfix+'.png')
     canvas.SaveAs('plots/run2_plot_BRaa_Type'+str(args.model)+postfix+'.pdf')
+    canvas.SaveAs('plots/run2_plot_BRaa_Type'+str(args.model)+postfix+'.root')
+    canvas.SaveAs('plots/run2_plot_BRaa_Type'+str(args.model)+postfix+'.C')
 
     #canvas2 = MakeCanvas("asdf","asdf",800,800)
     #canvas2.cd()

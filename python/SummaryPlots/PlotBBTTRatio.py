@@ -27,7 +27,7 @@ for model in [1,2,3,4] :
     #   maxbeta=0.8
 
     
-    histBRRatio=ROOT.TH2F("histBRRatio_%d" % model,"BR(a#to bb)/BR(a#to #tau#tau) model type = %d" % model,binmass,minmass,maxmass,binbeta,minbeta,maxbeta)
+    histBRRatio=ROOT.TH2F("histBRRatio_%d" % model,"#frac{br(a#rightarrow bb)}{br(a#rightarrow #tau#tau)}, 2HDM+S TYPE %d;a_{mass};tan(#beta)" % model,binmass,minmass,maxmass,binbeta,minbeta,maxbeta)
     for i in range(1,binmass+1):
         xxsm= histBRRatio.GetXaxis().GetBinCenter(i) #0.0000001+minmass+1.0*i*(maxmass-minmass)/(binmass)
         for b in range(1,binbeta+1):

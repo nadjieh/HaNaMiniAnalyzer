@@ -178,7 +178,7 @@ def contourFromTH2(h2in, threshold, minPoints=10, frameValue=1000. , canv = None
     # if (h2in.GetNbinsX() * h2in.GetNbinsY()) <= 100: minPoints = 10
 
     #h2 = h2in.Clone("%s_contours_%.2f" % (h2in.GetName() , threshold))
-    h2 = frameTH2D(h2in, threshold, frameValue)
+    h2 = h2in.Clone() #frameTH2D(h2in, threshold, frameValue)
     tobekept.append( h2 )
     h2.SetContour(1) #, contours)
     h2.SetContourLevel( 0 , threshold )
@@ -188,7 +188,7 @@ def contourFromTH2(h2in, threshold, minPoints=10, frameValue=1000. , canv = None
     if not canv :
         canv = ROOT.TCanvas('tmp', 'tmp')
     canv.cd()
-    h2.Draw('CONT LIST')
+    h2.Draw('CONT Z LIST')
     canv.Update()  # Needed to force the plotting and retrieve the contours in
     canv.Update()
     #ROOT.gROOT.GetListOfSpecials().Print( "" , 3)
@@ -198,7 +198,7 @@ def contourFromTH2(h2in, threshold, minPoints=10, frameValue=1000. , canv = None
     if not conts or conts.GetSize() == 0:
         print '*** No Contours Were Extracted!'
         return None
-    h2.Draw('CONT LIST')
+    h2.Draw('CONT Z LIST')
     canv.Update()  # Needed to force the plotting and retrieve the contours in
     #ROOT.gROOT.GetListOfSpecials().Print( "" , 3)
     conts = ROOT.gROOT.GetListOfSpecials().FindObject('contours')
@@ -206,10 +206,10 @@ def contourFromTH2(h2in, threshold, minPoints=10, frameValue=1000. , canv = None
     ret = ROOT.TList()
     for i in xrange(conts.GetSize()):
         contLevel = conts.At(i)
-        print '>> Contour %d has %d Graphs' % (i, contLevel.GetSize())
+        #print '>> Contour %d has %d Graphs' % (i, contLevel.GetSize())
         for j in xrange(contLevel.GetSize()):
             gr1 = contLevel.At(j)
-            print'\t Graph %d has %d points' % (j, gr1.GetN())
+            #print'\t Graph %d has %d points' % (j, gr1.GetN())
             if gr1.GetN() > minPoints:
                 ret.Add(gr1.Clone())
             # // break;
@@ -231,19 +231,30 @@ if __name__ == "__main__":
     style1=GetStyleHtt()
     style1.cd()
 
+
     
-    binbeta=200#1000
-    minbeta=0.5
-    maxbeta=10.0
-    minmass=20
-    maxmass=60
-    binmass=200
-    if (args.model==4):
-       minbeta=0.1
-       maxbeta=6
-    if (args.model==2):
-       minbeta=0.3
-    #   maxbeta=0.8
+    tanbetas = np.linspace( 0.01 , 10.01 , 100 , endpoint=False )
+    tanbetas = tanbetas[2:]
+    masses = np.linspace( 20 , 62.5 , 17 , endpoint=False )
+    binbeta = len( tanbetas )
+    minbeta = tanbetas[0]
+    maxbeta = tanbetas[-1]
+    binmass = len( masses )
+    minmass = masses[0]
+    maxmass = masses[-1]
+    
+    # binbeta=200#1000
+    # minbeta=0.5
+    # maxbeta=10.0
+    # minmass=20
+    # maxmass=60
+    # binmass=200
+    # if (args.model==4):
+    #    minbeta=0.1
+    #    maxbeta=6
+    # if (args.model==2):
+    #    minbeta=0.3
+    # #   maxbeta=0.8
 
     limits = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" )
     ROOT.gROOT.cd()
@@ -256,9 +267,23 @@ if __name__ == "__main__":
     histLimitOriginal=ROOT.TH2F("histLimitOriginal","Origianl Limit",binmass,minmass,maxmass,binbeta,minbeta,maxbeta)
     for i in range(1,binmass+1):
         xxsm= histLimitOriginal.GetXaxis().GetBinCenter(i) #0.0000001+minmass+1.0*i*(maxmass-minmass)/(binmass)
+        mass = masses[i-1]
         for b in range(1,binbeta+1):
-            tanbeta=histLimitOriginal.GetYaxis().GetBinCenter( b )
+            tanbeta= tanbetas[b-1] #histLimitOriginal.GetYaxis().GetBinLowEdge( b )
             ysm , limit , width , BRmm , BRbb = limits.GetModelLimit( args.model , xxsm , tanbeta )
+
+            # dirName = "/home/hbakhshi/Desktop/Hamb13/HaNaMiniAnalyzer/macro/combine/Feb2018/bTagSR2016Systs_MMTTIncluded/model%d/tanbeta%d" % (args.model , tanbeta*100)
+            # if int(mass)-mass == 0 :
+            #     fName = dirName + "/higgsCombineTest.Asymptotic.mH%d.root" % int(mass)
+            # else:
+            #     fName = dirName + "/higgsCombineTest.Asymptotic.mH%.1f.root" % mass
+
+            # #print fName
+            # if os.path.isfile( fName ):
+            #     ysm =  limits.ExtractLimit( fName )
+            # else :
+            #     print fName , "is not found"
+            #     ysm = 0.000001
 
             binindex = histLimit.GetBin( i , b ) #xxsm , tanbeta )
    	    histLimit.SetBinContent(binindex,ysm)
@@ -274,6 +299,7 @@ if __name__ == "__main__":
     canvas.cd()
     if (args.model>-2):
       canvas.SetLogz()
+      histLimit.SetAxisRange( 0.0001 , 1000 , "Z" )
     histLimit.GetXaxis().SetTitle("m_{a} (GeV)")
     histLimit.GetYaxis().SetTitle("tan #beta")
     histLimit.GetZaxis().SetTitle("95% CL on #frac{#sigma(h)}{#sigma_{SM}} B(h#rightarrow aa)")
@@ -317,8 +343,9 @@ if __name__ == "__main__":
         legend.AddEntry(mycontour100[0],"95% CL on #frac{#sigma(h)}{#sigma_{SM}}B(h#rightarrow aa) = 1.00","l")
 
     cTmp2 = ROOT.TCanvas("cTmp2" , "cTmp2")
-    mycontour24=contourFromTH2(histLimit, 0.34 , canv = cTmp2)
+    mycontour24=contourFromTH2(histLimit, 0.44 , canv = cTmp2)
     canvas.cd()
+    print mycontour24.GetSize(), mycontour100.GetSize()
     if mycontour24 and mycontour24.GetSize() > 0 :
         for contour in mycontour24 :
             contour.SetLineWidth(7)
@@ -328,7 +355,7 @@ if __name__ == "__main__":
             print "contour %.2f plotted" % 0.34
         legend.AddEntry(mycontour24[0],"95% CL on #frac{#sigma(h)}{#sigma_{SM}}B(h#rightarrow aa) = 0.34","l")
 
-    canvas.RedrawAxis()
+    #canvas.RedrawAxis()
     legend.Draw() #"same")
 
     canvas.SaveAs('plots/plot_BRaa_bbttRun2_Type'+str(args.model)+'.png')
