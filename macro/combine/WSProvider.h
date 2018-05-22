@@ -52,7 +52,7 @@
 #include "RooCategory.h"
 #include "RooWorkspace.h"
 #include "RooRandom.h"
-#include "../interface/RooMultiPdf.h"
+#include "RooMultiPdf.h"
 #include <iostream>
 #include <sstream>
 #include <vector>

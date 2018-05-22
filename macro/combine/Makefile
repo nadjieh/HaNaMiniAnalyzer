@@ -17,29 +17,22 @@ LIBS		+= $(COMBLIB)
 HEADERS 	+= $(MYHEADERS)
 HEADERS 	+= $(ROOFITINC)
 
+CXXFLAGS = -c -O0 $(ROOTCFLAGS) -fPIC $(HEADERS) -g
 
-t: Ttest clean
+all: doTtest provideIntermediate clean
 
-ws: WS clean
+t: doTtest clean
 
-md: med clean
+ws: provideWS clean
 
-WS:
-	@echo "Compiling the WSProvider.C .... \n"
-	$(CXX) WSProvider.C -c -o WSProvider.o -O0 $(ROOTCFLAGS) -fPIC $(HEADERS) -g
-	@echo "Linking ...... \n"
+md: provideIntermediate clean
+
+provideWS: WSProvider.o
 	g++ WSProvider.o -o provideWS $(ROOTGLIBS) $(LIBS) -g -fPIC -O0 -I/opt/root/include -m64 -pthread $(HEADERS)
-	
-Ttest:
-	@echo "Compiling the myT_test .... \n"
-	$(CXX) myT_test.C -c -o myT_test.o -O0 $(ROOTCFLAGS) -fPIC $(HEADERS) -g
-	@echo "Linking ...... \n"
+doTtest: myT_test.o
 	g++ myT_test.o -o doTtest $(ROOTGLIBS) $(LIBS) -g -fPIC -O0 -I/opt/root/include -m64 -pthread $(HEADERS)
 
-med:
-	@echo "Compiling the IntermediateProvider.C .... \n"
-	$(CXX) IntermediateProvider.C -c -o IntermediateProvider.o -O0 $(ROOTCFLAGS) -fPIC $(HEADERS) -g
-	@echo "Linking ...... \n"
+provideIntermediate: IntermediateProvider.o
 	g++ IntermediateProvider.o -o provideIntermediate $(ROOTGLIBS) $(LIBS) -g -fPIC -O0 -I/opt/root/include -m64 -pthread $(HEADERS)
 clean:
 	@echo "Cleaning..."
