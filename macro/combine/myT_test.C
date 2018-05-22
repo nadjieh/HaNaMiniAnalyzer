@@ -118,6 +118,8 @@ int main(int argc, char** argv) {
     TGraph * gChi2 = new TGraph(degrees.size());
     gChi2->SetName("Chi2");
 
+    TFile fPlots(Name , "recreate");
+    fPlots.cd();
     for (unsigned int i = 0; i < degrees.size(); i++) {
         dop = degrees[i];
         cout << "================ Degree: " << dop << endl;
@@ -175,8 +177,10 @@ int main(int argc, char** argv) {
             c = new TCanvas(name, name, 600, 800);
             c->cd();
             P->Draw();
-            name = name + ".C";
-            c->SaveAs(name);
+            //name = name + ".C";
+            //c->SaveAs(name);
+	    fPlots.cd();
+	    c->Write();
 	}
 	cout<<">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> With NLL Cross Check:"<<endl;
 	double nll = mytest.getNLL(inv);
@@ -199,10 +203,11 @@ int main(int argc, char** argv) {
       gChi2->GetPoint(i,x,y);
       cout<<"degree "<<degrees[i]<<": "<<y<<endl;
     }
-    TFile * f = new TFile(Name,"recreate");
-    f->cd();
+    //TFile * f = new TFile(Name,"recreate");
+    fPlots.mkdir( Name )->cd();
     gNLL->Write();
     gChi2->Write();
+    fPlots.Close();
     /*dop = 6;
 
     RooRealVar a0("a0", "a0", 30., 10., 50.);
