@@ -211,27 +211,26 @@ else :
 	process.Hamb.HLT_Mu17Mu8.Input = cms.InputTag( "TriggerResults","","HLT2" )
 
     if theSample.Name.count("GGH") :
-        AddSystematics( "PUUp"  , "Vertex" , "PUDataFileName" , "pileUpDataUp.root")
-        AddSystematics( "PUDown"  , "Vertex" , "PUDataFileName" , "pileUpDataDown.root")
-        AddSystematics( "JECUP"  , "Jets" , "JECUncertainty"  , 1)
-        process.HambJECUP.MET.Uncertainty = 2
-        AddSystematics( "JECDOWN"  , "Jets" , "JECUncertainty"  , -1)
-        process.HambJECDOWN.MET.Uncertainty = 3
+        # AddSystematics( "PUUp"  , "Vertex" , "PUDataFileName" , "pileUpDataUp.root")
+        # AddSystematics( "PUDown"  , "Vertex" , "PUDataFileName" , "pileUpDataDown.root")
+        # AddSystematics( "JECUP"  , "Jets" , "JECUncertainty"  , 1)
+        # process.HambJECUP.MET.Uncertainty = 2
+        # AddSystematics( "JECDOWN"  , "Jets" , "JECUncertainty"  , -1)
+        # process.HambJECDOWN.MET.Uncertainty = 3
 
+        #https://github.com/cms-sw/cmssw/blob/CMSSW_7_6_X/CondFormats/JetMETObjects/interface/JetResolutionObject.h#L25-L29
         AddSystematics( "JERUP"  , "Jets" , "JERUncertainty"  , 2)
         AddSystematics( "JERDOWN"  , "Jets" , "JERUncertainty"  , 1)
 
-        #AddSystematics( "BUP"  , "Jets" , "BTagUncertainty"  , 1)
-        #AddSystematics( "BDOWN"  , "Jets" , "BTagUncertainty"  , -1)
 
-        AddSystematics( "METUnClusDOWN"  , "MET" , "Uncertainty"  , 11)
-        AddSystematics( "METUnClusUP"  , "MET" , "Uncertainty"  , 10)
+        # AddSystematics( "METUnClusDOWN"  , "MET" , "Uncertainty"  , 11)
+        # AddSystematics( "METUnClusUP"  , "MET" , "Uncertainty"  , 10)
 
 
-        AddSystematics( "HLTUP"  , "DiMuon" , "HLTUnc"  , 1)
-        AddSystematics( "HLTDOWN"  , "DiMuon" , "HLTUnc"  , -1)
+        # AddSystematics( "HLTUP"  , "DiMuon" , "HLTUnc"  , 1)
+        # AddSystematics( "HLTDOWN"  , "DiMuon" , "HLTUnc"  , -1)
 
-        AddSystematics( "BShape"  , "Jets" , "BTagUncertainty"  , -1)
+        # AddSystematics( "BShape"  , "Jets" , "BTagUncertainty"  , -1)
 
     if theSample.Name.count("DYMGInclusive"):
         process.Hamb.LHE.cutOnNGenJets = 0
