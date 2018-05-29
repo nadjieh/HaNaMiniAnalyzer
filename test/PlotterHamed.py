@@ -38,6 +38,7 @@ from Haamm.HaNaMiniAnalyzer.SampleType import *
 from ROOT import kGray, kGreen, kOrange, kRed, kBlack, kCyan, kBlue, kAzure, kTeal, kPink, kYellow
 ci = TColor.GetColor("#ff6666")
 DYSamples = SampleType("DY" , ci , [ GetSample(DYJets80) , GetSample(DYJetsLowMass80), GetSample(WJetsMG80)] , nTuples )
+LODYSamples = SampleType("DY" , ci , [ GetSample(DYMG0J10To50), GetSample(DYMG1J10To50),GetSample(DYMG2J10To50),GetSample(DYMG3J10To50),GetSample(DYMG4J10To50) , GetSample(DYMG0J50Ext1), GetSample(DYMG0J50Ext2), GetSample(DYMG1J50), GetSample(DYMG2J50), GetSample(DYMG3J50), GetSample(DYMG4J50), GetSample(WJetsMG80)] , nTuples )
 ci = TColor.GetColor("#ffff66")
 TopSamples = SampleType("Top" , ci , [ GetSample(TTBar80) , GetSample(TW80), GetSample(TbarW80) , GetSample(TChannelTbar80) , GetSample( TChannelT80 ) ] , nTuples )
 ci = 38
@@ -85,7 +86,7 @@ from Haamm.HaNaMiniAnalyzer.Plotter import *
 plotter = Plotter()
 listofdata = [GetSample(s) for s in MiniAOD80Samples if s.IsData]
 dataSamples2 = SampleType("Data" , kBlack , listofdata  , datanTuples  ) # , additionalCut="(higgsMass > 135 || higgsMass < 115)"
-allSTs = [ dataSamples2 , DiBosonSamples, TopSamples, DYSamples ]
+allSTs = [ dataSamples2 , DiBosonSamples, TopSamples, LODYSamples ]
 allSTs.extend(signalsamples)
 for st in allSTs :
     plotter.AddSampleType( st )

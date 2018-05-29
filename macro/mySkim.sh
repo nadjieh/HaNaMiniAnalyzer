@@ -1,11 +1,3 @@
-#./skimtree dir Hamb mc DoubleMuB.root Mode mHcut 
-#./skimtree dir Hamb mc DoubleMuC.root Mode mHcut 
-#./skimtree dir Hamb mc DoubleMuD.root Mode mHcut 
-#./skimtree dir Hamb mc DoubleMuE.root Mode mHcut 
-#./skimtree dir Hamb mc DoubleMuF.root Mode mHcut 
-#./skimtree dir Hamb mc DoubleMuG.root Mode mHcut 
-#./skimtree dir Hamb mc DoubleMuH2.root Mode mHcut 
-#./skimtree dir Hamb mc DoubleMuH3.root Mode mHcut 
 #./skimtree dir Hamb mc DYJetsLowMass.root Mode mHcut 
 #./skimtree dir Hamb mc DYJets.root Mode mHcut 
 #./skimtree dir Hamb mc GGH20.root Mode mHcut 
@@ -114,17 +106,17 @@
 #./skimtree dir Hamb mc WW.root Mode mHcut 
 #./skimtree dir Hamb mc WZ.root Mode mHcut 
 #./skimtree dir Hamb mc ZZ.root Mode mHcut 
-./skimtree dir Hamb mc DYMG1J10To50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMG1J50.root  Mode mHcut
-./skimtree dir Hamb mc DYMG2J10To50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMG2J50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMG3J10To50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMG3J50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMG4J10To50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMG4J50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMGInclusive10To50.root  Mode mHcut 
-./skimtree dir Hamb mc DYMGInclusive50Ext1.root  Mode mHcut 
-./skimtree dir Hamb mc DYMGInclusive50Ext2.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMG1J10To50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMG1J50.root  Mode mHcut
+#./skimtree dir Hamb mc DYMG2J10To50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMG2J50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMG3J10To50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMG3J50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMG4J10To50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMG4J50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMGInclusive10To50.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMGInclusive50Ext1.root  Mode mHcut 
+#./skimtree dir Hamb mc DYMGInclusive50Ext2.root  Mode mHcut 
 
 ###auto loop!
 #mkdir out
@@ -141,3 +133,36 @@
 #     rm -f $base
 #     echo "\tmHcut done"
 # done
+
+./skimtree dir Hamb mc DoubleMuB.root Cat TLexc
+./skimtree dir Hamb mc  DoubleMuC.root Cat  TLexc
+./skimtree dir Hamb mc  DoubleMuD.root Cat  TLexc
+./skimtree dir Hamb mc  DoubleMuE.root Cat  TLexc
+./skimtree dir Hamb mc  DoubleMuF.root Cat  TLexc
+./skimtree dir Hamb mc  DoubleMuG.root Cat  TLexc
+./skimtree dir Hamb mc  DoubleMuH2.root Cat  TLexc
+./skimtree dir Hamb mc  DoubleMuH3.root Cat  TLexc
+hadd out/TLexc.root out/*DoubleMu*.root
+rm -f out/*DoubleMu*.root
+
+./skimtree dir Hamb mc DoubleMuB.root Cat  TMexc
+./skimtree dir Hamb mc  DoubleMuC.root Cat TMexc
+./skimtree dir Hamb mc  DoubleMuD.root Cat TMexc
+./skimtree dir Hamb mc  DoubleMuE.root Cat TMexc
+./skimtree dir Hamb mc  DoubleMuF.root Cat TMexc
+./skimtree dir Hamb mc  DoubleMuG.root Cat TMexc
+./skimtree dir Hamb mc  DoubleMuH2.root Cat TMexc
+./skimtree dir Hamb mc  DoubleMuH3.root Cat TMexc
+hadd out/TMexc.root out/*DoubleMu*.root
+rm -f out/*DoubleMu*.root
+
+./skimtree dir Hamb mc DoubleMuB.root Cat TT
+./skimtree dir Hamb mc  DoubleMuC.root Cat TT
+./skimtree dir Hamb mc  DoubleMuD.root Cat TT
+./skimtree dir Hamb mc  DoubleMuE.root Cat TT
+./skimtree dir Hamb mc  DoubleMuF.root Cat TT
+./skimtree dir Hamb mc  DoubleMuG.root Cat TT
+./skimtree dir Hamb mc  DoubleMuH2.root Cat TT
+./skimtree dir Hamb mc  DoubleMuH3.root Cat TT
+hadd out/TT.root out/*DoubleMu*.root
+rm -f out/*DoubleMu*.root

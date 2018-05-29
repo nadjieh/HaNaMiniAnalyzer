@@ -91,7 +91,7 @@ JetReader::SelectionStatus JetReader::Read( const edm::Event& iEvent , pat::DiOb
 
   for ( pat::Jet j : *handle) {
     if( !IsData && ApplyJER ){
-      float pt = JER(j , Rho);
+      float pt = JER(j , Rho, jerunc);
       reco::Candidate::LorentzVector tmp(j.p4());
       tmp.SetPx( tmp.X()*pt/tmp.Pt() );
       tmp.SetPy( tmp.Y()*pt/tmp.Pt() );

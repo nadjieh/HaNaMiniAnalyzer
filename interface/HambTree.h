@@ -165,7 +165,11 @@ public :
    
    Float_t		   chi2Sum;
    Bool_t		   passTL;
-   
+   Bool_t		   passTM;   
+   Bool_t		   passTT;
+
+
+   Bool_t passJetSize, passMuSize, passJet1Pt, passJet2Pt, passMu1Pt, passMu2Pt;
    
 
    // List of branches
@@ -221,6 +225,8 @@ public :
    TBranch        *b_bW;
    TBranch 		  *b_chi2Sum;	   
    TBranch 		  *b_passTL;
+
+   TBranch 		  *b_passTM, *b_passTT, *b_passJetSize, *b_passMuSize, *b_passJet1Pt, *b_passJet2Pt, *b_passMu1Pt, *b_passMu2Pt;
 
    HambTree(TTree *tree=0, TString dirName = "/Hamb/Trees", TString treeName = "Events", TFile * f = 0);
    virtual ~HambTree();
@@ -357,6 +363,14 @@ void HambTree::Init(TTree *tree)
    fChain->SetBranchAddress("bWeightLL", &bW, &b_bW);	
    fChain->SetBranchAddress("chi2Sum", &chi2Sum, &b_chi2Sum);   
    fChain->SetBranchAddress("passTL", &passTL, &b_passTL);
+   fChain->SetBranchAddress("passTM", &passTM, &b_passTM); 
+   fChain->SetBranchAddress("passTT", &passTT, &b_passTT); 
+   fChain->SetBranchAddress("passJetSize", &passJetSize, &b_passJetSize);
+   fChain->SetBranchAddress("passMuSize", &passMuSize, &b_passMuSize);
+   fChain->SetBranchAddress("passJet1Pt", &passJet1Pt, &b_passJet1Pt);  
+   fChain->SetBranchAddress("passJet2Pt", &passJet2Pt, &b_passJet2Pt); 
+   fChain->SetBranchAddress("passMu1Pt", &passMu1Pt, &b_passMu1Pt); 
+   fChain->SetBranchAddress("passMu2Pt", &passMu2Pt, &b_passMu2Pt);
    
    Notify();
 }

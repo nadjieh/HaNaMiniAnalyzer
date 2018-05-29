@@ -63,6 +63,7 @@ int main(int argc, char** argv) {
   TString dir ="";
   bool blind = false;
   bool isZ = false;
+  TString Cat = "";
   for (int f = 1; f < argc; f++) {
     std::string arg_fth(*(argv + f));
     if (arg_fth == "mc") {
@@ -89,6 +90,10 @@ int main(int argc, char** argv) {
     } else if(arg_fth == "isZ"){
       f++;
       isZ = true;
+	} else if(arg_fth == "Cat"){
+      f++;
+	  std::string out(*(argv + f));
+      Cat = out.c_str();
 	}  
   }
 
@@ -324,12 +329,29 @@ int main(int argc, char** argv) {
       //amuMass = rds->aMu_mass;
       //according to optimization of Dec. 2016
       //if(rds->jetsPt->at(1) < 20) continue;
-      if(rds->jetsPt->size() !=2 ) continue;
-      //
+      //if(rds->jetsPt->size() !=2 ) continue;
       //amuMass = a.M();
       //bWTL = rds->bWs_W1L1T;
       //bWLL = rds->bWs_W2L;
-      newTree->Fill();			
+
+
+	  ////////////////////
+	  // For Unblinding //
+	  ////////////////////
+	  bool passFinal = (rds->passHLT_Mu17Mu8 || rds->passHLT_Mu17Mu8_DZ);
+	  passFinal = (passFinal && rds->passJetSize && rds->passMuSize && rds->passJet1Pt && rds->passJet2Pt && rds->passMu1Pt && rds->passMu2Pt);
+	  passFinal = (passFinal && (rds->met < 60));
+	  passFinal = (passFinal && (rds->chi2Sum < 5));
+
+	  if (Cat == "TLexc"){
+		passFinal = (passFinal && rds->passTL && !rds->passTM && !rds->passTT);
+	  } else if (Cat == "TMexc"){
+		passFinal = (passFinal && rds->passTM && !rds->passTT);
+	  } else if (Cat == "TT"){
+		passFinal = (passFinal && rds->passTT);
+	  }
+	  if(passFinal)
+      	newTree->Fill();			
     }
   }
   newTree->Write();

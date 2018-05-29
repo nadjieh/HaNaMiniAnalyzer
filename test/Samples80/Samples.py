@@ -115,14 +115,26 @@ MiniAOD80Samples.append(GGHmmtt6080)
 
 #branching fractions for the DYMG samples are taken from AN 2016/360, no number is provided for DYMGInclusive10To50, the same k-factor of high mass is used for it
 DYMGInclusive10To50XSection = 18610.*4895./5765.
+DYLowMassZeroJet = DYMGInclusive10To50XSection -( (725.*18610./DYMGInclusive10To50XSection) + (395.*18610./DYMGInclusive10To50XSection) + (97.*18610./DYMGInclusive10To50XSection) + (34.8*18610./DYMGInclusive10To50XSection))
+DYHighMasssZeroJet = 5765 - ((51.*5765./4895.)+(96.*5765./4895.)+(331.*5765./4895.)+(1016.*5765./4895))
+
 DYMGInclusive10To50 = Sample( "DYMGInclusive10To50" , DYMGInclusive10To50XSection , True , "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
 MiniAOD80Samples.append( DYMGInclusive10To50 )
+
+DYMG0J10To50 = Sample( "DYMG0J10To50" , DYLowMassZeroJet , True , "/DYJetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
+MiniAOD80Samples.append(DYMG0J10To50)
 
 DYMGInclusive50Ext1 = Sample( "DYMGInclusive50Ext1" , 5765 , True , "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/MINIAODSIM" )
 MiniAOD80Samples.append( DYMGInclusive50Ext1 )
 
 DYMGInclusive50Ext2 = Sample( "DYMGInclusive50Ext2" , 5765 , True , "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM" )
 MiniAOD80Samples.append( DYMGInclusive50Ext2 )
+
+DYMG0J50Ext1 = Sample( "DYMG0J50Ext1" , DYHighMasssZeroJet , True , "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v2/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG0J50Ext1)
+
+DYMG0J50Ext2 = Sample( "DYMG0J50Ext2" , DYHighMasssZeroJet , True , "/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/MINIAODSIM" )
+MiniAOD80Samples.append( DYMG0J50Ext2 )
 
 DYMG1J10To50 = Sample( "DYMG1J10To50" , 725.*18610./DYMGInclusive10To50XSection , True , "/DY1JetsToLL_M-10to50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
 MiniAOD80Samples.append( DYMG1J10To50 )
