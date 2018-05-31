@@ -9,7 +9,7 @@ if not len(sys.argv) == 3 :
     exit()
 
 prefix = "out"
-OutPath = "/eos/cms/store/user/%s/%s/" % (user, sys.argv[2] )
+OutPath = "eos/cms/store/user/%s/%s/" % (user, sys.argv[2] )
 
 from Samples80.Samples import MiniAOD80Samples as samples
 for sample in samples:
@@ -38,15 +38,14 @@ for sample in samples:
     copy( "SetupAndRun.sh" , "./%s/%s" % (workingdir , sample.Name) )
 
     file = open("%s/%s/Submit.cmd" % (workingdir , sample.Name) , "w" )
-    print >> file, '+JobFlavour             = "tomorrow"'
-    print >> file, "environment             = CONDORJOBID=$(ProcId)"
-    print >> file, "notification            = Error"
-    print >> file, ""
-
     print >> file, "executable              = %s/%s/%s/SetupAndRun.sh" % (os.getcwd() , workingdir , sample.Name)
     print >> file, "output                  = $(ClusterId)_$(ProcId).out"
     print >> file, "error                   = $(ClusterId)_$(ProcId).err"
     print >> file, "log                     = $(ClusterId)_$(ProcId).log"
+    print >> file, '+JobFlavour             = "tomorrow"'
+    print >> file, "environment             = CONDORJOBID=$(ProcId)"
+    print >> file, "notification            = Error"
+    print >> file, ""
     print >> file, "arguments               = %(vomsaddress)s %(scram)s %(cmsver)s %(gitco)s %(sample)s %(out)s %(outdir)s %(nFilesPerJob)d" % { 
         "vomsaddress":"%s/%s/.x509up_u%d" % (os.getcwd() , workingdir , os.getuid()) ,
         "scram":os.getenv("SCRAM_ARCH") ,
@@ -57,7 +56,6 @@ for sample in samples:
         "outdir":OutPath,
         "nFilesPerJob":nFilesPerJob
         }
-
     print >> file, "queue %d" % (len(sample.Jobs))
 
     print >> file, ""
@@ -65,7 +63,7 @@ for sample in samples:
     file.close()
 
     print >> file_sh, "cd %s" % (sample.Name)
-    print >> file_sh, "condor_submit Submit.cmd"
+    print >> file_sh, "condor_submit -batch-name %s Submit.cmd" % (sample.Name)
     print >> file_sh, "cd .."
 
 

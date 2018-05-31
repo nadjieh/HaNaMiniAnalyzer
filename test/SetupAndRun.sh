@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export X509_USER_PROXY=$1
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 voms-proxy-info
