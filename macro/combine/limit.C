@@ -4,7 +4,7 @@
 #include <TTree.h>
 #include <TGraphAsymmErrors.h>
 using namespace std;
-const int nPoint = 86;
+int nPoint = 86;
 typedef std::vector<double> numbers;
 numbers GetNumbers(TFile * f, double xsec = 1.){
 	numbers ret;
@@ -86,15 +86,28 @@ void limit(){
 	double mass[nPoint];
 	std::vector<TFile*> fs;
 	stringstream STR;
+	int counter = 0;
+
+	numbers wrongMassFiles;
 	for(int num = 0; num<nPoint; num++){
 		STR.str("");
-		mass[num] = 20. + 0.5*num;
+		double MMMM = 20. + 0.5*num;
 		if(num%2 == 0)	
-			STR <<(int)mass[num];
+			STR <<(int)MMMM;
 		else
-			STR <<(int)mass[num]<<".5";
+			STR <<(int)MMMM<<".5";
 		TString Mass = STR.str().c_str();
-		fs.push_back( TFile::Open("higgsCombineSigmaBr.Asymptotic.mH"+Mass+".root"));
+		TFile* ff = TFile::Open("higgsCombineTest.AsymptoticLimits.mH"+Mass+".root");
+		if(ff)
+		  if( ff->Get("limit") ){
+		    fs.push_back( ff );
+		    mass[counter] = MMMM;
+		    counter ++;
+		  }else
+		    wrongMassFiles.push_back( MMMM );
+		else
+		  wrongMassFiles.push_back( MMMM );
+		  
 	}
 	std::vector<numbers> mynumbers;
 	std::vector<numbers> mynumbersXsec;	
@@ -105,7 +118,9 @@ void limit(){
 		mynumbers.push_back(GetNumbers(fs[s]));
 		mynumbersXsec.push_back(GetNumbers(fs[s],0.00017));		
 	}
-	
+
+	nPoint = n;
+
 	TGraphAsymmErrors * g0 = GetGraph(mynumbers,mass,0);
 	g0->SetName("g0");
 	g0->SetLineStyle(2);
@@ -165,4 +180,7 @@ void limit(){
 	Obs2->Draw("p");
 	c2.SaveAs("myLimitXsec.C");
 
+	for(int ii = 0 ; ii < wrongMassFiles.size() ; ii++){
+	  cout << wrongMassFiles[ii] << " file was not found" << endl;
+	}
 }

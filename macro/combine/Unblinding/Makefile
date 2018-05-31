@@ -1,6 +1,8 @@
-HIG_COMBINE_DIR = /home/hbakhshi/Desktop/tHq/HiggsAnalysis/CombinedLimit/
+#HIG_COMBINE_DIR = /home/hbakhshi/Desktop/tHq/HiggsAnalysis/CombinedLimit/
+HIG_COMBINE_DIR = /afs/cern.ch/user/h/hbakhshi/work/tHq/CMSSW_8_1_0/src/HiggsAnalysis/CombinedLimit
 
-HOMELIB		= $(HOME)/lib
+#HOMELIB		= $(HOME)/lib
+HOMELIB = /afs/cern.ch/work/h/hbakhshi/tHq/CMSSW_8_1_0/lib/slc6_amd64_gcc530/
 ROOFITLIB	=$(ROOFITSYS)/lib
 ROOTINC		=-I$(shell root-config --incdir)
 ROOTLIBS	=$(shell root-config --libs) -lMinuit #-lRooFit -lRooFitCore -lRooStats 

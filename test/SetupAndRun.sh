@@ -5,6 +5,7 @@ voms-proxy-info
 export SCRAM_ARCH=$2
 scramv1 project CMSSW $3
 cd $3/src/
+export SCRAM_ARCH=$2
 eval `scramv1 runtime -sh`
 git cms-merge-topic cms-met:METRecipe_8020 -u
 git cms-merge-topic cms-met:METRecipe_80X_part2 -u 

@@ -6,6 +6,7 @@
 using namespace std;
 const int nPoint = 86;
 typedef std::vector<double> numbers;
+const float ratio = 1.1137;
 numbers GetNumbers(TFile * f, double xsec = 1.){
 	numbers ret;
 	TTree * t = (TTree*) f->Get("limit");
@@ -21,17 +22,17 @@ numbers GetNumbers(TFile * f, double xsec = 1.){
 		t->GetEntry(i);
 		cout<<quant_<<" "<<limit_<<endl;
 		if(fabs(quant_ - 0.5) < 0.001)
-			res[2] = xsec*limit_;
+			res[2] = xsec*limit_/ratio;
 		else if(fabs(quant_ - 0.025) < 0.001)
-			res[0] = xsec*limit_;
+			res[0] = xsec*limit_/ratio;
 		else if(fabs(quant_ - 0.16) < 0.001)
-			res[1] = xsec*limit_;	
+			res[1] = xsec*limit_/ratio;	
 		else if(fabs(quant_ - 0.84) < 0.001)
-			res[3] = xsec*limit_;
+			res[3] = xsec*limit_/ratio;
 		else if(fabs(quant_ - 0.975) < 0.001)
-			res[4] = xsec*limit_;
+			res[4] = xsec*limit_/ratio;
 		else if(fabs(quant_ + 1) < 0.001)
-			res[5] = xsec*limit_;
+			res[5] = xsec*limit_/ratio;
 	}
 	for(int i = 0; i<5; i++){
 		if(i != 2)
@@ -94,8 +95,8 @@ void limit(){
 		else
 			STR <<(int)mass[num]<<".5";
 		TString Mass = STR.str().c_str();
-		if (TFile::Open("higgsCombineTest.Asymptotic.mH"+Mass+".root") != NULL)
-		  fs.push_back( TFile::Open("higgsCombineTest.Asymptotic.mH"+Mass+".root"));
+		if (TFile::Open("higgsCombineTest.AsymptoticLimits.mH"+Mass+".root") != NULL)
+		  fs.push_back( TFile::Open("higgsCombineTest.AsymptoticLimits.mH"+Mass+".root"));
 	}
 	std::vector<numbers> mynumbers;
 	std::vector<numbers> mynumbersXsec;	

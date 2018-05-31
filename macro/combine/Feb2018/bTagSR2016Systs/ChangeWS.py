@@ -23,8 +23,8 @@ for arg in ["bern20","bern21","bern22", "bern30","bern31","bern32","bern33", "m0
     args[ arg ] = InWS.var( arg )
     if arg == "m0" :
         args[arg].setRange( 60 , 80)
-    #args[arg].removeRange()
-    #args[arg].setConstant()
+        #args[arg].removeRange()
+        #args[arg].setConstant()
 
 sig_norm = InWS.arg("signal_norm")
 sig_shap = InWS.arg("signal")
