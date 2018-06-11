@@ -256,7 +256,8 @@ if __name__ == "__main__":
     #    minbeta=0.3
     # #   maxbeta=0.8
 
-    limits = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" )
+    #limits = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" )
+    limits = LimitReader("../../macro/combine/Unblinding/Limits.root")
     ROOT.gROOT.cd()
     
     histLimit=ROOT.TH2F("histLimit","Limit",binmass,minmass,maxmass,binbeta,minbeta,maxbeta)
@@ -270,7 +271,7 @@ if __name__ == "__main__":
         mass = masses[i-1]
         for b in range(1,binbeta+1):
             tanbeta= tanbetas[b-1] #histLimitOriginal.GetYaxis().GetBinLowEdge( b )
-            ysm , limit , width , BRmm , BRbb = limits.GetModelLimit( args.model , xxsm , tanbeta )
+            ysm , limit , width , BRmm , BRbb = limits.GetModelLimit( args.model , xxsm , tanbeta , 5 )
 
             # dirName = "/home/hbakhshi/Desktop/Hamb13/HaNaMiniAnalyzer/macro/combine/Feb2018/bTagSR2016Systs_MMTTIncluded/model%d/tanbeta%d" % (args.model , tanbeta*100)
             # if int(mass)-mass == 0 :

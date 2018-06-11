@@ -1,0 +1,45 @@
+imax 1 number of bins
+jmax 1 number of processes minus 1
+kmax 22 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes bkg       TMexc       UnblindedWS.root HMuMubbWS:BkgShape_TMexc 
+shapes data_obs  TMexc       UnblindedWS.root HMuMubbWS:Dataset_TMexc 
+shapes signal    TMexc       HAMB2016.root wTMexc:signal_TMexc
+----------------------------------------------------------------------------------------------------------------------------------
+bin          TMexc
+observation  -1.0
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             TMexc	TMexc
+process                         signal       bkg    
+process                         0            1      
+rate                            0.3200	     1
+----------------------------------------------------------------------------------------------------------------------------------
+JES                     lnN     1.020/0.970  -       
+JER			lnN	1.009/0.999  -
+MET                     lnN     1.002/0.990  -       
+PDF                     lnN     0.989/1.008  -       
+btag_JES                lnN     0.880/1.200  -       
+btag_lf                 lnN     0.900/1.430  -       
+btag_HFSTAT1		lnN	1.06/0.94    -
+btag_HFSTAT2		lnN	0.96/1.04    -
+btag_LFSTAT1		lnN	1.000006/0.999987	-
+btag_LFSTAT2		lnN	1.0002/0.9997		-
+btag_CFERR1		lnN	1.0008/0.998		-
+btag_CFERR2		lnN	0.992/1.009		-
+btag_HF			lnN	1.004/0.997		-
+lumi                    lnN     1.025        -       
+muonHLT                 lnN     1.006/0.994  -       
+muonID                  lnN     0.986/1.014  -       
+muonIso                 lnN     0.986/1.014  -       
+pileup                  lnN     0.980/1.010  -       
+signalTHunc             lnN     1.13         -       
+a1            param  0.0000 0.0004
+m1            param  0.0000 0.0001
+b1            param  0.0110 0.0001
+pdfIndex_TMexc  discrete
+
+btag group = btag_CFERR1 btag_CFERR2 btag_HF btag_HFSTAT1 btag_HFSTAT2 btag_JES btag_LFSTAT1 btag_LFSTAT2 btag_lf
+muon group = muonHLT muonID muonIso
+signalshape group = a1 m1 b1
+theory group = PDF signalTHunc
+experiment group = JES MET lumi pileup

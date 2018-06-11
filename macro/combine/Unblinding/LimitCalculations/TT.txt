@@ -1,0 +1,45 @@
+imax 1 number of bins
+jmax 1 number of processes minus 1
+kmax 22 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes bkg       TT       UnblindedWS.root HMuMubbWS:BkgShape_TT
+shapes data_obs  TT       UnblindedWS.root HMuMubbWS:Dataset_TT     
+shapes signal    TT       HAMB2016.root wTT:signal_TT
+----------------------------------------------------------------------------------------------------------------------------------
+bin          TT
+observation  -1.0
+----------------------------------------------------------------------------------------------------------------------------------
+bin                             TT	TT
+process                         signal       bkg    
+process                         0            1      
+rate                            0.2700       1
+----------------------------------------------------------------------------------------------------------------------------------
+JES                     lnN     1.005/0.980  -
+JER			lnN	1.010/1.0003 -
+MET                     lnN     1.005/0.990  -
+PDF                     lnN     0.989/1.008  -
+btag_JES                lnN     0.890/1.430  -
+btag_lf                 lnN     0.840/1.220  -
+btag_HFSTAT1		lnN	1.06/0.94    -
+btag_HFSTAT2		lnN	0.94/1.06    -
+btag_LFSTAT1		lnN	0.9991/1.0008	-
+btag_LFSTAT2		lnN	1.0005/0.9994	-
+btag_CFERR1		lnN	1.002/0.997	-
+btag_CFERR2		lnN	0.991/1.01	-
+btag_HF			lnN	0.992/1.0008	-
+lumi                    lnN     1.025        -
+muonHLT                 lnN     1.006/0.994  -
+muonID                  lnN     0.986/1.014  -
+muonIso                 lnN     0.986/1.014  -
+pileup                  lnN     0.980/1.020  -
+signalTHunc             lnN     1.13         -
+a1            param  0.0000 0.0004
+m1            param  0.0000 0.0001
+b1            param  0.0110 0.0001
+pdfIndex_TT  discrete
+
+btag group = btag_CFERR1 btag_CFERR2 btag_HF btag_HFSTAT1 btag_HFSTAT2 btag_JES btag_LFSTAT1 btag_LFSTAT2 btag_lf
+muon group = muonHLT muonID muonIso
+signalshape group = a1 m1 b1
+theory group = PDF signalTHunc
+experiment group = JES JER MET lumi pileup

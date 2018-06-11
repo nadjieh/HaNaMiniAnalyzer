@@ -194,12 +194,13 @@ class LimitReader:
             self.MedianGraph = self.File.Get("median").Clone()
             self.g2sigmaBand = self.File.Get("graph2sigma").Clone()
             self.g1sigmaBand = self.File.Get("graph1sigma").Clone()
+            self.ObservedGraph = self.File.Get("observed").Clone()
             ROOT.gROOT.cd()
             self.gp2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , +1 )
             self.gm2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , -1 )
             self.gp1sigma = self.ProduceUpDownPlots( self.g1sigmaBand , +1 )
             self.gm1sigma = self.ProduceUpDownPlots( self.g1sigmaBand , -1 )
-            self.AllGraphs = {-2:self.gm2sigma , -1:self.gm1sigma , 0:self.MedianGraph , +1:self.gp1sigma , +2:self.gp2sigma }
+            self.AllGraphs = {-2:self.gm2sigma , -1:self.gm1sigma , 0:self.MedianGraph , +1:self.gp1sigma , +2:self.gp2sigma , 5:self.ObservedGraph }
         else:
             self.Median2dHist = self.File.Get("hLimitMedian").Clone()
         self.File.Close()

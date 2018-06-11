@@ -439,7 +439,7 @@ int main(int argc, char** argv) {
     double minpar = -10.;
     double maxpar = 10.;
     double mL = 20.;
-    double mH = 63.;
+    double mH = 62.5;
     vector<double> degrees;
     int pdfId = 0;
     TString inputFileName = "";

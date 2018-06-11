@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-#nFilesPerJob=15 #used for signal systematics on March 02 and before
-nFilesPerJob=3
+nFilesPerJob=15 #used for signal systematics on March 02 and before
+#nFilesPerJob=3
 
 CheckFailedJobs=True
 hname = "Hamb/CutFlowTable/CutFlowTable"
@@ -40,8 +40,8 @@ call(["voms-proxy-init" , "--out" , "./%s/.x509up_u%d" % ( workingdir , os.getui
 FailedJobs = {}
 if CheckFailedJobs:
     for sample in samples:
-    	#if not sample.Name.count("GGH") : #for signal sample systs 
-        if not sample.Name.count("DYMG"): #for signal sample systs 
+    	if not sample.Name.count("GGH") : #for signal sample systs 
+        #if not sample.Name.count("DYMG"): #for signal sample systs 
             continue
 
         ListOfFailedJobs = []
@@ -78,8 +78,8 @@ if CheckFailedJobs:
 file = open("%s/submit.sh" % (workingdir) , "w" )
 for sample in samples:
 
-    #if not sample.Name.count("GGH") :                                                                                                                                                              
-    if not sample.Name.count("DYMG"):
+    if not sample.Name.count("GGH") :                                                                                                                                                              
+    #if not sample.Name.count("DYMG"):
         continue
 
 

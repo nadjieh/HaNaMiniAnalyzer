@@ -4,9 +4,9 @@
 #include <TTree.h>
 #include <TGraphAsymmErrors.h>
 using namespace std;
-const int nPoint = 86;
+int nPoint = 86;
 typedef std::vector<double> numbers;
-const float ratio = 1.1137;
+const float ratio_ = 1.1137;
 numbers GetNumbers(TFile * f, double xsec = 1.){
 	numbers ret;
 	TTree * t = (TTree*) f->Get("limit");
@@ -22,17 +22,17 @@ numbers GetNumbers(TFile * f, double xsec = 1.){
 		t->GetEntry(i);
 		cout<<quant_<<" "<<limit_<<endl;
 		if(fabs(quant_ - 0.5) < 0.001)
-			res[2] = xsec*limit_/ratio;
+			res[2] = xsec*limit_/ratio_;
 		else if(fabs(quant_ - 0.025) < 0.001)
-			res[0] = xsec*limit_/ratio;
+			res[0] = xsec*limit_/ratio_;
 		else if(fabs(quant_ - 0.16) < 0.001)
-			res[1] = xsec*limit_/ratio;	
+			res[1] = xsec*limit_/ratio_;	
 		else if(fabs(quant_ - 0.84) < 0.001)
-			res[3] = xsec*limit_/ratio;
+			res[3] = xsec*limit_/ratio_;
 		else if(fabs(quant_ - 0.975) < 0.001)
-			res[4] = xsec*limit_/ratio;
+			res[4] = xsec*limit_/ratio_;
 		else if(fabs(quant_ + 1) < 0.001)
-			res[5] = xsec*limit_/ratio;
+			res[5] = xsec*limit_/ratio_;
 	}
 	for(int i = 0; i<5; i++){
 		if(i != 2)
@@ -40,8 +40,8 @@ numbers GetNumbers(TFile * f, double xsec = 1.){
 		else
 			ret.push_back(res[i]);
 	}
-	//cout<<"bserved limit: "<<res[5]<<"\t";
-	//ret.push_back(res[5]);
+	cout<<"bserved limit: "<<res[5]<<"\t";
+	ret.push_back(res[5]);
 	cout<<ret[ret.size()-1]<<endl;
 	return ret;
 }
@@ -87,16 +87,28 @@ void limit(){
 	double mass[nPoint];
 	std::vector<TFile*> fs;
 	stringstream STR;
+	int counter = 0;
+
+	numbers wrongMassFiles;
 	for(int num = 0; num<nPoint; num++){
 		STR.str("");
-		mass[num] = 20. + 0.5*num;
+		double MMMM = 20. + 0.5*num;
 		if(num%2 == 0)	
-			STR <<(int)mass[num];
+			STR <<(int)MMMM;
 		else
-			STR <<(int)mass[num]<<".5";
+			STR <<(int)MMMM<<".5";
 		TString Mass = STR.str().c_str();
-		if (TFile::Open("higgsCombineTest.AsymptoticLimits.mH"+Mass+".root") != NULL)
-		  fs.push_back( TFile::Open("higgsCombineTest.AsymptoticLimits.mH"+Mass+".root"));
+		TFile* ff = TFile::Open("higgsCombineTest.AsymptoticLimits.mH"+Mass+".root");
+		if(ff)
+		  if( ff->Get("limit") ){
+		    fs.push_back( ff );
+		    mass[counter] = MMMM;
+		    counter ++;
+		  }else
+		    wrongMassFiles.push_back( MMMM );
+		else
+		  wrongMassFiles.push_back( MMMM );
+		  
 	}
 	std::vector<numbers> mynumbers;
 	std::vector<numbers> mynumbersXsec;	
@@ -107,7 +119,9 @@ void limit(){
 		mynumbers.push_back(GetNumbers(fs[s]));
 		mynumbersXsec.push_back(GetNumbers(fs[s],0.00017*48.58*1000));		
 	}
-	
+
+	nPoint = n;
+
 	TGraphAsymmErrors * g0 = GetGraph(mynumbers,mass,0);
 	g0->SetName("g0");
 	g0->SetLineStyle(2);
@@ -139,15 +153,15 @@ void limit(){
 	g22->SetFillColor(kGreen);
 	g22->SetTitle("Expected 2 #sigma");
 	
-	//TGraph * Obs = GetObserved(mynumbers,mass);
-	//Obs->SetNameTitle("Obs","Observed");
-	//Obs->SetFillColor(kWhite);
-	//Obs->SetMarkerStyle(20);
+	TGraph * Obs = GetObserved(mynumbers,mass);
+	Obs->SetNameTitle("Obs","Observed");
+	Obs->SetFillColor(kWhite);
+	Obs->SetMarkerStyle(20);
 
-	//TGraph * Obs2 = GetObserved(mynumbersXsec,mass);
-        //Obs2->SetNameTitle("Obs2","Observed");
-        //Obs2->SetFillColor(kWhite);
-        //Obs2->SetMarkerStyle(20);
+	TGraph * Obs2 = GetObserved(mynumbersXsec,mass);
+        Obs2->SetNameTitle("Obs2","Observed");
+        Obs2->SetFillColor(kWhite);
+        Obs2->SetMarkerStyle(20);
 	
 	TCanvas c;
 	c.cd();
@@ -155,8 +169,8 @@ void limit(){
 	g2->Draw("ap3");
 	g1->Draw("p3");
 	g0->Draw("p");
-	//Obs->Draw("p");
-	c.SaveAs("myLimitRTest.C");
+	Obs->Draw("p");
+	c.SaveAs("myLimitRSigmaBR.C");
 	
 	TCanvas c2;
 	c2.cd();
@@ -164,7 +178,10 @@ void limit(){
 	g22->Draw("ap3");
 	g11->Draw("p3");
 	g00->Draw("p");
-	//Obs2->Draw("p");
-	c2.SaveAs("myLimitXsecH.C");
+	Obs2->Draw("p");
+	c2.SaveAs("myLimitXsec.C");
 
+	for(int ii = 0 ; ii < wrongMassFiles.size() ; ii++){
+	  cout << wrongMassFiles[ii] << " file was not found" << endl;
+	}
 }
