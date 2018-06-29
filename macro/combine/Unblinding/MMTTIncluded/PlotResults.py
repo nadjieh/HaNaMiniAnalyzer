@@ -8,7 +8,7 @@ import os.path
 cwd = os.getcwd()
 
 efficiencies = mmbb.EfficiencyReader()
-limitReader = mmbb.LimitReader( "../bTagSR2016Systs/myLimitXsec.root" )
+limitReader = mmbb.LimitReader( "../Limits.root" )
 modeltype = 3
 
 tanbetas = numpy.linspace( 0.01 , 10.01 , 100 , endpoint=False )
@@ -34,12 +34,13 @@ for tanbeta in tanbetas:
         if os.path.isfile( fName ):
             fffIn = ROOT.TFile.Open( fName )
             if fffIn :
-                h2d.SetBinContent( bin_id , limitReader.ExtractLimit( fName ) )
+                h2d.SetBinContent( bin_id , limitReader.ExtractLimit( fName , 5 ) )
             else:
                 h2d.SetBinContent( bin_id , -1. )
         else:
-            newupperbound, tb_ratio , old_limit = limitReader.GetModelLimitTTNormalized(modeltype , mass , tanbeta , index = 0 )
+            newupperbound, tb_ratio , old_limit = limitReader.GetModelLimitTTNormalized(modeltype , mass , tanbeta , index = 5 )
             h2d.SetBinContent( bin_id , newupperbound )
+        print mass, h2d.GetBinContent( bin_id )
             
 
 fOut = ROOT.TFile.Open("limits%d.root" % modeltype , "recreate")

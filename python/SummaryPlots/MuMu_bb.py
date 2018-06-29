@@ -228,7 +228,7 @@ class LimitReader:
         ret.SetName( "graph%s%d" % ( "p" if w > 0 else "m" , abs( w ) ) )
         return ret
 
-    def ExtractLimit(self , fInName):
+    def ExtractLimit(self , fInName , index=2):
         #print fInName
         xsec = 1.0
         fIn = ROOT.TFile.Open( fInName )
@@ -260,7 +260,7 @@ class LimitReader:
 	    else :
 		ret.append(res[i])
 
-	return res[2]*0.1
+	return res[index]*0.1
 
     
     def GetLimit(self , mass , index = 0 ):
