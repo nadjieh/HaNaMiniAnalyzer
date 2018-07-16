@@ -63,4 +63,5 @@ SingleNeutrinoTuneCP5 = Sample("SingleNeutrinoTuneCP5" , 1 , False , "/SingleNeu
 
 SingleNeutrinos = []
 SingleNeutrinos.extend( [ SingleNeutrinoTuneCP0 , SingleNeutrinoTuneCP2 , SingleNeutrinoTuneCP5 ] )
+MINIAOD.extend( [ SingleNeutrinoTuneCP0 , SingleNeutrinoTuneCP2 , SingleNeutrinoTuneCP5 ] )
 

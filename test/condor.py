@@ -11,7 +11,7 @@ if not len(sys.argv) == 3 :
 prefix = "out"
 OutPath = "eos/cms/store/user/%s/%s/" % (user, sys.argv[2] )
 
-from SamplesPU.Samples import SingleNeutrinos as samples
+from SamplesPU.Samples import MINIAOD as samples
 for sample in samples:
     sample.MakeJobs( nFilesPerJob , "%s/%s" % (OutPath , prefix) )
 
