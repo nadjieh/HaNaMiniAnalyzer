@@ -55,3 +55,11 @@ ZeroBiasD = Sample("ZeroBiasD" , 0 , False , "/ZeroBias/Run2016D-03Feb2017-v1/MI
 ZeroBiasC = Sample("ZeroBiasC" , 0 , False , "/ZeroBias/Run2016C-03Feb2017-v1/MINIAOD")
 
 MINIAOD.extend( [ ZeroBiasC , ZeroBiasD , ZeroBiasE , ZeroBiasF , ZeroBiasG , ZeroBiasH2 , ZeroBiasH3 ] )
+
+
+SingleNeutrinoTuneCP0 = Sample("SingleNeutrinoTuneCP0" , 1 , False , "/SingleNeutrino/RunIISummer16MiniAODv2-FlatPU0to75TuneCP0_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v3/MINIAODSIM" )
+SingleNeutrinoTuneCP2 = Sample("SingleNeutrinoTuneCP2" , 1 , False , "/SingleNeutrino/RunIISummer16MiniAODv2-FlatPU0to75TuneCP2_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM" )
+SingleNeutrinoTuneCP5 = Sample("SingleNeutrinoTuneCP5" , 1 , False , "/SingleNeutrino/RunIISummer16MiniAODv2-FlatPU0to75TuneCP5_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM" )
+
+SingleNeutrinos.extend( [ SingleNeutrinoTuneCP0 , SingleNeutrinoTuneCP2 , SingleNeutrinoTuneCP5 ] )
+
