@@ -11,7 +11,7 @@ if not len(sys.argv) == 3 :
 prefix = "out"
 OutPath = "eos/cms/store/user/%s/%s/" % (user, sys.argv[2] )
 
-from SamplesPU/Samples import SingleNeutrinos as samples
+from SamplesPU.Samples import SingleNeutrinos as samples
 for sample in samples:
     sample.MakeJobs( nFilesPerJob , "%s/%s" % (OutPath , prefix) )
 
@@ -50,7 +50,7 @@ for sample in samples:
         "vomsaddress":"%s/%s/.x509up_u%d" % (os.getcwd() , workingdir , os.getuid()) ,
         "scram":os.getenv("SCRAM_ARCH") ,
         "cmsver":os.getenv("CMSSW_VERSION"),
-        "gitco":"master" ,
+        "gitco":"HamedPU" ,
         "sample":sample.Name ,
         "out":prefix,
         "outdir":OutPath,

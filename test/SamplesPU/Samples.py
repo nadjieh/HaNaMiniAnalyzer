@@ -61,5 +61,6 @@ SingleNeutrinoTuneCP0 = Sample("SingleNeutrinoTuneCP0" , 1 , False , "/SingleNeu
 SingleNeutrinoTuneCP2 = Sample("SingleNeutrinoTuneCP2" , 1 , False , "/SingleNeutrino/RunIISummer16MiniAODv2-FlatPU0to75TuneCP2_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM" )
 SingleNeutrinoTuneCP5 = Sample("SingleNeutrinoTuneCP5" , 1 , False , "/SingleNeutrino/RunIISummer16MiniAODv2-FlatPU0to75TuneCP5_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM" )
 
+SingleNeutrinos = []
 SingleNeutrinos.extend( [ SingleNeutrinoTuneCP0 , SingleNeutrinoTuneCP2 , SingleNeutrinoTuneCP5 ] )
 
