@@ -51,7 +51,7 @@ for sample in samples:
         "vomsaddress":"%s/%s/.x509up_u%d" % (os.getcwd() , workingdir , os.getuid()) ,
         "scram":os.getenv("SCRAM_ARCH") ,
         "cmsver":os.getenv("CMSSW_VERSION"),
-        "gitco":"master" ,
+        "gitco":"80X_201705" ,
         "sample":sample.Name ,
         "out":prefix,
         "outdir":OutPath,

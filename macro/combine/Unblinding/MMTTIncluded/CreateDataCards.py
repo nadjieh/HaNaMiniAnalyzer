@@ -83,7 +83,17 @@ for tanbeta in tanbetas:
     total_points += len(mass_indices)
     print "\t" , len(mass_indices) # , [masses[i] for i in mass_indices]
     if len(mass_indices) != 0:
+        with open("Submit.cmd", "rt") as fin:
+            with open( dirName + "/Submit.cmd" , "wt") as fout:
+                for line in fin:
+                    lout = line.replace( "MODEL" , "%d"%modeltype  ).replace( "TANBETA" , "%d"% (tanbeta*100)  ).replace( "MASSSTEP" , "%.4f" % (42.5 / 17) ).replace( "MASSINDICES" , str(mass_indices).replace(" " , "").replace("[" , "(" ).replace("]" , ")") )
+                    fout.write( lout )
+
+
+
+
         submitLx.write( "cd " + dirName + "\n" )
-        submitLx.write( 'bsub -q 1nh -J "tanB%.1f' % (tanbeta) + str(mass_indices).replace(" " , "") + '" -o HambCombine%I.out `pwd`/runOnLxbatch.sh\n' )
+        #submitLx.write( 'bsub -q 1nh -J "tanB%.1f' % (tanbeta) + str(mass_indices).replace(" " , "") + '" -o HambCombine%I.out `pwd`/runOnLxbatch.sh\n' )
+        submitLx.write( 'condor_submit Submit.cmd\n' )
         
 print total_points, 1.0*total_points/( len(masses)*len(tanbetas) )
