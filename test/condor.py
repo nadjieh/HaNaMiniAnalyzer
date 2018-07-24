@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-nFilesPerJob=10
+nFilesPerJob=2
 import sys
 import getpass
 user = getpass.getuser()
@@ -31,8 +31,9 @@ file_sh = open("%s/Submit.sh" % (workingdir) , "w" )
 
 
 for sample in samples:
-    if not sample.Name.count("GGH"):
-        continue
+    if not sample.Name.count("GGHmmtt"):
+        if not sample.Name.count( "GGHbbtt" ):
+            continue
 
     os.mkdir( "%s/%s" % (workingdir , sample.Name) )
     copy( "SetupAndRun.sh" , "./%s/%s" % (workingdir , sample.Name) )

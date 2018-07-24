@@ -119,11 +119,17 @@ def MakeMultiPdf(region , nbins , IdIndices ):
 AuxObjects = []
 def PlotMultiPdf(frame , mpdf , data , header ):
     plot = data.plotOn( frame )
+    h = plot.getHist()
+    y = h.GetY()
+    yh = h.GetEYhigh()
+    for i in range(0 , h.GetN() ):
+        if y[i] == 0:
+            h.SetPointEYhigh( i , 1.8 )
     legend = ROOT.TLegend(0.1,0.7,0.48,0.9)
     legend.SetFillStyle(0)
     legend.SetLineColor(0)
     legend.SetHeader( header  )
-    legend.AddEntry( plot.getCurve() , "Data" , "lp" )
+    legend.AddEntry( plot.getHist() , "Data" , "lp" )
     AuxObjects.append( legend )
     colors = [ 2,3,4,5,6,7,8,9,28,46,41]
     for ipdf in range(0 , mpdf.getNumPdfs() ):
