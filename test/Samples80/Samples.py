@@ -63,6 +63,15 @@ MiniAOD80Samples.append(WZ80)
 WW80 = Sample( "WW" ,  118.7 , False ,  "/WW_TuneCUETP8M1_13TeV-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/MINIAODSIM")
 MiniAOD80Samples.append(WW80)
 
+VBF2080 = Sample( "VBF20", 3.7820*1.7*0.0001,False, "/SUSYVBFToHToAA_AToMuMu_AToBB_M-20_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM")
+MiniAOD80Samples.append(VBF2080)
+
+VBF4080 = Sample( "VBF40", 3.7820*1.7*0.0001,False, "/SUSYVBFToHToAA_AToMuMu_AToBB_M-40_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM")
+MiniAOD80Samples.append(VBF4080)
+
+VBF6080 = Sample( "VBF60", 3.7820*1.7*0.0001,False, "/SUSYVBFToHToAA_AToMuMu_AToBB_M-60_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM")
+MiniAOD80Samples.append(VBF6080)                                  
+
 GGH1580 = Sample( "GGH15", 48.5800*1.7*0.0001,False, "/SUSYGluGluToHToAA_AToMuMu_AToBB_M-15_TuneCUETP8M1_13TeV_madgraph_pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v2/MINIAODSIM")
 MiniAOD80Samples.append(GGH1580)
 

@@ -280,18 +280,19 @@ if __name__ == "__main__":
             tanbeta= tanbetas[b-1] #histLimitOriginal.GetYaxis().GetBinLowEdge( b )
 
             if MMTTIncluded :
-                dirName = "/home/hbakhshi/Desktop/Hamb13/HaNaMiniAnalyzer/macro/combine/Unblinding/MMTTIncluded/model%d/tanbeta%d" % (args.model , tanbeta*100)
-                if int(mass)-mass == 0 :
-                    fName = dirName + "/higgsCombineTest.AsymptoticLimits.mH%d.root" % int(mass)
-                else:
-                    fName = dirName + "/higgsCombineTest.AsymptoticLimits.mH%.1f.root" % mass
+                ysm = limits.GetModelLimit( args.model , xxsm , tanbeta , 5 )[0]
+                # dirName = "/home/hbakhshi/Desktop/Hamb13/HaNaMiniAnalyzer/macro/combine/Unblinding/MMTTIncluded/model%d/tanbeta%d" % (args.model , tanbeta*100)
+                # if int(mass)-mass == 0 :
+                #     fName = dirName + "/higgsCombineTest.AsymptoticLimits.mH%d.root" % int(mass)
+                # else:
+                #     fName = dirName + "/higgsCombineTest.AsymptoticLimits.mH%.1f.root" % mass
 
-                #print fName
-                if os.path.isfile( fName ):
-                    ysm =  limits.ExtractLimit( fName , 5)
-                else :
-                    print fName , "is not found"
-                    ysm = 0.000001
+                # #print fName
+                # if os.path.isfile( fName ):
+                #     ysm =  limits.ExtractLimit( fName , 5)
+                # else :
+                #     print fName , "is not found"
+                #     ysm = 0.000001
 
                 
             if not MMTTIncluded :
