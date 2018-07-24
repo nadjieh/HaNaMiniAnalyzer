@@ -225,9 +225,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=int, default='1', help="Which type of 2HDM?")
+    parser.add_argument('--mmtt', type=int, default='0', help="mumu tautau is included")
 
     args = parser.parse_args()
 
+    print args.model , args.mmtt
     style1=GetStyleHtt()
     style1.cd()
 
@@ -256,8 +258,13 @@ if __name__ == "__main__":
     #    minbeta=0.3
     # #   maxbeta=0.8
 
-    #limits = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" )
-    limits = LimitReader("../../macro/combine/Unblinding/Limits.root")
+    MMTTIncluded = args.mmtt == 1
+    if MMTTIncluded :
+        limits = LimitReader("../../macro/combine/Unblinding/MMTTIncluded/limits3.root" , is2d=True)
+    else:
+        #limits = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" )
+        limits = LimitReader("/home/hbakhshi/Desktop/tHq/Papers/Ours2/papers/HIG-18-011/trunk/figures/src/limits.root")
+
     ROOT.gROOT.cd()
     
     histLimit=ROOT.TH2F("histLimit","Limit",binmass,minmass,maxmass,binbeta,minbeta,maxbeta)
@@ -271,28 +278,34 @@ if __name__ == "__main__":
         mass = masses[i-1]
         for b in range(1,binbeta+1):
             tanbeta= tanbetas[b-1] #histLimitOriginal.GetYaxis().GetBinLowEdge( b )
-            ysm , limit , width , BRmm , BRbb = limits.GetModelLimit( args.model , xxsm , tanbeta , 5 )
 
-            # dirName = "/home/hbakhshi/Desktop/Hamb13/HaNaMiniAnalyzer/macro/combine/Feb2018/bTagSR2016Systs_MMTTIncluded/model%d/tanbeta%d" % (args.model , tanbeta*100)
-            # if int(mass)-mass == 0 :
-            #     fName = dirName + "/higgsCombineTest.Asymptotic.mH%d.root" % int(mass)
-            # else:
-            #     fName = dirName + "/higgsCombineTest.Asymptotic.mH%.1f.root" % mass
+            if MMTTIncluded :
+                dirName = "/home/hbakhshi/Desktop/Hamb13/HaNaMiniAnalyzer/macro/combine/Unblinding/MMTTIncluded/model%d/tanbeta%d" % (args.model , tanbeta*100)
+                if int(mass)-mass == 0 :
+                    fName = dirName + "/higgsCombineTest.AsymptoticLimits.mH%d.root" % int(mass)
+                else:
+                    fName = dirName + "/higgsCombineTest.AsymptoticLimits.mH%.1f.root" % mass
 
-            # #print fName
-            # if os.path.isfile( fName ):
-            #     ysm =  limits.ExtractLimit( fName )
-            # else :
-            #     print fName , "is not found"
-            #     ysm = 0.000001
+                #print fName
+                if os.path.isfile( fName ):
+                    ysm =  limits.ExtractLimit( fName , 5)
+                else :
+                    print fName , "is not found"
+                    ysm = 0.000001
 
-            binindex = histLimit.GetBin( i , b ) #xxsm , tanbeta )
-   	    histLimit.SetBinContent(binindex,ysm)
-            histBRmmbb.SetBinContent( binindex,BRmm*BRbb)
-            histBRmm.SetBinContent( binindex,BRmm*width)
-            histBRbb.SetBinContent( binindex,BRbb*width)
-            histWidth.SetBinContent( binindex,width*width)
-            histLimitOriginal.SetBinContent( binindex,limit)
+                
+            if not MMTTIncluded :
+                ysm , limit , width , BRmm , BRbb = limits.GetModelLimit( args.model , xxsm , tanbeta , 5 )
+                binindex = histLimit.GetBin( i , b ) #xxsm , tanbeta )
+   	        histLimit.SetBinContent(binindex,ysm)
+                histBRmmbb.SetBinContent( binindex,BRmm*BRbb)
+                histBRmm.SetBinContent( binindex,BRmm*width)
+                histBRbb.SetBinContent( binindex,BRbb*width)
+                histWidth.SetBinContent( binindex,width*width)
+                histLimitOriginal.SetBinContent( binindex,limit)
+            else:
+                binindex = histLimit.GetBin( i , b ) 
+   	        histLimit.SetBinContent(binindex,ysm)
 
     canvas = MakeCanvas("asdf","asdf",800,800)
     canvas.SetRightMargin(0.23)#FIXME 0.2
@@ -308,12 +321,12 @@ if __name__ == "__main__":
     histLimit.GetZaxis().SetTitleOffset(1.25)
     histLimit.GetYaxis().SetTitleOffset(0.92)
     #histLimit.GetXaxis().SetRangeUser(15,62)
-    # if (args.model==3):
-    #    histLimit.GetZaxis().SetRangeUser(0.05,3)
+    if (args.model==3):
+        histLimit.GetZaxis().SetRangeUser(0.05,30)
     # if (args.model==2):
     #    histLimit.GetZaxis().SetRangeUser(0.05,3)
-    # if (args.model==4):
-    #    histLimit.GetZaxis().SetRangeUser(0.1,300)
+    elif (args.model==4):
+        histLimit.GetZaxis().SetRangeUser(0.1,1000)
     # if (args.model==1):
     #     #histLimit.GetZaxis().SetRangeUser(0.1,1.0) 1.7*0.0001*
     #     histLimit.GetZaxis().SetRangeUser(0.00001 , 1.0 ) #0.00008/(1.7*0.0001),0.0002/(1.7*0.0001))
@@ -351,7 +364,7 @@ if __name__ == "__main__":
         for contour in mycontour24 :
             contour.SetLineWidth(7)
             contour.SetLineStyle(3)
-            contour.SetLineColor(ROOT.kBlue)
+            contour.SetLineColor(ROOT.kMagenta)
             contour.Draw("l")
             print "contour %.2f plotted" % 0.34
         legend.AddEntry(mycontour24[0],"95% CL on #frac{#sigma(h)}{#sigma_{SM}}B(h#rightarrow aa) = 0.34","l")
@@ -359,10 +372,14 @@ if __name__ == "__main__":
     #canvas.RedrawAxis()
     legend.Draw() #"same")
 
-    canvas.SaveAs('plots/plot_BRaa_bbttRun2_Type'+str(args.model)+'.png')
-    canvas.SaveAs('plots/plot_BRaa_bbttRun2_Type'+str(args.model)+'.pdf')
+    if MMTTIncluded :
+        nameextention = "Type%d_mmbb_mmtt" % (args.model)
+    else :
+        nameextention = "Type%d" % (args.model)
+    canvas.SaveAs('plots/plot_BRaa_bbttRun2_'+nameextention+'_observed.png')
+    canvas.SaveAs('plots/plot_BRaa_bbttRun2_'+nameextention+'_observed.pdf')
 
-    fout = ROOT.TFile.Open('plots/plot_BRaa_bbttRun2_Type'+str(args.model)+'.root' , "recreate")
+    fout = ROOT.TFile.Open('plots/plot_BRaa_bbttRun2_'+nameextention+'_observed.root' , "recreate")
     canvas.Write()
     cTmp2.Write()
     cTmp1.Write()

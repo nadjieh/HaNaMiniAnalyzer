@@ -191,10 +191,10 @@ class LimitReader:
         ROOT.gROOT.cd()
         
         if not is2d :
-            self.MedianGraph = self.File.Get("median").Clone()
-            self.g2sigmaBand = self.File.Get("graph2sigma").Clone()
-            self.g1sigmaBand = self.File.Get("graph1sigma").Clone()
-            self.ObservedGraph = self.File.Get("observed").Clone()
+            self.MedianGraph = self.File.Get("limitXSec/expected").Clone()
+            self.g2sigmaBand = self.File.Get("limitXSec/two_sigma").Clone()
+            self.g1sigmaBand = self.File.Get("limitXSec/one_sigma").Clone()
+            self.ObservedGraph = self.File.Get("limitXSec/observed").Clone()
             ROOT.gROOT.cd()
             self.gp2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , +1 )
             self.gm2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , -1 )
@@ -228,7 +228,7 @@ class LimitReader:
         ret.SetName( "graph%s%d" % ( "p" if w > 0 else "m" , abs( w ) ) )
         return ret
 
-    def ExtractLimit(self , fInName):
+    def ExtractLimit(self , fInName , index = 2):
         #print fInName
         xsec = 1.0
         fIn = ROOT.TFile.Open( fInName )
@@ -237,7 +237,7 @@ class LimitReader:
             print fInName, "has a problem"
             return 0.0000001
         
-        res=[-1.,-1.,-1.-1.,-1.,-1.]
+        res=[-1.,-1.,-1,-1.,-1.,-1.]
         ret = []
 	for event in t :
 	    quant_ = event.quantileExpected
@@ -253,6 +253,8 @@ class LimitReader:
 	    elif abs(quant_ - 0.975) < 0.001 :
 		res[4] = xsec*limit_
 	    elif abs(quant_ + 1) < 0.001 :
+                #print limit_
+                #print res
 		res[5] = xsec*limit_
 	for i in range(5):
 	    if i != 2 :
@@ -260,10 +262,11 @@ class LimitReader:
 	    else :
 		ret.append(res[i])
 
-	return res[2]*0.1
+	return res[index]*0.1
 
     
     def GetLimit(self , mass , index = 0 ):
+        #the limit multiplied by 0.00017 should be passed here
         if mass in self.MassLimits :
             limit = self.MassLimits[mass]
         else :
@@ -311,7 +314,7 @@ class LimitReader:
         for mass in np.linspace(minM , maxM , bins )[::-1]:
             x.append( mass )
             x_err.append(0)
-            Y = self.GetModelLimit( modelType , mass , tanB , 0)
+            Y = self.GetModelLimit( modelType , mass , tanB , 5)
             Y_high = self.GetModelLimit( modelType , mass , tanB , 1)
             Y_low = self.GetModelLimit( modelType , mass , tanB , -1)
 
