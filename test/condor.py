@@ -31,9 +31,8 @@ file_sh = open("%s/Submit.sh" % (workingdir) , "w" )
 
 
 for sample in samples:
-    if not sample.Name.count("GGHmmtt"):
-        if not sample.Name.count( "GGHbbtt" ):
-            continue
+    if not sample.Name.count("VBF"):
+        continue
 
     os.mkdir( "%s/%s" % (workingdir , sample.Name) )
     copy( "SetupAndRun.sh" , "./%s/%s" % (workingdir , sample.Name) )
