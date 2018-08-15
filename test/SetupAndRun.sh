@@ -34,6 +34,13 @@ fi
 echo cmsRun PUAnalyzer_cfg.py sample=$5 job=$FILEID output=$6 maxEvents=-1 nFilesPerJob=$8
 cmsRun PUAnalyzer_cfg.py sample=$5 job=$FILEID output=$6 maxEvents=-1 nFilesPerJob=$8
 
+
+outfilename=`ls $6*$5*.root`
+outfilenames=`ls *$6*$5*.root`
+
+ls -l $outfilenames
+
+
 if [[ $7 == eos* ]] ;
 then
     #first try to copy to /eos
@@ -43,7 +50,7 @@ then
 	if [ -f  /$7/$outfilename ]; then
 	    echo "the file exists, is being renamed"
 	    rm -f /$7/${outfilename}_
-		rm -f /$7/$outfilename
+	    rm -f /$7/$outfilename
 	fi
 
 	COUNTER2=0
