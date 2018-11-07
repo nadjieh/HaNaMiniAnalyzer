@@ -1,4 +1,4 @@
-HOMELIB		= $(HOME)/lib
+HOMELIB		= $(CMSSW_BASE)/lib/$(SCRAM_ARCH)/
 ROOFITLIB	=$(ROOFITSYS)/lib
 ROOTINC		=-I$(shell root-config --incdir)
 ROOTLIBS	=$(shell root-config --libs) -lMinuit #-lRooFit -lRooFitCore -lRooStats 
@@ -7,7 +7,7 @@ ROOTGLIBS	=$(shell root-config --glibs) -lMinuit #-lRooFit -lRooFitCore -lRooSta
 ROOFITLIBS       =-L$(ROOFITLIB) -lRooFit -lRooFitCore -lRooStats 
 COMBLIB		=-L$(HOMELIB) -lHiggsAnalysisCombinedLimit
 ROOFITINC	=-I$(ROOFITSYS)/include
-MYHEADERS=-I../interface
+MYHEADERS=-I$(CMSSW_BASE)/src/HiggsAnalysis/CombinedLimit/interface/
 CXX=g++
 
 GLIBS		=$(ROOTGLIBS) 
