@@ -55,7 +55,7 @@ for tanbeta in tanbetas:
         totalyields = efficiencies.GetSignalYields( "mmbb" , "total" , 2.0 , mass , 3. )
         #HtoaaHamedYield = totalyields/efficiencies.GetBR( "mmbb" , 2.0 , mass , 3. )
         #myCF = HtoaaYieldWs/HtoaaHamedYield
-        correctedTotalYield = (1.7*0.001*totalyields)/(efficiencies.GetBR( "mmbb" , 2.0 , mass , 3. )*1.114)
+        correctedTotalYield = (1.7*0.001*totalyields)/efficiencies.GetBR( "mmbb" , 2.0 , mass , 3. )
         correctionfactor = 1.0/correctedTotalYield
         #correctionfactor = 1.0/yieldinws
 

@@ -15,18 +15,14 @@ else :
 
 from Haamm.HaNaMiniAnalyzer.ExtendedSample import *
 for sample in samples:
-    if "GGH" not in sample.Name :
-	continue
-    if "GGH35" in sample.Name :
-        continue
-    if "GGHmmtt40" in sample.Name :
+    if "VBF" not in sample.Name :
         continue
         #job is already created : sample.MakeJobs( 20 , "%s/%s" % (OutPath24June , prefix) )
     #    print sample.Name 
     #else:
-    sample.MakeJobs( 15 , "eos/cms/store/user/%s/%s/%s" % (GetUserName(), "JERSystBatch" , "out" ) ) 
+    sample.MakeJobs( 2 , "eos/cms/store/user/%s/%s/%s" % (GetUserName(), "vbf" , "out" ) ) 
 
     ss = ExtendedSample(sample)
     #export EOS_MGM_URL=root://eosuser.cern.ch
     #eosmount eos_cb
-    ss.fhadd("./JERSystBatch/")
+    ss.fhadd("./vbf/")

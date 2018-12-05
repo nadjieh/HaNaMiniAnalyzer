@@ -19,6 +19,7 @@ class EfficiencyReader:
         self.InputFile = ROOT.TFile.Open( fname )
 
         self.mmbb = {}
+        self.VBF = {}
         self.mmtt = {}
         self.ttbb = {}
         self.CatNames = {"TL":"SRTLexc" , "TM":"SRTMexc" , "TT":"SRTT"}
@@ -27,6 +28,7 @@ class EfficiencyReader:
             self.mmbb[cat] = self.GetCategoryEffGraph( "" , dirName , {20:2.00000000000000000e+05 , 25:9.60100000000000000e+04 , 30:1.99235000000000000e+05 , 40:2.00000000000000000e+05 , 45:2.00000000000000000e+05 , 50:2.00000000000000000e+05 , 55:2.00000000000000000e+05 , 60:2.00000000000000000e+05 } )
             self.mmtt[cat] = self.GetCategoryEffGraph( "mmtt" , dirName , {20:2.50000000000000000e+05 , 40:2.50000000000000000e+05 , 60:2.49252000000000000e+05 } )
             self.ttbb[cat] = self.GetCategoryEffGraph( "bbtt" , dirName , {20:4.18969000000000000e+05/0.1426 , 40:3.91355000000000000e+05/0.1322 , 60:3.39000000000000000e+05/0.1133 } )
+            self.VBF[cat] = self.GetCategoryEffGraph( "VBF" , dirName , {20:200000 , 40:193420 , 60:200000 } )
 
         self.InputFile.Close()
         self.TempList = []
@@ -47,7 +49,7 @@ class EfficiencyReader:
             return getattr( self , sample )[catName].Eval( mass , 0 , "S" )
         
     def GetMMBBEfficiency(self , catName , mass ):
-        return self.mmbb[catName].Eval( mass , 0 , "S" )
+        return ( 48.5800*self.mmbb[catName].Eval( mass , 0 , "S" ) + 3.7820*self.mmbb[catName].Eval( mass , 0 , "S" ) )/( 48.58+3.7820 )
     def GetMMTTEfficiency(self , catName , mass ):
         return self.mmtt[catName].Eval( mass , 0 , "S" )
     def GetTTBBEfficiency(self , catName , mass ):
@@ -100,11 +102,11 @@ class EfficiencyReader:
 
         return BR
 
-    def GetSignalYields(self, sample , cat , tanb , m , modeltype , lumi=35900 , xsection=48.5800 , brHaa = 0.1):
+    def GetSignalYields(self, sample , cat , tanb , m , modeltype , lumi=35900 , xsection=52.362 , brHaa = 0.1): #cross section is 48.58+3.7820 ggH+VBF
         BR = self.GetBR( sample , tanb , m , modeltype )
         return lumi*xsection*brHaa*BR*self.GetEfficiency( sample , cat , m )
 
-    def GetSignalYieldsPlot( self, sample , cat , modeltype , lumi=35900 , xsection=48.5800 , brHaa = 0.1):
+    def GetSignalYieldsPlot( self, sample , cat , modeltype , lumi=35900 , xsection=52.362 , brHaa = 0.1):
         name = "h2d_%s_%s_%d_signalyield" % (sample , cat , modeltype)
         title = "Signal yilds for %s in category %s for model type %d" % (sample , cat , modeltype )
         if hasattr(self, name ):
