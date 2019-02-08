@@ -47,8 +47,8 @@ class Variable:
                 self.MCHistos[ mc.DataFiles[i].XSec ] = mc.DataFiles[i].ReWeight( self )
 
     def Write(self, fout):
-        fout.mkdir( "%s/%s/%s" % (self.Method , self.RunEra , self.Name ) )
-        fout.cd( "%s/%s/%s" % (self.Method , self.RunEra , self.Name ) )
+        fout.mkdir( "%s/%s" % (  self.Method , self.RunEra ) )
+        fout.cd( "%s/%s" % ( self.Method , self.RunEra ) )
         self.Data.Write()
         self.MC.Write()
         self.KTestGraph = TGraph( len(self.MCHistos) )
@@ -89,7 +89,7 @@ class Variable:
         fout.cd()
 
 class DatasetController :
-    def __init__(self , path = "/home/hbakhshi/Downloads/CERNBox/Personal/Projects/PU/April/" , fileName = "SingleMu%s.root"):
+    def __init__(self , path = "/home/hbakhshi/Downloads/CERNBox/Personal/Projects/PU/May/" , fileName = "SingleMu%s.root"):
         self.runEras = {} #"B":{},"C":{},"D":{},"E":{},"F":{},"G":{},"H":{}}
         self.nTuples = path
         self.All = TChain("PUAnalyzer/Trees/Events")
@@ -105,6 +105,9 @@ class DatasetController :
             self.runEras[runEra]["tree"] = self.runEras[runEra]["file"].Get("PUAnalyzer/Trees/Events")
             self.All.Add( self.runEras[runEra]["fname"] )
 
+            print fname , runEra , self.runEras[runEra]["tree"].GetEntries()
+        print "All" , self.All.GetEntries()
+        
     def MakeHisto(self, runEra , name , title , nBins , min_ , max_ ):
         attrname = "%s_%s" % (runEra , name )
         if hasattr( self , attrname  ):
@@ -117,12 +120,16 @@ class DatasetController :
         else :
             tree = self.runEras[ runEra[-1] ]["tree"]
         
-        tree.Draw( "%s>>cloned_%s(%d, %.2g, %.2g)" % (name , attrname , nBins , min_ , max_) )
+        draw_ret = tree.Draw( "%s>>cloned_%s(%d, %.2g, %.2g)" % (name , attrname , nBins , min_ , max_) )
+
+        if draw_ret < 0 :
+            print tree.GetEntries()
+            print name ,  "cloned_%s(%d, %.2g, %.2g)" % (attrname , nBins , min_ , max_)
         setattr( self , attrname , gDirectory.Get( "cloned_%s" % (attrname) ).Clone( attrname ) )
         return getattr( self , attrname )
         
 class MCSampleContainer :
-    def __init__(self, name , nTuples = "/home/hbakhshi/Downloads/CERNBox/Personal/Projects/PU/April/" , runEras = []):
+    def __init__(self, name , nTuples = "/home/hbakhshi/Downloads/CERNBox/Personal/Projects/PU/May/" , runEras = []):
         self.nTuples=nTuples
 
         self.SampleName = name
@@ -137,8 +144,8 @@ class MCSampleContainer :
         self.Tree = self.File.Get("PUAnalyzer/Trees/Events")
         self.hnTrueInt.Scale( 1.0 / self.hnTrueInt.Integral() )
 
-        xsec_variations = [ 69200*i/100 for i in range( 84 , 118 ) ]
-        print xsec_variations
+        xsec_variations =  range( 840 , 1180 )
+        #print xsec_variations
         self.runEras = ["era%s"%era for era in runEras] #{"All","eraB","eraC","eraD","eraE","eraF","eraG","eraH"}
         self.runEras.append("All")
         datapumethods={"latest"} # "bestFit" , , "pcc"}
@@ -148,17 +155,22 @@ class MCSampleContainer :
             for method in datapumethods:
                 fdata = None
                 datafilename = nTuples + "datapu/data_%s_%s.root" % (method, runEra)
+                print datafilename
                 if os.path.isfile( datafilename ):
                     fdata = TFile.Open( datafilename )
                 else:
                     print datafilename, "doesn't exit"
                     continue
                 for xsec in xsec_variations:
+                    xsec_val = 69200.0*xsec/1000 
                     hdata = fdata.Get("h_" + str(xsec) )
+                    if hdata == None :
+                        print "Histo for ", runEra, " for xsec " , xsec_val , "doesn't exist in the file"
+                        continue
                     hdata.Scale( 1.0 / hdata.Integral() )
                     hdata.Divide( self.hnTrueInt )
                     gROOT.cd()
-                    self.DataFiles[ (method,runEra,xsec) ] = PUWeightInfo( method, runEra , xsec , hdata )
+                    self.DataFiles[ (method,runEra,xsec_val) ] = PUWeightInfo( method, runEra , xsec_val , hdata )
                 fdata.Close()
 
     def MakeHisto( self, name , title , nBins , min_ , max_ ):
@@ -173,56 +185,73 @@ class MCSampleContainer :
         
 
 class EraTuneHandler :
-    def __init__(self, name , datafiles , mcfiles , fout ):
+    def Make2DSummaryPlot(self , varName , ext):
+        name = "hBestXSections_%s_%s" % (varName , ext)
+        setattr( self, name , TH2D( name , "Best XSections (%s,%s);Era;Tune" % (ext, varName) , len(self.data.runEras)+1 , 0 , len(self.data.runEras)+1 , 4 , 0 , 4 ) )
+        h = getattr( self, name)
+        h.GetXaxis().SetBinLabel( 1 , "All")
+        index = 2
+        for runera in sorted( self.data.runEras.keys() ):
+            h.GetXaxis().SetBinLabel( index , "era%s" % (runera) )
+            index += 1
+        index = 1
+        for tune in self.Tunes : #[1,2,3,4]:
+            h.GetYaxis().SetBinLabel( index , "tuneM%d"%(tune) )
+            index += 1
+        return h
+    
+    def __init__(self, name , datafiles , mcfiles , fout , tunes = [1,2,3,4] ):
+        self.Tunes = tunes 
         self.data = DatasetController(fileName = datafiles)
         self.Dir = fout.mkdir( name )
         self.Dir.cd()
 
-        self.hBestXSectionsChi2 = TH2D( "hBestXSectionsChi2" , "hBestXSectionsChi2;Era;Tune" , len(self.data.runEras)+1 , 0 , len(self.data.runEras)+1 , 4 , 0 , 4 )
-        self.hBestXSectionsChi2.GetXaxis().SetBinLabel( 1 , "All")
-        index = 2
-        for runera in self.data.runEras:
-            self.hBestXSectionsChi2.GetXaxis().SetBinLabel( index , "era%s" % (runera) )
-            index += 1
-        index = 1
-        for tune in [1,2,3,4]:
-            self.hBestXSectionsChi2.GetYaxis().SetBinLabel( index , "tuneM%d"%(tune) )
-            index += 1
+        variables = { "nVertices" : ( "nVertices" , 54 , 6 , 60 ) ,
+                      "nGoodVertices" : ("nGoodVertices", 54, 5 , 59) ,
+                      "nEles" : ("nEles" , 10 , 0 , 10 ) ,
+                      "nMus" : ("nMus" , 10 , 0 , 10 ),
+                      "nChargedHadrons" : ("nChargedHadrons" , 1200 , 0 , 1200 ),
+                      "nLostTracks": ("nLostTracks" , 35 , 0 , 35 ),
+                      "nPhotons" : ("nPhotons" , 600 , 0 , 600 ),
+                      "nNeutralHadrons" : ("nNeutralHadrons" , 120 , 0 , 120 ),
+                      "fixedGridRhoAll" : ("fixedGridRhoAll" , 40 , 0 , 40 ),
+                      "fixedGridRhoFastjetAll" : ("fixedGridRhoFastjetAll" , 40 , 0 , 40 ),
+                      "fixedGridRhoFastjetAllCalo" : ("fixedGridRhoFastjetAllCalo" , 25 , 0 , 25 ),
+                      "fixedGridRhoFastjetCentral" : ("fixedGridRhoFastjetCentral" , 50 , 0 , 50 ),
+                      "fixedGridRhoFastjetCentralCalo" : ("fixedGridRhoFastjetCentralCalo" , 20 , 0 , 20 ),
+                      "fixedGridRhoFastjetCentralChargedPileUp" : ("fixedGridRhoFastjetCentralChargedPileUp" , 35 , 0 , 35 ),
+                      "fixedGridRhoFastjetCentralNeutral" : ("fixedGridRhoFastjetCentralNeutral" , 12 , 0 , 12 ) }
+        bestXsecPlots = {}
 
-        self.hBestXSectionsKTest = TH2D( "hBestXSectionsKTest" , "hBestXSectionsKTest;Era;Tune" , len(self.data.runEras)+1 , 0 , len(self.data.runEras)+1 , 4 , 0 , 4 )
-        self.hBestXSectionsKTest.GetXaxis().SetBinLabel( 1 , "All")
-        index = 2
-        for runera in self.data.runEras:
-            self.hBestXSectionsKTest.GetXaxis().SetBinLabel( index , "era%s" % (runera) )
-            index += 1
-        index = 1
-        for tune in [1,2,3,4]:
-            self.hBestXSectionsKTest.GetYaxis().SetBinLabel( index , "tuneM%d"%(tune) )
-            index += 1
+        for var in variables:
+            varDir = self.Dir.mkdir( var )
+            chi2bestxsec = self.Make2DSummaryPlot( var , "Chi2" )
+            ktestbestxsec = self.Make2DSummaryPlot( var , "KTest")
+            for tune in tunes : #[1,2,3,4]:
+                tuneName = "tuneM%d" % (tune)
+                setattr( self, "MC_" + tuneName , MCSampleContainer( name=mcfiles % (tune) , runEras=self.data.runEras.keys() ) )
+                mc = getattr( self, "MC_" + tuneName )
+                tunedir = varDir.mkdir(tuneName )
+                tunedir.cd()
 
+                for runEra in sorted( mc.runEras ):
+                    Var = Variable("latest" , runEra , self.data , mc , var , variables[var][0] , variables[var][1] , variables[var][2]  , variables[var][3] )
+                    Var.Write( tunedir )
 
-        for tune in [1,2,3,4]:
-            tuneName = "tuneM%d" % (tune)
-            setattr( self, "MC_" + tuneName , MCSampleContainer( name=mcfiles % (tune) , runEras=self.data.runEras.keys() ) )
-            mc = getattr( self, "MC_" + tuneName )
-            tunedir = self.Dir.mkdir(tuneName )
-            tunedir.cd()
-            for runEra in mc.runEras:
-                nVertices = Variable("latest" , runEra , self.data , mc , "nVertices" , "nVertices" , 54 , 6 , 60 )
-                nVertices.Write( tunedir )
-
-                self.hBestXSectionsChi2.Fill( runEra , tuneName , nVertices.XSectionMinChi2[0] )
-                self.hBestXSectionsKTest.Fill( runEra , tuneName , nVertices.XSectionMinKTest[0] )
+                    chi2bestxsec.Fill( runEra , tuneName , Var.XSectionMinChi2[0] )
+                    ktestbestxsec.Fill( runEra , tuneName , Var.XSectionMinKTest[0] )
                 
-        self.Dir.cd()
-        self.hBestXSectionsKTest.Write()
-        self.hBestXSectionsChi2.Write()
+            varDir.cd()
+            chi2bestxsec.Write()
+            ktestbestxsec.Write()
         
-fout = TFile.Open("out.root" , "recreate")
+fout = TFile.Open("out_2018.root" , "recreate")
 
-EraTuneHandler( "DY" , "SingleMu%s.root",  "ZmuMuM%d" , fout )
-EraTuneHandler( "NuGunZeroBias" , "ZeroBias%s.root",  "NuGunM%d" , fout )
-EraTuneHandler( "NuGunMinBias" , "MinBias%s.root",  "NuGunM%d" , fout )
+#EraTuneHandler( "DY" , "SingleMu%s.root",  "ZmuMuM%d" , fout )
+#EraTuneHandler( "NuGunZeroBias" , "ZeroBias%s.root",  "NuGunM%d" , fout )
+#EraTuneHandler( "NuGunMinBias" , "MinBias%s.root",  "NuGunM%d" , fout )
+#EraTuneHandler( "SingleNuMinBias" , "MinBias%s.root",  "SingleNeutrinoTuneCP%d" , fout , [0,2,5] )
+EraTuneHandler( "SingleNuZeroBias" , "ZeroBias%s.root",  "SingleNeutrinoTuneCP%d" , fout , [0,2,5] )
 
 fout.Close()
 

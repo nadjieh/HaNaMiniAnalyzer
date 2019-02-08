@@ -3,7 +3,7 @@
 #/usr/bin/env python
 ############MAKE SAMPLE LIST : ###################
 
-LUMI = 35.5
+LUMI = 35.9
 
 import os
 import os.path
