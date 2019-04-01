@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Haamm/HaNaMiniAnalyzer/interface/LHEEventReader.h"
 
 LHEEventReader::LHEEventReader( edm::ParameterSet const& iPS, edm::ConsumesCollector && iC) :
@@ -7,8 +8,18 @@ LHEEventReader::LHEEventReader( edm::ParameterSet const& iPS, edm::ConsumesColle
 }
 
 double LHEEventReader::Read( const edm::Event& iEvent ){
+  using namespace std;
+
   BaseEventReader< LHEEventProduct >::Read( iEvent );
   WeightSign = (handle->hepeup().XWGTUP > 0) ? 1.0 : -1.0 ; 
+
+  //cout << "ww=" << handle->originalXWGTUP() << "--";
+  //for(int i = 0 ; i < 9 ; i++)
+  //  cout << "w" << i << "=" << handle->weights()[i].wgt << " -- " ;
+  //cout << endl;
+  scale_uu = handle->weights()[4].wgt/handle->originalXWGTUP();
+  scale_dd = handle->weights()[8].wgt/handle->originalXWGTUP();
+
 
   NGenJets = 0 ;
   const lhef::HEPEUP& lheEvent = handle->hepeup();

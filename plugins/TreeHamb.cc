@@ -200,6 +200,8 @@ void TreeHamb::beginJob()
     if(!forOptimization){//for optimization we use a lighter version of the tree
         theSelectionResultTree->Branch("nVertices" , &nVertices);
 	theSelectionResultTree->Branch("Weight", Weight , weightLeafList.c_str() );
+	theSelectionResultTree->Branch("WeightScaleUp", &(LHEReader->scale_uu) );
+	theSelectionResultTree->Branch("WeightScaleDown", &(LHEReader->scale_dd) );
 	theSelectionResultTree->Branch("puWeight", &puWeight);
 
 	if( jetReader->BTagWeightNonShapes )

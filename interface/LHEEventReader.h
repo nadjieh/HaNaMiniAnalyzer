@@ -16,6 +16,9 @@ public:
 
   int NGenJets ;
   int cutOnNGenJets ;
+  
+  float scale_uu;
+  float scale_dd;
 private :
 
 };
