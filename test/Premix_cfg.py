@@ -103,7 +103,7 @@ process = customizeHLTforFullSim(process)
 from Haamm.HaNaMiniAnalyzer.PreMixFiles import PremixFiles
 from random import randint
 
-process.mixData.input.fileNames = cms.untracked.vstring( [PremixFiles[randint(0,len(PremixFiles)-1)] for i in range(0,20)] )
+process.mixData.input.fileNames = cms.untracked.vstring( [PremixFiles[randint(0,len(PremixFiles)-1)] for i in range(0,40)] )
 
 
 import FWCore.ParameterSet.VarParsing as opts
