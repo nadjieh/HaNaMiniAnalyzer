@@ -15,6 +15,9 @@ cd Haamm
 git clone -b $4 https://github.com/nadjieh/HaNaMiniAnalyzer/
 cd HaNaMiniAnalyzer/
 git checkout $4
+rm -f src/*
+rm -f plugins/*
+rm -rf macro
 scram b
 cd test
 if [ ! -z "$LSB_JOBINDEX" ];
@@ -38,7 +41,11 @@ outfilename=`ls $6*$5*.root`
 outfilenames=`ls *$6*$5*.root`
 
 ls -l $outfilenames
+echo cmsRun AODSIM_cfg.py infile=$outfilenames output=AODSIM_$5_$FILEID.root
+cmsRun AODSIM_cfg.py infile=$outfilenames output=AODSIM_$5_$FILEID.root
 
+outfilenames=`ls AODSIM_$5_$FILEID.root`
+ls -l $outfilenames
 
 if [[ $7 == eos* ]] ;
 then
