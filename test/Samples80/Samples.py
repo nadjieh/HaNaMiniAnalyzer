@@ -169,3 +169,11 @@ MiniAOD80Samples.append( DYMG4J10To50 )
 DYMG4J50 = Sample( "DYMG4J50" , 51.*5765./4895. , True , "/DY4JetsToLL_M-50_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM" )
 MiniAOD80Samples.append( DYMG4J50 )
 
+GGH20PSGENSIM = Sample( "GGH20PSGENSIM", 48.5800*1.7*0.0001,True, "/SUSYGluGluToHToAA_AToMuMu_AToBB_M-20_TuneCUETP8M1_13TeV_madgraph_Herwigpp/hbakhshi-PSHerwigpp_RAWSIMoutput-ab3049243ffd725f50ccf1808f052c71/USER")
+MiniAOD80Samples.append(GGH20PSGENSIM)
+
+GGH40PSGENSIM = Sample( "GGH40PSGENSIM", 48.5800*1.7*0.0001,True, "/SUSYGluGluToHToAA_AToMuMu_AToBB_M-40_TuneCUETP8M1_13TeV_madgraph_Herwigpp/hbakhshi-PSHerwigpp_RAWSIMoutput-bd046e34aab243306fd3f61b9f692474/USER")
+MiniAOD80Samples.append(GGH40PSGENSIM)
+
+GGH60PSGENSIM = Sample( "GGH60PSGENSIM", 48.5800*1.7*0.0001,True, "/SUSYGluGluToHToAA_AToMuMu_AToBB_M-60_TuneCUETP8M1_13TeV_madgraph_Herwigpp/hbakhshi-PSHerwigpp_RAWSIMoutput-51e223377599988f71f1e6bca84210cb/USER")
+MiniAOD80Samples.append(GGH60PSGENSIM)
