@@ -44,6 +44,7 @@ ls -l $outfilenames
 echo cmsRun AODSIM_cfg.py infile=$outfilenames output=AODSIM_$5_$FILEID.root
 cmsRun AODSIM_cfg.py infile=$outfilenames output=AODSIM_$5_$FILEID.root
 
+outfilename=`ls AODSIM_$5_$FILEID.root`
 outfilenames=`ls AODSIM_$5_$FILEID.root`
 ls -l $outfilenames
 
