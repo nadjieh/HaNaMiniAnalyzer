@@ -46,11 +46,12 @@ for sample in samples:
     print >> file, "environment             = CONDORJOBID=$(ProcId)"
     print >> file, "notification            = Error"
     print >> file, "request_cpus            = 4"
+    print >> file, 'requirements            = (OpSysAndVer =?= "SLCern6")'
     print >> file, ""
     print >> file, "arguments               = %(vomsaddress)s %(scram)s %(cmsver)s %(gitco)s %(sample)s %(out)s %(outdir)s %(nFilesPerJob)d" % { 
         "vomsaddress":"%s/%s/.x509up_u%d" % (os.getcwd() , workingdir , os.getuid()) ,
-        "scram":os.getenv("SCRAM_ARCH") ,
-        "cmsver":os.getenv("CMSSW_VERSION"),
+        "scram":"slc6_amd64_gcc530" ,
+        "cmsver":"CMSSW_8_0_21" ,
         "gitco":"80X_201705" ,
         "sample":sample.Name ,
         "out":prefix,

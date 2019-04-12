@@ -1,0 +1,3 @@
+CMSSW_7_1_25_patch3
+copy HIG-RunIISummer15wmLHEGS-*-fragment_hw.py in Configuration/GenProduction/python/
+run crab files to produce 200K events for different masses with herwig++ used as PS
