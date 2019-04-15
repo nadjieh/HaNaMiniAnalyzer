@@ -88,6 +88,8 @@ class Sample :
         
         if not datasetname == "" :
             self.InitiateFilesFromListOrDAS( datasetname , appendix )
+        else :
+            self.LoadFilesFromList()
 
         if treeName :
             self.TreeName = treeName
