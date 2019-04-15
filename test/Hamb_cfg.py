@@ -115,7 +115,7 @@ if options.sync == 0 :
         raise NameError("Sample with name %s wasn't found" % (options.sample))
 else:
     from Haamm.HaNaMiniAnalyzer.Sample import *
-    theSample = Sample( "Sync" , "Sync" , 100 , False , 0 , "" )
+    theSample = Sample( "Sync" , 100 , False , "" )
     #theSample.Files = ['/store/mc/RunIIFall15MiniAODv2/TT_TuneCUETP8M1_13TeV-powheg-pythia8/MINIAODSIM/PU25nsData2015v1_76X_mcRun2_asymptotic_v12_ext3-v1/00000/0C5BB11A-E2C1-E511-8C02-002590A831B6.root']
     theSample.Files = ['file:MINIAODSIM_GGH20PSGENSIM_1.root']
     #theSample.Files = ['/store/data/Run2016C/DoubleMuon/MINIAOD/PromptReco-v2/000/275/658/00000/0498AA19-863B-E611-A9B3-02163E0138A8.root']

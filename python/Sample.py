@@ -7,6 +7,7 @@ import os, ntpath
 import os.path
 from JSONSample import *
 import json
+
 ####NEVER TRY TO IMPORT ROOT MODULES IN THE PYTHON CONFIGURATION, Oherwise CMSSW fails in initiating the tree
 #kGray = 920
 #kGreen = 416
@@ -52,6 +53,7 @@ class JobInformation:
             output = "eos/cms" + output
 
         self.Output = output
+
 class Sample :
     WD = './'
 

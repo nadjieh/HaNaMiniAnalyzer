@@ -1,13 +1,27 @@
-TString prefix[5] = {"SRTL","SRTLexc", "SRTMexc", "SRTT","SRMM"};
+//const int nPrefix = 5;
+//TString prefix[nPrefix] = {"SRTL","SRTLexc", "SRTMexc", "SRTT","SRMM"};
+
+
 //TString syst[13]={"Hamb", "HambPUUp", "HambPUDown", "HambJECUP", "HambJECDOWN", "HambJERUP", "HambJERDOWN", "HambBUP", "HambBDOWN", "HambMETUnClusDOWN", "HambMETUnClusUP", "HambHLTUP", "HambHLTDOWN"};
 //TString syst[3]={"Hamb", "HambBUP", "HambBDOWN"};
 //TString syst[13]={"Hambcentral", "HambPUUp", "HambPUDown", "HambJECUP", "HambJECDOWN", "HambJERUP", "HambJERDOWN", "HambBUP", "HambBDOWN", "HambMETUnClusDOWN", "HambMETUnClusUP", "HambHLTUP", "HambHLTDOWN"};
-const int nSyst = 19;
-TString syst[nSyst]={"HambBShapecentral","HambBShapeup_hfstats1",  "HambBShapedown_hfstats1",  "HambBShapeup_hfstats2",  "HambBShapedown_hfstats2",  "HambBShapeup_lfstats1",  "HambBShapedown_lfstats1",  "HambBShapeup_lfstats2",  "HambBShapedown_lfstats2",  "HambBShapeup_jes",  "HambBShapedown_jes",  "HambBShapeup_lf",  "HambBShapedown_lf",  "HambBShapeup_cferr1",  "HambBShapedown_cferr1",  "HambBShapeup_cferr2",  "HambBShapedown_cferr2",  "HambBShapeup_hf","HambBShapedown_hf"};
+//const int nSyst = 19;
+//TString syst[nSyst]={"HambBShapecentral","HambBShapeup_hfstats1",  "HambBShapedown_hfstats1",  "HambBShapeup_hfstats2",  "HambBShapedown_hfstats2",  "HambBShapeup_lfstats1",  "HambBShapedown_lfstats1",  "HambBShapeup_lfstats2",  "HambBShapedown_lfstats2",  "HambBShapeup_jes",  "HambBShapedown_jes",  "HambBShapeup_lf",  "HambBShapedown_lf",  "HambBShapeup_cferr1",  "HambBShapedown_cferr1",  "HambBShapeup_cferr2",  "HambBShapedown_cferr2",  "HambBShapeup_hf","HambBShapedown_hf"};
+
+
+const int nPrefix = 3;
+TString prefix[nPrefix] = {"SRTL" , "SRTLScaleUp" , "SRTLScaleDown" };
+
+const int nSyst=1;
+TString syst[nSyst] = {"Hambcentral"};
 
 TString histname = "/General/amuMass/signals/";
 
-TString sigs[8] = {"20","25","30","40","45","50","55","60"};
+//const int nsigs = 8;
+//TString sigs[nsigs] = {"20","25","30","40","45","50","55","60"};
+
+const int nsigs = 3;
+TString sigs[nsigs] = {"Signalmmtt20" , "Signalmmtt40" , "Signalmmtt60"};
 void SystYieldExtractor(){
 	for (int j = 0; j < 5; j++){
 		cout<<"***** *"<<prefix[j]<<"*"<<endl;
@@ -18,7 +32,7 @@ void SystYieldExtractor(){
 				cout<<" relDiff |";
 		}
 		cout<<endl;
-		for (int i = 0; i < 8; i++){
+		for (int i = 0; i < nsigs; i++){
 			cout<<"| ma = "<<sigs[i]<<"|";		
 			int n = 0;
 			for (int iSyst = 0; iSyst<nSyst;iSyst++){

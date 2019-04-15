@@ -19,13 +19,19 @@ if runOnOutsOfAnotherJob :
 else :
     samples = MiniAOD80Samples
 
-def GetSample( s ):
+def GetSample( s , changeName = False ):
     if runOnOutsOfAnotherJob:
         for ss in samples:
             if s.Name == ss.Name :
+                if changeName:
+                    ss.Name = "Hamb" + ss.Name
+                print ss.Name
                 return ss
         return None
     else:
+        if changeName:
+            s.Name = "Hamb" + s.Name
+        print s.Name
         return s
 
 
@@ -35,6 +41,8 @@ nSystTuples = "%s/Hamb13/March02_Full2016_MassProd_CorrectBtag/withSelVariables/
 
 #nSystTuples = "%s/Hamb13/June06_Full2016_MassProd/SystSignal27Feb/withSelVariables/withMoreBtags/" %(LOCATION)
 #nTuples = "/home/hbakhshi/Downloads/Hamb_Nadjieh/withSelVariables/"
+
+nSystTuples = "../macro/out/"
 
 from Haamm.HaNaMiniAnalyzer.SampleType import *
 from ROOT import kGray, kGreen, kOrange, kRed, kBlack, kCyan, kBlue, kAzure, kTeal, kPink, kYellow
@@ -77,12 +85,15 @@ signalsamples = []
 # signalsamples.append (SampleType( "Signal50" , kOrange+10 , [ GetSample(GGH5080) ] , nSystTuples , True ))
 # signalsamples.append (SampleType( "Signal55" , kRed+2 , [ GetSample(GGH5580) ] , nSystTuples , True ))
 # signalsamples.append (SampleType( "Signal60" , kPink+10 , [ GetSample(GGH6080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalmmtt20" , kBlue+2 , [ GetSample(GGHmmtt2080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalmmtt40" , kYellow+2 , [ GetSample(GGHmmtt4080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalmmtt60" , kPink+10 , [ GetSample(GGHmmtt6080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalbbtt20" , kOrange-2 , [ GetSample(GGHbbtt2080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalbbtt40" , kOrange+10 , [ GetSample(GGHbbtt4080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalbbtt60" , kRed+2 , [ GetSample(GGHbbtt6080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt20" , kBlue+2 , [ GetSample(GGHmmtt2080, True) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt40" , kYellow+2 , [ GetSample(GGHmmtt4080, True) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signalmmtt60" , kPink+10 , [ GetSample(GGHmmtt6080, True) ] , nSystTuples , True ))
+#signalsamples.append (SampleType( "Signalbbtt20" , kOrange-2 , [ GetSample(GGHbbtt2080, True) ] , nSystTuples , True ))
+#signalsamples.append (SampleType( "Signalbbtt40" , kOrange+10 , [ GetSample(GGHbbtt4080, True) ] , nSystTuples , True ))
+#signalsamples.append (SampleType( "Signalbbtt60" , kRed+2 , [ GetSample(GGHbbtt6080, True) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "SignalVBF20" , kBlue+2 , [ GetSample(VBF2080, True) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "SignalVBF40" , kYellow+2 , [ GetSample(VBF4080, True) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "SignalVBF60" , kPink+10 , [ GetSample(VBF6080, True) ] , nSystTuples , True ))
 
 nTotals = {}
             
@@ -92,7 +103,7 @@ listofdata = [GetSample(s) for s in MiniAOD80Samples if s.IsData]
 dataSamples2 = SampleType("Data" , kBlack , listofdata  , nTuples  ) # , additionalCut="(higgsMass > 135 || higgsMass < 115)"
 #allSTs = [ dataSamples2 , DiBosonSamples, TopSamples, DYSamples ]
 #if(len(sys.argv) == 3):
-allSTs = [ dataSamples2, SampleType( "Signalmmtt2000" , kBlue+2 , [ GetSample(GGHmmtt2080) ] , nSystTuples , True )]#DiBosonSamples, TopSamples, DYSamples ]
+allSTs = [ SampleType( "Signalmmtt2000" , kBlue+2 , [ GetSample(GGHmmtt2080, True) ] , nSystTuples , True )]#DiBosonSamples, TopSamples, DYSamples ]
 
 allSTs.extend(signalsamples)
 for st in allSTs :
@@ -159,22 +170,26 @@ cCRTLexc = CutInfo("CRTLexc", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsM
 cCRTMexc = CutInfo("CRTMexc", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TMexc" , "MET" , "invchi2sum"]]), "Weight*%s" %(bWeightTM) , title="CR+TMexc"   )
 cCRTT = CutInfo("CRTT", "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TT" , "MET" , "invchi2sum"]]), "Weight*%s" %(bWeightTT) , title="CR+TT"   )
 
-cuts = [ cSRTL , cSRTLexc, cSRTMexc, cSRTT, cSRMM ]
+cSRTLScaleUp = CutInfo( "SRTLScaleUp" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum"]] ) , "Weight*%s*WeightScaleUp" %(bWeightTL) , title="Signal Region - TL , scale up"  )
+cSRTLScaleDown = CutInfo( "SRTLScaleDown" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum"]] ) , "Weight*%s*WeightScaleDown" %(bWeightTL) , title="Signal Region - TL , scale Down"  )
+
+#, cSRTLexc, cSRTMexc, cSRTT, cSRMM
+cuts = [ cSRTL , cSRTLScaleDown , cSRTLScaleUp ]
 
 for cut in cuts :
-    if "Blind" not in cut.Name :
+    #if "Blind" not in cut.Name :
         #cut.AddHist( "nJets" , "@jetsPt.size()", 10 , 0 , 10, False , Title="#jets" , dirName="Jets" )
-        cut.AddHist( "nVertices" , "nVertices" , 50 , 0. , 50., False , Title="#Vertices" , dirName="General" )
+        #cut.AddHist( "nVertices" , "nVertices" , 50 , 0. , 50., False , Title="#Vertices" , dirName="General" )
         #cut.AddHist( "metPhi" , "abs(metPhi)" , 16 , 0. , 3.2, False , Title="#phi" , dirName="MET" )
         #cut.AddHist( "metSig" , "metSig" , 25, 0, 50, False , Title="met significance" , dirName="MET" )
         #met = cut.AddHist( "met" , "met" , 30 , 0. , 300, False , Title="met" , dirName="MET")
         #cut.AddHist( "amuPt" , "amPt" , 30 , 0. , 300., False , Title="p_{T}^{#mu#mu}" , dirName="MuMu")
         #cut.AddHist( "abPt" , "abPt" , 30 , 0. , 300., False , Title="p_{T}^{bb}" , dirName="bb")
-        cut.AddHist( "abMass" , "abMass" , 24, 10. , 250., False , Title="m_{bb}" , dirName="bb")
-        cut.AddHist( "Mu1Pt" , "muPt[0]" , 50 , 0 , 500 , False , Title="p_{T}^{#mu} (leading)"  , dirName="Mus" )
-        cut.AddHist( "Mu2Pt" , "muPt[1]" , 50 , 0 , 500 , False , Title="p_{T}^{#mu} (sub-leading)" , dirName="Mus")
-        cut.AddHist( "Jet1Pt" , "jetsPt[0]" , 50 , 0 , 500 , False , Title="p_{T}^{jet} (leading)" , dirName="Jets")
-        cut.AddHist( "Jet2Pt" , "jetsPt[1]" , 50 , 0 , 500 , False , Title="p_{T}^{jet} (sub-leading)", dirName="Jets")
+        #cut.AddHist( "abMass" , "abMass" , 24, 10. , 250., False , Title="m_{bb}" , dirName="bb")
+        #cut.AddHist( "Mu1Pt" , "muPt[0]" , 50 , 0 , 500 , False , Title="p_{T}^{#mu} (leading)"  , dirName="Mus" )
+        #cut.AddHist( "Mu2Pt" , "muPt[1]" , 50 , 0 , 500 , False , Title="p_{T}^{#mu} (sub-leading)" , dirName="Mus")
+        #cut.AddHist( "Jet1Pt" , "jetsPt[0]" , 50 , 0 , 500 , False , Title="p_{T}^{jet} (leading)" , dirName="Jets")
+        #cut.AddHist( "Jet2Pt" , "jetsPt[1]" , 50 , 0 , 500 , False , Title="p_{T}^{jet} (sub-leading)", dirName="Jets")
         #cut.AddHist( "Mu1Eta" , "muEta[0]" , 10 , -2.5 , 2.5 , False , Title="#mu_{lead.} #eta" , dirName="Mus")
         #cut.AddHist( "Mu2Eta" , "muEta[1]" , 10 , -2.5 , 2.5 , False , Title="#mu_{sub-lead.} #eta" , dirName="Mus" )
         #cut.AddHist( "Jet1Eta" , "jetsEta[0]" , 10 ,-2.5 , 2.5 , False , Title="jet_{lead.} #eta" , dirName="Jets")

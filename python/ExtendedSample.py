@@ -7,6 +7,33 @@ import fnmatch
 
 from Sample import *
 from Plotter import *
+from os import listdir
+from os.path import isfile, join, splitext, basename
+
+
+def GetFileStatus(job_ , hname , sample):
+    outfile = job_.Output
+    job= job_.Index + 1
+    if isfile( outfile ) :
+        ff = TFile.Open(outfile)
+        if not ff :
+            return -1 # "File exist, but can not be opened"
+
+        h = ff.Get("%s_%s_0"% ( hname , sample.Name) )
+        if not h == None :
+            ntotal = h.GetBinContent(1)
+            if ntotal == 0:
+                if not sample.IsData : #data may be is null because of json
+                    return -3 # "Exists with no entry"
+        else :
+            return -2 # Exists, without histogram"
+
+        ff.Close()
+    else :
+        return -4 # " : file doesn't exist  " 
+
+    return 1
+
 
 class ExtendedSample: #extend the sample object to store histograms
     def __init__( self , sample , additionalCut = None  ):
@@ -251,7 +278,10 @@ class ExtendedSample: #extend the sample object to store histograms
 
         return contents
 
-    def fhadd(self, prefix = "" , force=False, verbose=False, slow=True):
+
+    def PrintHaddResults(self):
+        print( "%d jobs were merged out of %d jobs in %s.root" % (len(self.HealthyFilesUsedForHadd) , len(self.Jobs) , self.Name ))
+    def fhadd(self, prefix = "" , force=False, verbose=False, slow=True ):
         """ taken from https://root.cern.ch/phpBB3/viewtopic.php?t=14881
         This function will merge objects from a list of root files and write them    
         to a target root file. The target file is newly created and must not
@@ -270,7 +300,11 @@ class ExtendedSample: #extend the sample object to store histograms
         """
 
         target = prefix + self.Name + ".root"
-        sources = [j.Output for j in self.Jobs]
+        sources = [j.Output for j in self.Jobs if GetFileStatus(j , "Hamb/CutFlowTable/CutFlowTable" , self)>0]
+        self.HealthyFilesUsedForHadd = sources
+        if len(sources)==0:
+            print( "no healthy file is found for %s to hadd, exit" % self.Name )
+            return
 
         TH1.AddDirectory(False)
         # check if target file exists and exit if it does and not in force mode
@@ -312,6 +346,7 @@ class ExtendedSample: #extend the sample object to store histograms
             if not os.path.exists(f):
                 notexistingfiles.append( f )
                 continue
+            
             otherfiles.append(TFile.Open(f))
 
         print "The following files don't exist %s" % notexistingfiles
