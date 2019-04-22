@@ -30,7 +30,6 @@ call(["voms-proxy-init" , "--out" , "./%s/.x509up_u%d" % ( workingdir , os.getui
 file_sh = open("%s/Submit.sh" % (workingdir) , "w" )
 
 
-os.mkdir( "%s" % (workingdir ) )
 copy( "SetupAndRunMiniAODSim.sh" , "./%s" % (workingdir) )
     
 file = open("%s/Submit.cmd" % (workingdir ) , "w" )
