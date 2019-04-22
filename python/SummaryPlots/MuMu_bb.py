@@ -182,7 +182,7 @@ class EfficiencyReader:
         return graph
 
 class LimitReader:
-    def __init__(self, fname , color = ROOT.kOrange-4 , is2d = False):
+    def __init__(self, fname , limit_dir="limitXSec" , color = ROOT.kOrange-4 , is2d = False):
         self.Color = color
 
         tColor=ROOT.gROOT.GetColor(color)
@@ -193,10 +193,10 @@ class LimitReader:
         ROOT.gROOT.cd()
         
         if not is2d :
-            self.MedianGraph = self.File.Get("limitXSec/expected").Clone()
-            self.g2sigmaBand = self.File.Get("limitXSec/two_sigma").Clone()
-            self.g1sigmaBand = self.File.Get("limitXSec/one_sigma").Clone()
-            self.ObservedGraph = self.File.Get("limitXSec/observed").Clone()
+            self.MedianGraph = self.File.Get(limit_dir+"/expected").Clone()
+            self.g2sigmaBand = self.File.Get(limit_dir+"/two_sigma").Clone()
+            self.g1sigmaBand = self.File.Get(limit_dir+"/one_sigma").Clone()
+            self.ObservedGraph = self.File.Get(limit_dir+"/observed").Clone()
             ROOT.gROOT.cd()
             self.gp2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , +1 )
             self.gm2sigma = self.ProduceUpDownPlots( self.g2sigmaBand , -1 )

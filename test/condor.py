@@ -33,6 +33,10 @@ file_sh = open("%s/Submit.sh" % (workingdir) , "w" )
 for sample in samples:
     if not any( [sample.Name.count(sname) for sname in ["PSMINIAODSIM" ] ] ):
         continue
+
+    for job in sample.Jobs :
+        print job.Output
+    continue
     
     os.mkdir( "%s/%s" % (workingdir , sample.Name) )
     copy( "SetupAndRun.sh" , "./%s/%s" % (workingdir , sample.Name) )

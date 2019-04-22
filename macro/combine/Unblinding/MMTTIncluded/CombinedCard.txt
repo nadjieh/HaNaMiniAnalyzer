@@ -1,7 +1,7 @@
 Combination of TLexc.txt  TMexc.txt  TT.txt
 imax 3 number of bins
 jmax 1 number of processes minus 1
-kmax 22 number of nuisance parameters
+kmax 24 number of nuisance parameters
 ----------------------------------------------------------------------------------------------------------------------------------
 shapes bkg       ch1       ../../UnblindedWS.root HMuMubbWS:BkgShape_TLexc
 shapes data_obs  ch1       ../../UnblindedWS.root HMuMubbWS:Dataset_TLexc
@@ -25,6 +25,8 @@ JER                     lnN     0.935/1.003  -            1.009/0.999  -        
 JES                     lnN     1.035/0.950  -            1.020/0.970  -            1.005/0.980  -          
 MET                     lnN     1.004/0.990  -            1.002/0.990  -            1.005/0.990  -          
 PDF                     lnN     0.989/1.008  -            0.989/1.008  -            0.989/1.008  -          
+SCALES                  lnN     0.960/1.023  -            0.960/1.023  -            0.960/1.023  -          
+PS			lnN     0.932/1.068  -            0.932/1.068  -            0.932/1.068  -          
 btag_CFERR1             lnN     1.010/0.993  -            1.001/0.998  -            1.002/0.997  -          
 btag_CFERR2             lnN     0.999/1.001  -            0.992/1.009  -            0.991/1.010  -          
 btag_HF                 lnN     1.003/0.997  -            1.004/0.997  -            0.992/1.001  -          
@@ -39,7 +41,7 @@ muonHLT                 lnN     1.006/0.994  -            1.006/0.994  -        
 muonID                  lnN     0.986/1.014  -            0.986/1.014  -            0.986/1.014  -          
 muonIso                 lnN     0.986/1.014  -            0.986/1.014  -            0.986/1.014  -          
 pileup                  lnN     1.006/0.994  -            0.980/1.010  -            0.980/1.020  -          
-signalTHunc             lnN     1.038        -            1.038        -            1.038        -          
+signalTHunc             lnN     1.047        -            1.047        -            1.047        -          
 a1            param  0.0000 0.0004
 m1            param  0.0000 0.0001
 b1            param  0.0110 0.0001
@@ -49,5 +51,5 @@ pdfIndex_TLexc  discrete
 signalshape group = a1 m1 b1
 muon group = muonID muonHLT muonIso
 experiment group = JER JES MET lumi pileup
-theory group = PDF signalTHunc
+theory group = PDF signalTHunc SCALES PS
 btag group = btag_HFSTAT2 btag_HFSTAT1 btag_CFERR2 btag_LFSTAT2 btag_LFSTAT1 btag_CFERR1 btag_HF btag_JES btag_lf

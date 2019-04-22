@@ -182,7 +182,7 @@ class ExtendedSample: #extend the sample object to store histograms
             print "looking ofr" , dirName
             dir = ff.GetDirectory(dirName)
             if not dir :
-                print "File %d of sample %s is not valid, skip it , %s" % (Job.Index , self.Name , finame)
+                print "File %d of sample %s is not valid, skip it , %s (%s)" % (Job.Index , self.Name , finame , dirName)
                 continue
             for dir__ in dir.GetListOfKeys() :
                 if not dir__.IsFolder():

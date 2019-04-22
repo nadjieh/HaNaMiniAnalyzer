@@ -1,5 +1,5 @@
 mkdir out
-for f in ../test/scales/*.root
+for f in ../test/out_GGH*.root
 do
    ln -s $f
    base=`basename $f`

@@ -263,7 +263,7 @@ if __name__ == "__main__":
         limits = LimitReader("../../macro/combine/Unblinding/MMTTIncluded/limits3.root" , is2d=True)
     else:
         #limits = LimitReader( "../../macro/combine/Feb2018/bTagSR2016Systs/myLimitXsec.root" )
-        limits = LimitReader("/home/hbakhshi/Desktop/tHq/Papers/Ours2/papers/HIG-18-011/trunk/figures/src/limits.root")
+        limits = LimitReader("~/Desktop/limits.root" , limit_dir="Un47/br")
 
     ROOT.gROOT.cd()
     

@@ -8,7 +8,7 @@ import os.path
 cwd = os.getcwd()
 
 efficiencies = mmbb.EfficiencyReader()
-limitReader = mmbb.LimitReader( "/afs/cern.ch/user/h/hbakhshi/work/Hamb/HigCadiDatacards/trunk/cadi/HIG-18-011/Unblinded/paperv4_condor/limits.root")
+limitReader = mmbb.LimitReader( "/afs/cern.ch/user/h/hbakhshi/work/Hamb/HigCadiDatacards/trunk/cadi/HIG-18-011/Unblinded/paper_review/pssysts/limits.root" , limit_dir="Un47/br")
 modeltype = 3
 
 tanbetas = numpy.linspace( 0.01 , 10.01 , 100 , endpoint=False )

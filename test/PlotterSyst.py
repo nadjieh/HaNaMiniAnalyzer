@@ -73,27 +73,37 @@ if len(sys.argv) == 3:
     bWeightMM = bW
 
 
+bW = "bWsShape"
+bWeightLL = bW
+bWeightML = bW
+bWeightTL = bW
+bWeightTM = bW
+bWeightTT = bW
+bWeightMM = bW
 
 
 signalsamples = []
 #signalsamples.append (SampleType( "Signal15" , kAzure+10 , [ GetSample(GGH1580) ] , nTuples , True ))
-# signalsamples.append (SampleType( "Signal20" , kBlue+2 , [ GetSample(GGH2080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signal20" , kBlue+2 , [ GetSample(GGH2080) ] , nSystTuples , True ))
 # signalsamples.append (SampleType( "Signal25" , kCyan+2	, [ GetSample(GGH2580) ] , nSystTuples , True ))
 # signalsamples.append (SampleType( "Signal30" , kTeal+10 , [ GetSample(GGH3080) ] , nSystTuples , True ))
-# signalsamples.append (SampleType( "Signal40" , kYellow+2 , [ GetSample(GGH4080) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signal40" , kYellow+2 , [ GetSample(GGH4080) ] , nSystTuples , True ))
 # signalsamples.append (SampleType( "Signal45" , kOrange-2 , [ GetSample(GGH4580) ] , nSystTuples , True ))
 # signalsamples.append (SampleType( "Signal50" , kOrange+10 , [ GetSample(GGH5080) ] , nSystTuples , True ))
 # signalsamples.append (SampleType( "Signal55" , kRed+2 , [ GetSample(GGH5580) ] , nSystTuples , True ))
-# signalsamples.append (SampleType( "Signal60" , kPink+10 , [ GetSample(GGH6080) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalmmtt20" , kBlue+2 , [ GetSample(GGHmmtt2080, True) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalmmtt40" , kYellow+2 , [ GetSample(GGHmmtt4080, True) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "Signalmmtt60" , kPink+10 , [ GetSample(GGHmmtt6080, True) ] , nSystTuples , True ))
-#signalsamples.append (SampleType( "Signalbbtt20" , kOrange-2 , [ GetSample(GGHbbtt2080, True) ] , nSystTuples , True ))
-#signalsamples.append (SampleType( "Signalbbtt40" , kOrange+10 , [ GetSample(GGHbbtt4080, True) ] , nSystTuples , True ))
-#signalsamples.append (SampleType( "Signalbbtt60" , kRed+2 , [ GetSample(GGHbbtt6080, True) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "SignalVBF20" , kBlue+2 , [ GetSample(VBF2080, True) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "SignalVBF40" , kYellow+2 , [ GetSample(VBF4080, True) ] , nSystTuples , True ))
-signalsamples.append (SampleType( "SignalVBF60" , kPink+10 , [ GetSample(VBF6080, True) ] , nSystTuples , True ))
+signalsamples.append (SampleType( "Signal60" , kPink+10 , [ GetSample(GGH6080) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signalmmtt20" , kBlue+2 , [ GetSample(GGHmmtt2080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signalmmtt40" , kYellow+2 , [ GetSample(GGHmmtt4080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signalmmtt60" , kPink+10 , [ GetSample(GGHmmtt6080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signalbbtt20" , kOrange-2 , [ GetSample(GGHbbtt2080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signalbbtt40" , kOrange+10 , [ GetSample(GGHbbtt4080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "Signalbbtt60" , kRed+2 , [ GetSample(GGHbbtt6080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "SignalVBF20" , kBlue+2 , [ GetSample(VBF2080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "SignalVBF40" , kYellow+2 , [ GetSample(VBF4080, True) ] , nSystTuples , True ))
+# signalsamples.append (SampleType( "SignalVBF60" , kPink+10 , [ GetSample(VBF6080, True) ] , nSystTuples , True ))
+signalsamples.append( SampleType( "SignalHW20" , kBlue , [ GetSample( GGH20PSMINIAODSIM ) ] , nSystTuples , True ))
+signalsamples.append( SampleType( "SignalHW40" , kBlue , [ GetSample( GGH40PSMINIAODSIM ) ] , nSystTuples , True ))
+signalsamples.append( SampleType( "SignalHW60" , kBlue , [ GetSample( GGH60PSMINIAODSIM ) ] , nSystTuples , True ))
 
 nTotals = {}
             
@@ -103,7 +113,7 @@ listofdata = [GetSample(s) for s in MiniAOD80Samples if s.IsData]
 dataSamples2 = SampleType("Data" , kBlack , listofdata  , nTuples  ) # , additionalCut="(higgsMass > 135 || higgsMass < 115)"
 #allSTs = [ dataSamples2 , DiBosonSamples, TopSamples, DYSamples ]
 #if(len(sys.argv) == 3):
-allSTs = [ SampleType( "Signalmmtt2000" , kBlue+2 , [ GetSample(GGHmmtt2080, True) ] , nSystTuples , True )]#DiBosonSamples, TopSamples, DYSamples ]
+allSTs = [ ] #SampleType( "Signalmmtt2000" , kBlue+2 , [ GetSample(GGHmmtt2080, True) ] , nSystTuples , True )]#DiBosonSamples, TopSamples, DYSamples ]
 
 allSTs.extend(signalsamples)
 for st in allSTs :
@@ -174,7 +184,7 @@ cSRTLScaleUp = CutInfo( "SRTLScaleUp" , "&&".join( [Cuts[ss] for ss in ["HLT", "
 cSRTLScaleDown = CutInfo( "SRTLScaleDown" , "&&".join( [Cuts[ss] for ss in ["HLT", "BasicJetsMu" , "TL" , "MET" , "chi2sum"]] ) , "Weight*%s*WeightScaleDown" %(bWeightTL) , title="Signal Region - TL , scale Down"  )
 
 #, cSRTLexc, cSRTMexc, cSRTT, cSRMM
-cuts = [ cSRTL , cSRTLScaleDown , cSRTLScaleUp ]
+cuts = [ cSRTL ] #, cSRTLScaleDown , cSRTLScaleUp ]
 
 for cut in cuts :
     #if "Blind" not in cut.Name :
@@ -208,7 +218,7 @@ for cut in cuts :
 for c in cuts :
     plotter.AddTreePlots( c )
 
-name_extent = sys.argv[1] if len(sys.argv) >= 2 else "defaults"
+name_extent = sys.argv[1] if len(sys.argv) >= 2 else "Hamb"
 plotter.LoadHistos( LUMI , "%s" %(name_extent))
 if len(sys.argv) == 3:
     name_extent = name_extent+sys.argv[2]

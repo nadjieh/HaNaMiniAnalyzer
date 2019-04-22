@@ -1,5 +1,5 @@
 import FWCore.ParameterSet.Config as cms
-
+RunSyst = False
 process = cms.Process("HaNa")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
@@ -210,7 +210,7 @@ else :
 	process.Hamb.HLT_Mu17Mu8_DZ.Input = cms.InputTag( "TriggerResults","","HLT2" )
 	process.Hamb.HLT_Mu17Mu8.Input = cms.InputTag( "TriggerResults","","HLT2" )
 
-    if theSample.Name.count("GGH") or theSample.Name.count("VBF") :
+    if RunSyst and (theSample.Name.count("GGH") or theSample.Name.count("VBF") ):
         AddSystematics( "PUUp"  , "Vertex" , "PUDataFileName" , "pileUpDataUp.root")
         AddSystematics( "PUDown"  , "Vertex" , "PUDataFileName" , "pileUpDataDown.root")
         AddSystematics( "JECUP"  , "Jets" , "JECUncertainty"  , 1)

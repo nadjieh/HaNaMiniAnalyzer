@@ -282,7 +282,7 @@ bool TreeHamb::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     if( passLHECuts == 0.0 )
       return false;
     nGenJets = LHEReader->NGenJets;
-    cout << "event with " << nGenJets << " passed the criteria" << endl;
+    //cout << "event with " << nGenJets << " passed the criteria" << endl;
     //W = LHEReader->ExtractWeightsInRange( 446 , 495 ); // To be checked for HiggsExo
   }
   hCutFlowTable->Fill( ++stepEventSelection , W );

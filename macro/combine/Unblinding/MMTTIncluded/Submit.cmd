@@ -5,5 +5,6 @@ log                     = $(ClusterId)_$(ProcId).log
 +JobFlavour             = "tomorrow"
 environment             = LSB_JOBINDEX=$(ProccIndex)
 notification            = Error
+requirements            = (OpSysAndVer =?= "SLCern6")
 
 queue ProccIndex in MASSINDICES
