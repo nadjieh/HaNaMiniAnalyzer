@@ -9,16 +9,19 @@ from ExtendedSample import *
 
 class SampleType:
     def __init__(self , name , color , samples = [] , LoadJobDir = "" , signal = False , additionalCut=None ):
-        self.Name = name 
+        self.Title = name
+        self.Name = ''.join(e for e in self.Title if e.isalnum())
+
         if signal:
 	        self.SetMass()
 	        print self.Mass
         
-        if type(color) is int:
-            self.Color = color
-            self.MultiPlot = False
+        #if type(color) is int:
+        self.Color = color
+        self.MultiPlot = False
             
         self.Samples = [ExtendedSample(s, additionalCut) for s in samples]
+        #print(self.Name, [s.Name for s in self.Samples] )
         if not LoadJobDir == "":
             for ss in self.Samples:
                 ss.LoadJobs( LoadJobDir )
@@ -39,7 +42,7 @@ class SampleType:
             return False
         return self.Samples[0].IsData
 
-    def LoadHistos(self , lumi , dirName = "Hamb" , cftName = "CutFlowTable" , treeHistos = []):
+    def LoadHistos(self , lumi , dirName = "Hamb" , cftName = "CutFlowTable" , treeHistos = [] ):
         self.AllHists = {}
         self.GREs = []
         self.AllOtherHists = {}
@@ -50,12 +53,12 @@ class SampleType:
         #print Indices
         for s in self.Samples :
             print "\tSample %s is loading :" % (s.Name)
-            if s.LoadHistos( dirName , cftName , [] , Indices ):
-                if len(treeHistos):
-                    print "%s/Trees/Events" %(dirName)
-                    s.DrawTreeHistos( treeHistos, "%s/Trees/Events" %(dirName) )
-                s.NormalizeHistos( lumi )
-                print "\tAll Loaded and normalized, now they are being organized"
+            s.LoadHistos( dirName , cftName , [] , Indices )
+            if len(treeHistos):
+                print "\t\t%s/Events" %(dirName)
+                s.DrawTreeHistos( treeHistos, "%s/Events" %(dirName) )
+            s.NormalizeHistos( lumi )
+            print "\tAll Loaded and normalized, now they are being organized"
             for propname in s.AllHists:
                 if not propname in self.AllOtherHists.keys():
                     self.AllOtherHists[propname] = {}
@@ -80,11 +83,12 @@ class SampleType:
                         color = self.Color
                         if i==0:
                             hnew = s.AllHists[propname][0].Clone("%s_%s" % ( propname , self.Name ) )
-                            hnew.SetTitle( self.Name )
+                            hnew.SetTitle( self.Title )
                         else:
                             hnew = s.AllHists[propname][i].Clone("%s_%s_%d" % ( propname , self.Name , i) )
                             color = self.Colors[i][0]
                             hnew.SetTitle( self.Colors[i][2] )
+
 
                         hnew.SetBit(TH1.kNoTitle) 
                         setattr( self , "%s_%d" % (propname,i) , hnew )
@@ -99,7 +103,8 @@ class SampleType:
                             hhh.SetLineColor( 1 )
                             hhh.SetLineWidth( 2 )
                             if not self.IsData() :
-                                hhh.SetFillColor( color )
+                                #print(self.Name , int(color) )
+                                hhh.SetFillColor( int(color ) )
                                 hhh.SetFillStyle( 1001 )
                             else:
                                 hhh.SetStats(0)

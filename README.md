@@ -1,20 +1,12 @@
 # HaNaMiniAnalyzer
-This package is designed to read MiniAOD files and produce plots and ntuples.
-For using it, one needs to compile it as a package in CMSSW. This version can be compiled using CMSSW_8_0X. It should be cloned into
-a directory named Haamb.
+This package is designed to make plots out of flat ntuples
+For using it, one needs to have python2.7 and root installed. The python directory should be added to the python path using the following instruction.
 
 ```
-cmsrel CMSSW_8_0_26_patch1
-cd CMSSW_8_0_26_patch1/src
-mkdir Haamb
-cd Haamb
-git clone -b 80X_201705 https://github.com/nadjieh/HaNaMiniAnalyzer 
-cd HaNaMiniAnalyzer
-scram b -j 4
+mkdir -p ~/.local/lib/python2.7/site-packages/Haamm/;
+touch ~/.local/lib/python2.7/site-packages/Haamm/__init__.py;
+ln -s `pwd`/python ~/.local/lib/python2.7/site-packages/Haamm/HaNaMiniAnalyzer;
 ```
 
-Basic files of the package is located in the [src](src), [python](python) and [include](include) directories.
-Currently one plugin is availabel in [TreeHamb.cc](plugins/TreeHamb.cc).
-One can read and learn how these tools are designed to facilitate reading MiniAOD.
-
-Information about how to run this package can be found in [test](test) directory
+Basic files of the package are located in the [python](python) directory.
+Information about how to run this package can be found in [vbf](vbf) directory

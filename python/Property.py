@@ -1,5 +1,6 @@
 from ROOT import TDirectory, TFile, TCanvas , TH1D , TH1 , THStack, TList, gROOT, TLegend, TPad, TLine, gStyle, TTree , TObject , gDirectory, gPad, TLimit, Double, TLimitDataSource, TString, TLatex
-from ROOT import RooFit,RooDataHist, RooHistPdf,RooAddPdf,RooFitResult, RooRealVar, RooArgSet, RooArgList
+from ROOT import RooFit,RooDataHist, RooHistPdf,RooAddPdf,RooFitResult, RooRealVar, RooArgSet, RooArgList, gSystem
+from xml.etree.ElementTree import SubElement
 
 from math import sqrt,log
 import os
@@ -23,7 +24,7 @@ class Property:
 		self.isLnSoSqrtSB = False
 		self.isLnSoSqrtSBdB = False
 		self.SigSignificance = []
-		
+
 	@staticmethod
 	def FromDir( dir , GRE = True ):
 		name = dir.GetName()
@@ -238,38 +239,48 @@ class Property:
 					s.DrawNormalized("E SAME HIST")
 				self.GetSLegend().Draw()
 		return self.SignalCanvas
-	
-	def GetCanvas(self, padid , padOrCanvas=0):
-		canvasname = "%s_canvas" % (self.Name)
-		pad1name = "%s_pad1" % (self.Name)
-		pad2name = "%s_pad2" % (self.Name)
-		if not hasattr(self , "Canvas"):
-			#print canvasname
+
+                
+	def GetCanvas(self, padid , padOrCanvas=0 , W=1050 , H=750 , appendix=''):
+		canvasname = "%s_canvas%s" % (self.Name , appendix)
+		pad1name = "%s_pad1%s" % (self.Name , appendix)
+		pad2name = "%s_pad2%s" % (self.Name , appendix)
+                
+		#print( 'start' ,  canvasname , appendix , W, H , hasattr(self , "Canvas{0}".format(appendix) )
+		if not hasattr(self , canvasname):
 			if padOrCanvas == 0:
-				self.Canvas = TCanvas( canvasname )
+				Canvas = TCanvas( canvasname , canvasname , W , H)
+                                setattr( self , canvasname , Canvas )
 			else:
-				self.Canvas = gPad
-			self.Canvas.cd()
-			self.Pad1 =  TPad(pad1name ,pad1name,0,0.25,1,1)
-			self.Pad1.SetBottomMargin(0.1)
-			self.Pad1.Draw()
+				Canvas = gPad
+		        Canvas.cd()
+			Pad1 =  TPad(pad1name ,pad1name,0,0.25,1,1)
+			Pad1.SetBottomMargin(0.1)
+			Pad1.Draw()
 
-			self.Canvas.cd()
+			Canvas.cd()
 
-			self.Pad2 = TPad( pad2name,pad2name,0,0,1,0.24)
-			self.Pad2.SetTopMargin(0.1)
-			self.Pad2.SetBottomMargin(0.1)
-			self.Pad2.Draw()
+			Pad2 = TPad( pad2name,pad2name,0,0,1,0.24)
+			Pad2.SetTopMargin(0.1)
+			Pad2.SetBottomMargin(0.1)
+			Pad2.Draw()
 
+                        setattr( self , pad1name , Pad1 )
+                        setattr( self , pad2name , Pad2 )
+                        #print( 'test' , canvasname , pad1name , pad2name)
+
+                #print( canvasname , pad1name , pad2name)
 		if padid == 0:
-			self.Canvas.cd()
+			getattr(self, canvasname).cd()
+                        return getattr(self, canvasname)
 		elif padid == 1:
-			self.Pad1.cd()
+			getattr(self, pad1name).cd()
+                        return getattr(self, pad1name)
 		if padid == 2:
-			self.Pad2.cd()
-
-		return self.Canvas
-
+			getattr(self, pad2name).cd()
+                        return getattr(self, pad2name)
+                else:
+                        return None
 
 	def GetLegend(self):
 		legendname = "%s_legend" % (self.Name)
@@ -278,7 +289,7 @@ class Property:
 			self.Legend.SetName( legendname )
 			self.Legend.AddEntry( self.Data , "Data" , "lp" )
 			for st in reversed( self.Bkg.keys() ):
-				self.Legend.AddEntry( self.Bkg[st] , st , "f" )
+				self.Legend.AddEntry( self.Bkg[st] , self.Bkg[st].GetTitle() , "f" )
 				
 		return self.Legend
 
@@ -294,14 +305,15 @@ class Property:
 	
 
 	def GetRatioPlot(self):
-		rationame = "%s_Ratio" % (self.Name)
-		if not hasattr(self, "Ratio"):
+		rationame = "%s_Ratio_%d" % (self.Name , self.MarkerStyle)
+		if not hasattr(self, "Ratio_{0}".format(self.MarkerStyle)):
 			self.Ratio = self.Data.Clone( rationame )
 			self.Ratio.SetStats(0)
 			self.Ratio.Divide( self.GetStack().GetStack().Last() )
 			for i in range(1 , self.Data.GetNbinsX()+1 ):
 				self.Ratio.GetXaxis().SetBinLabel(i , "")
-			self.Ratio.SetMarkerStyle(20)
+			self.Ratio.SetMarkerStyle(self.MarkerStyle)
+                        #self.Ratio.SetMarkerSize( self.MarkerSize )
 			self.Ratio.GetYaxis().SetRangeUser(0,2)
 			self.Ratio.GetXaxis().SetLabelSize( 0.)
 			self.Ratio.GetYaxis().SetTitle("Data / MC")
@@ -313,6 +325,7 @@ class Property:
 			self.Ratio.GetYaxis().SetNdivisions(509)
 			self.Ratio.GetYaxis().SetTitleOffset(0.25)
 			self.Ratio.SetFillStyle(3001)
+                        setattr( self , "Ratio_{0}".format(self.MarkerStyle) , self.Ratio )
 			
 		return self.Ratio
 
@@ -359,13 +372,16 @@ class Property:
                         self.TitleBox.DrawLatex(0.6,0.943,title)
                 return self.TitleBox
 
-	def Draw(self, normalizetodata = False , padOrCanvas = 0 ):
+	def Draw(self, normalizetodata = False , padOrCanvas = 0 , W=1050 , H=750 , canvas_appendix='' ):
+                if W<500 :
+                        self.MarkerStyle = 7
+                else:
+                        self.MarkerStyle = 20
 		gStyle.SetOptTitle(0)
-		self.GetCanvas(1, padOrCanvas)
-                self.Data.GetYaxis().SetRangeUser( 0.000001 , 2*self.Data.GetMaximum() )
-                self.Data.SetMarkerStyle(20)
-		self.Data.Draw("E")
-		self.GetStack(normalizetodata).Draw("HIST SAME")
+		self.GetCanvas(1, padOrCanvas , W=W , H=H , appendix=canvas_appendix)
+                self.Data.SetMarkerStyle(self.MarkerStyle)
+		#self.Data.Draw("E")
+		self.GetStack(normalizetodata).Draw('HIST') #"HIST SAME")
 		self.Data.Draw("E SAME P")
 		if self.Signal:
 			for s in self.Signal:
@@ -373,15 +389,24 @@ class Property:
 			self.GetSLegend().Draw()
 		self.GetLegend().Draw()
 		self.GetTitleBox().Draw()
-		self.GetCanvas(2)
+		self.GetCanvas(2 , padOrCanvas,  appendix=canvas_appendix)
 		self.GetRatioUnc().Draw("E2")
 		self.GetRatioPlot().Draw("ep same")
 		self.GetLineOne().Draw()
 
-	def Write(self , propdir , normtodata , mkdir=False ):
+	def Write(self , propdir , normtodata , mkdir=False , png_filename = None , xml_node = None  ):
 		if mkdir:
-			propdir = propdir.mkdir( self.Name )
+                        if propdir.Get( self.Name ):
+                                for i in range(10):
+                                        name = "{0}_{1}".format( self.Name , i )
+                                        if propdir.Get(name) :
+                                                continue
+                                        propdir = propdir.mkdir( "{0}_{1}".format( self.Name , i ) )
+                                        break
+                        else:
+			        propdir = propdir.mkdir( self.Name )
 		propdir.cd()
+                print( propdir.GetPath() )
 		catdir = propdir.mkdir( "cats" )
 		catdir.cd()
 		if hasattr( self , "Data" ) and self.Data :
@@ -404,9 +429,55 @@ class Property:
 
 		propdir.cd()
 		if(self.Data is not None):
-			self.Draw(normtodata)
-		self.GetCanvas(0).Write()
-		
+                        self.Data.GetYaxis().SetRangeUser( 0.0 , 2*max(self.Data.GetMaximum(), self.GetStack().GetStack().Last().GetMaximum()) )
+			self.Draw(normtodata , canvas_appendix='main')
+                c = self.GetCanvas(0 , appendix='main')
+                c.Write()
+                if(self.Data is not None):
+			self.Draw(normtodata , W=400 , H=300 , canvas_appendix='thumbnail')
+                cth = self.GetCanvas(0 , appendix='thumbnail')
+                cth.Write()
+
+                self.GetCanvas(padid=1 , appendix='main').SetLogy()
+                self.GetCanvas(padid=1 , appendix='thumbnail').SetLogy()
+                if self.Data:
+                        self.Data.SetMarkerStyle(20)
+                        self.Data.GetYaxis().SetRangeUser( 0.001 , 500*self.Data.GetMaximum() )
+
+                c.Write( c.GetName() + "_log" )
+                if self.Data:
+                        self.Data.SetMarkerStyle(7)
+                cth.Write( cth.GetName() + "_log")
+                
+                if png_filename and self.Data:
+                        c.SaveAs( png_filename )
+                        c.SaveAs( png_filename.replace( '.png' , '.pdf' ) )
+                        
+                        cth.SaveAs( png_filename.replace( '.png' , '_thumb.png' ) )
+                        
+                        gSystem.ProcessEvents()
+                        #c.SaveAs( png_filename.replace( '.png' , '_log.png') )
+                        c.SaveAs( png_filename.replace( '.png' , '_log.pdf') )
+                        c.SaveAs( png_filename.replace( '.png' , '_log.png') )
+
+                        cth.SaveAs( png_filename.replace( '.png' , '_thumb_log.png' ) )
+                        
+                        if xml_node is not None:
+                                var_el = SubElement(xml_node, "variable")
+                                SubElement( var_el , "name" ).text = self.Name
+                                SubElement( var_el , "image" ).text = png_filename.split( '/' )[-1]
+                                SubElement( var_el , "thumbnail" ).text = png_filename.split( '/' )[-1].replace( '.png' , '_thumb.png' )
+                                SubElement( var_el , "HasLog").text = str(True)
+                                SubElement( var_el , "logImage").text = png_filename.split( '/' )[-1].replace( '.png' , '_log.png' )
+                                SubElement( var_el , "logThumbnail").text = png_filename.split( '/' )[-1].replace( '.png' , '_thumb_log.png' )
+                                other_formats = SubElement( var_el , "OtherFormats" )
+                                of_el = SubElement( other_formats , "format" )
+                                SubElement( of_el , "ext" ).text = 'pdf'
+                                SubElement( of_el , "file" ).text = png_filename.split( '/' )[-1].replace( '.png' , '.pdf' )
+                                SubElement( of_el , "logImage" ).text = png_filename.split( '/' )[-1].replace( '.png' , '_log.pdf' )
+                        cth.Close()
+                c.Close()
+                
 		if(hasattr(self, "SignalROC")):
 			roc = propdir.mkdir( "ROCs" )
 			roc.cd()
@@ -455,7 +526,8 @@ class Property:
 			expdir.cd()
 			for iSig in range(0, len(self.ExpLimits)):
 				self.ExpLimits[iSig].Write()
-		propdir.cd()		
+		propdir.cd()
+	        #return self.GetCanvas(0)
 
 	def ROCMaker(self, inputHist):
 		tmp = inputHist.Clone("ROC_%s" %inputHist.GetName())

@@ -76,6 +76,7 @@ class ExtendedSample: #extend the sample object to store histograms
         #print self.Jobs
         
     def GetCFT(self , index = 0):
+        #print( self.CutFlowTableName , self.AllHists)
         if not hasattr( self, "CutFlowTableName" ):
             return None
         if not self.CutFlowTableName in self.AllHists:
@@ -105,19 +106,38 @@ class ExtendedSample: #extend the sample object to store histograms
             return
         self.nTotal = self.GetNTotal()
         #print self.Name, "nTotal : " , self.nTotal, "xSec: " , self.XSection
-        if self.nTotal == 0:
-            print "\tSample %s has no entries" % (self.Name)
-            return
+        #if self.nTotal == 0:
+            #print "\tSample %s has no entries" % (self.Name)
+            #return
 
         for index in self.LoadedIndices:
-            self.XSFactor = lumi*self.XSections[index]/self.nTotal
+            nT = self.nTotal
+            if self.nTotal == 0:
+                nT = 1
+            if type(lumi) in (float, int):
+                self.XSFactor = lumi*self.XSections[index]/self.nTotal
+                print "\t\tXSFactor[%d] for lumi %d is : %.4f" % (index , lumi , self.XSFactor)
+            elif type(lumi) is dict:
+                self.XSFactor = {}
+                for l in lumi:
+                    self.XSFactor[l] = lumi[l]*self.XSections[index]/self.nTotal
+                    print "\t\tXSFactor[%d] for lumi %s is : %s" % (index , str(lumi) , str(self.XSFactor) )
             #print "\t XSFactor : " , self.XSFactor
-            print "\t\tXSFactor[%d] for lumi %d is : %.4f" % (index , lumi , self.XSFactor)
             #print "%s factor : (%.2f*%.2f)/%.0f = %.3f" % (sample , lumi , self.XSections[sample] , ntotal  , factor)
             for h in self.AllHists :
                 if len(self.AllHists[h]):
-                    self.AllHists[h][index].Scale(self.XSFactor)
-
+                    if type(lumi) in (float, int):
+                        self.AllHists[h][index].Scale(self.XSFactor)
+                    elif type(lumi) is dict:
+                        counter = 0
+                        for l in lumi:
+                            if l in self.AllHists[h][index].GetName():
+                                self.AllHists[h][index].Scale(self.XSFactor[l])
+                                counter+=1
+                        if counter == 0:
+                            print "\t\t\t%s is not scaled" % self.AllHists[h][index].GetName()
+                        elif counter ==2:
+                            print "\t\t\t%s is scaled more than once (%d)" % (self.AllHists[h][index].GetName() , counter)
     def SetFriendTreeInfo(self , friendsDir , friendTreeName ):
         self.FriendsDir = friendsDir
         self.FriendTreeName = friendTreeName
@@ -148,7 +168,7 @@ class ExtendedSample: #extend the sample object to store histograms
     def DrawTreeHistos( self , treeselections ,  treeName = "Hamb/Trees/Events"):
         if hasattr(self, "TreeName" ):
             treeName = self.TreeName
-            print "Tree Name is : %s" % (treeName)
+            print "\t\tTree Name is : %s" % (treeName)
         self.LoadTree(treeName)
         
         if not hasattr( self, "LoadedIndices" ):
@@ -179,36 +199,44 @@ class ExtendedSample: #extend the sample object to store histograms
             else:
                 print "File %d of sample %s doesn't exist, skip it , %s" % (Job.Index , self.Name , finame)
                 continue
-            print "looking ofr" , dirName
-            dir = ff.GetDirectory(dirName)
+            print "\t\tlooking for" , dirName
+            if dirName in ['.' , './']:
+                dir = ff
+            else:
+                dir = ff.GetDirectory(dirName)
             if not dir :
                 print "File %d of sample %s is not valid, skip it , %s (%s)" % (Job.Index , self.Name , finame , dirName)
                 continue
             for dir__ in dir.GetListOfKeys() :
-                if not dir__.IsFolder():
-                    continue
                 propname = dir__.GetName()
                 if len(loadonly) > 0 and not propname in loadonly :
                     continue
                 print "\t\tloading %s (indices = %s)" % ( propname, str(indices) )
-                dir_ = dir.GetDirectory( propname )
-                dircontents = dir_.GetListOfKeys()
                 selectedHistos = {}
-                for index in indices:
-                    if dircontents.GetEntries() <= index:
-                        continue                    
-                    thehisto = None
-                    for dirindex in range( 0,dircontents.GetEntries() ):
-                        dircont = dircontents.At(dirindex).GetName()
-                        searchfor = "_%d" % (index)
-                        isitthat = dircont.endswith( searchfor  )
-                        #print "%s.endswith( %s ) = %r" % (dircont , searchfor , isitthat )
-                        if isitthat:
-                            thehisto = dir_.Get( dircont )
-                            break
-                    #print [propname , index]
-                    if thehisto and thehisto.ClassName().startswith("TH"):
-                        selectedHistos[index] = thehisto 
+
+                if dir__.IsFolder():
+                    if dir__.ReadObj().IsA().InheritsFrom(TTree.Class()):
+                        continue
+                    dir_ = dir.GetDirectory( propname )
+                    dircontents = dir_.GetListOfKeys()
+                    for index in indices:
+                        if dircontents.GetEntries() <= index:
+                            continue                    
+                        thehisto = None
+                        for dirindex in range( 0,dircontents.GetEntries() ):
+                            dircont = dircontents.At(dirindex).GetName()
+                            searchfor = "_%d" % (index)
+                            isitthat = dircont.endswith( searchfor  )
+                            #print "%s.endswith( %s ) = %r" % (dircont , searchfor , isitthat )
+                            if isitthat:
+                                thehisto = dir_.Get( dircont )
+                                break
+                        #print [propname , index]
+                        if thehisto and thehisto.ClassName().startswith("TH"):
+                            selectedHistos[index] = thehisto
+                elif dir__.ReadObj().IsA().InheritsFrom(TH1.Class()):
+                    selectedHistos[0] = dir__.ReadObj()
+
 
                 if propname in self.AllHists.keys() :
                     for index in selectedHistos:
