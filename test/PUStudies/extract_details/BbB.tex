@@ -1,0 +1,42 @@
+\section{Strategy for Bunch-by-Bunch studies}
+\begin{frame}
+  \frametitle{Bunch-by-Bunch studies}
+  \begin{itemize}
+  \item With all respects to the LUM POG, how much should we care about the source of the time evolution?
+    \begin{itemize}
+    \item As Georgios suggested, we need to make sure that this is a real effect
+    \item It needs to be cross checked with another luminometer
+    \end{itemize}
+  \item This study has some motivations for Run II
+  \item To conherently add this to the Run II PU study
+    \begin{itemize}
+    \item we can study the effect of considering it in Run II
+    \item a systematic uncertainty can be assigned to the best fit cross section for the assumption of the bunch-by-bunch luminosity profile
+      \begin{itemize}
+      \item baseline: Gaussian
+      \item compared to other scenarios
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+\begin{frame}
+  \frametitle{What do we need to do}
+  \begin{itemize}
+  \item to estimate the shape of the bunch-by-bunch luminosity
+    \begin{itemize}
+    \item divide the fill in different time intervals (30 minutes or so)
+    \item fit to find a function to describe it (multiple function forms can be used here)
+    \item the final shape of the fill is sum of these functions
+      \begin{equation}
+        f = \sum_{i}Lumi_{i}\times f_{i}
+      \end{equation}
+    \end{itemize}
+  \item this function can be used as the input of puCalculator
+    \begin{itemize}
+      \item do we know how to implement it?
+    \end{itemize}
+  \item the output can be used to estimate the pp inelastic cross section
+  \item comparing with nominal values, the uncertainty can be assigned
+  \item for the sake of simplicity, we can start with one long fill instead of entire Run-II
+  \end{itemize}
+\end{frame}
