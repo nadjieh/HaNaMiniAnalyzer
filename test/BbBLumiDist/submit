@@ -1,0 +1,13 @@
+executable          = /afs/cern.ch/user/h/hbakhshi/work/Lumi/runIt.sh
+arguments           = -y 2018 -f $Fn(FILL)
+output              = PUCondor/$(ClusterId).$(ProcId).$Fn(FILL).out
+error               = PUCondor/$(ClusterId).$(ProcId).$Fn(FILL).err
+log                 = PUCondor/$(ClusterId).log
+stream_output 	    = True
+stream_error 	    = True
++JobFlavour         = "tomorrow"
+transfer_executable = False
+requirements        = ( (OpSysAndVer =?= "CentOS7") )
+WHEN_TO_TRANSFER_OUTPUT = ON_EXIT_OR_EVICT
+queue FILL matching files /eos/project/l/lpc/public/MassiFiles/2018/measurements/CMS/lumi/*
+ 
